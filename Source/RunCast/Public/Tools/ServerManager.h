@@ -6,12 +6,14 @@
 #include "UObject/NoExportTypes.h"
 #include "Tools/ConnectionManager.h"
 #include "Tools/MessageHandler.h"
+//#include "Tools/Globals.h"
 #include "Kismet/GameplayStatics.h"
 #include "ServerManager.generated.h"
 
-/**
- * 
- */
+
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnServerListRecieved, TArray<FServerInfo>, serversList);
+
 UCLASS()
 class RUNCAST_API UServerManager : public UObject
 {
@@ -26,7 +28,16 @@ public:
 	UConnectionManager* GetConnectionManager();
 
 	UFUNCTION(BlueprintCallable)
+	void ConnectToUEServer(FServerInfo& serverInfo);
+
+	UFUNCTION(BlueprintCallable)
 	void RequestNewSessionServer(const FString& serverName);
+
+	UFUNCTION(BlueprintCallable)
+	void RequestSessionsList();
+
+	UPROPERTY()
+	FOnServerListRecieved OnServerListRecieved;
 
 protected: 
 
@@ -35,5 +46,22 @@ protected:
 
 	UFUNCTION()
 	void RequestNewSessionServerHandle(UMessageHandler* newSessionObj);
+
+	UFUNCTION()
+	void RequestSessionsListHandle(UMessageHandler* newSessionObj);
+
+private: 
+
+	UPROPERTY()
+	FTimerHandle ServerStartDelayHandler;
+
+	UPROPERTY()
+	URequestNewServerHandler* NewServerRequestHandler;
+
+	UFUNCTION()
+	void ServerStartDelayFinished();
+
+	UFUNCTION()
+	void ConnectToServer(FServerInfo& serverInfo);
 
 };

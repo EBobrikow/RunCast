@@ -8,6 +8,18 @@
 #include "Globals.generated.h"
 
 
+namespace JSVal
+{
+	namespace ServerInfo
+	{
+		static const FString Id = TEXT("Id");
+		static const FString ServerName = TEXT("serverName");
+		static const FString Port = TEXT("port");
+		static const FString Host = TEXT("host");
+		static const FString MatchStatus = TEXT("matchStatus");
+	}
+}
+
 USTRUCT(BlueprintType)
 struct FServerInfo
 {
@@ -28,6 +40,15 @@ struct FServerInfo
 	UPROPERTY(BlueprintReadWrite)
 	int32 MatchStatus;
 
+	FServerInfo();
+
+	FServerInfo(
+		int32 _id,
+		const FString& _serverName,
+		int32 _port,
+		const FString& _host,
+		int32 _matchStatus
+	);
 
 };
 

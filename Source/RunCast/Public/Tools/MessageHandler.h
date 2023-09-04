@@ -69,3 +69,18 @@ protected:
 
 	void virtual ParseJsonObject(TSharedPtr<FJsonObject> JsonObj) override;
 };
+
+UCLASS()
+class RUNCAST_API UServersListHandler : public UMessageHandler
+{
+	GENERATED_BODY()
+
+public:
+
+	UPROPERTY()
+	TArray<FServerInfo> serversInfoList;
+
+protected:
+
+	void virtual ParseJsonObject(TSharedPtr<FJsonObject> JsonObj) override;
+};

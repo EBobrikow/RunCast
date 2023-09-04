@@ -7,6 +7,7 @@
 #include "Components/Button.h"
 #include "Core/RCGameInstance.h"
 #include "Kismet/KismetSystemLibrary.h"
+#include "UI/RCServerList.h"
 #include "RCMainMenuWidget.generated.h"
 
 /**
@@ -20,6 +21,7 @@ class RUNCAST_API URCMainMenuWidget : public UUserWidget
 public:
 
 	virtual void NativeConstruct() override;
+	virtual void NativeDestruct() override;
 	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
 
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
@@ -34,6 +36,9 @@ public:
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
 	UButton* ExitGame_Btn;
 
+	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
+	URCServerList* WB_ServersList;
+
 protected:
 
 	UFUNCTION(BlueprintCallable)
@@ -47,6 +52,9 @@ protected:
 
 	UFUNCTION(BlueprintCallable)
 	void OnExitGamePressed();
+
+	UFUNCTION()
+	void OnListRecieved(TArray<FServerInfo> serverList);
 
 
 	UPROPERTY()

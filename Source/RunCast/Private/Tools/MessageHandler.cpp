@@ -54,6 +54,7 @@ void UMessageHandler::RequestAction()
 
 void UMessageHandler::ParseJsonObject(TSharedPtr<FJsonObject> JsonObj)
 {
+
 }
 
 bool UMessageHandler::parseAsString(TPair<FString, TSharedPtr<FJsonValue>> const& val, const FString& fieldName, FString& value)
@@ -94,5 +95,33 @@ bool UMessageHandler::parseAsBool(TPair<FString, TSharedPtr<FJsonValue>> const& 
 
 void URequestNewServerHandler::ParseJsonObject(TSharedPtr<FJsonObject> JsonObj)
 {
+	//{"Id":1,"serverName":"Yahoo","port":1001,"host":"ws://127.0.0.1","matchStatus":0}
+	FServerInfo servInfo = FServerInfo();
+	
+	for (auto val : JsonObj->Values)
+	{
+		if (val.Value->IsNull())
+		{
+			continue;
+		}
+		if (parseAsNumber(val, JSVal::ServerInfo::Id, servInfo.Id)) {}
+		else if (parseAsString(val, JSVal::ServerInfo::ServerName, servInfo.ServerName)) {}
+		else if (parseAsNumber(val, JSVal::ServerInfo::Port, servInfo.Port)) {}
+		else if (parseAsString(val, JSVal::ServerInfo::Host, servInfo.host)) {}
+		else if (parseAsNumber(val, JSVal::ServerInfo::MatchStatus, servInfo.MatchStatus)) {}
+	}
+	serverInfo = servInfo;
+}
 
+void UServersListHandler::ParseJsonObject(TSharedPtr<FJsonObject> JsonObj)
+{
+	// [{"Id":1,"serverName":"Yahoo","port":1001,"host":"127.0.0.1","matchStatus":0},{"Id":2,"serverName":"Yahoo","port":1002,"host":"127.0.0.1","matchStatus":0}]
+
+	/*for (auto file : val.Value->AsArray())
+	{
+		TSharedPtr<FJsonObject> inst = file->AsObject();
+		for (auto tmpfile : inst->Values)
+		{
+			if (parseAsString(tmpfile, JSVal::Course::filename, coursefile._filename)) {
+			}*/
 }
