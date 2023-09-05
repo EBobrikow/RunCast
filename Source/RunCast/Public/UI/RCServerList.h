@@ -24,6 +24,9 @@ public:
 	UFUNCTION()
 	void AddListItem(FServerInfo& data);
 
+	UFUNCTION()
+	void ClearList();
+
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
 	UListView* ListView;
 	

@@ -80,6 +80,8 @@ public:
 	UPROPERTY()
 	TArray<FServerInfo> serversInfoList;
 
+	//virtual void OnRecieved(FString message) override;
+
 protected:
 
 	void virtual ParseJsonObject(TSharedPtr<FJsonObject> JsonObj) override;

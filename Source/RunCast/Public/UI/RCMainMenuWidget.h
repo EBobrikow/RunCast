@@ -5,6 +5,8 @@
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
 #include "Components/Button.h"
+#include "Components/Overlay.h"
+#include "Components/TextBlock.h"
 #include "Core/RCGameInstance.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "UI/RCServerList.h"
@@ -39,19 +41,31 @@ public:
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
 	URCServerList* WB_ServersList;
 
+	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
+	UButton* RefreshServerListBtn;
+
+	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
+	UTextBlock* NoAvailableText;
+
+	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
+	UOverlay* ServerListOverlay;
+
 protected:
 
 	UFUNCTION(BlueprintCallable)
-	void OnSoloGamePressed();
+	void OnSoloGameClicked();
 
 	UFUNCTION(BlueprintCallable)
-	void OnHostGamePressed();
+	void OnHostGameClicked();
 
 	UFUNCTION(BlueprintCallable)
-	void OnSearchGamePressed();
+	void OnSearchGameClicked();
 
 	UFUNCTION(BlueprintCallable)
-	void OnExitGamePressed();
+	void OnExitGameClicked();
+
+	UFUNCTION(BlueprintCallable)
+	void OnRefreshClicked();
 
 	UFUNCTION()
 	void OnListRecieved(TArray<FServerInfo> serverList);

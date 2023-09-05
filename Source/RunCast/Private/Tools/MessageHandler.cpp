@@ -113,9 +113,57 @@ void URequestNewServerHandler::ParseJsonObject(TSharedPtr<FJsonObject> JsonObj)
 	serverInfo = servInfo;
 }
 
+//void UServersListHandler::OnRecieved(FString message)
+//{
+//	FString msg = "[{\"Id\":1,\"serverName\":\"Yahoo\",\"port\":1001,\"host\":\"127.0.0.1\",\"matchStatus\":0},{\"Id\":2,\"serverName\":\"Yahoo\",\"port\":1002,\"host\":\"127.0.0.1\",\"matchStatus\":0}]";
+//	TSharedPtr<FJsonObject> JsonObject;
+//	if (msg[0] != '{')
+//	{
+//		msg = FString::Printf(TEXT("{\"object\":%s}"), *msg);
+//
+//	}
+//	TSharedRef<TJsonReader<>> Reader = TJsonReaderFactory<>::Create(msg);
+//	if (FJsonSerializer::Deserialize(Reader, JsonObject))
+//	{
+//		ParseJsonObject(JsonObject);
+//	}
+//
+//	RequestAction();
+//}
+
 void UServersListHandler::ParseJsonObject(TSharedPtr<FJsonObject> JsonObj)
 {
 	// [{"Id":1,"serverName":"Yahoo","port":1001,"host":"127.0.0.1","matchStatus":0},{"Id":2,"serverName":"Yahoo","port":1002,"host":"127.0.0.1","matchStatus":0}]
+
+	for (auto val : JsonObj->Values)
+	{
+		if (val.Value->IsNull())
+		{
+			continue;
+		}
+		if (val.Key == "object")
+		{
+			for (auto serverInfoObj : val.Value->AsArray())
+			{
+				FServerInfo servInfoLoc = FServerInfo();
+				TSharedPtr<FJsonObject> inst = serverInfoObj->AsObject();
+				for (auto serverInfo : inst->Values)
+				{
+					if (val.Value->IsNull())
+					{
+						continue;
+					}
+					if (parseAsNumber(serverInfo, JSVal::ServerInfo::Id, servInfoLoc.Id)) {}
+					else if (parseAsString(serverInfo, JSVal::ServerInfo::ServerName, servInfoLoc.ServerName)) {}
+					else if (parseAsNumber(serverInfo, JSVal::ServerInfo::Port, servInfoLoc.Port)) {}
+					else if (parseAsString(serverInfo, JSVal::ServerInfo::Host, servInfoLoc.host)) {}
+					else if (parseAsNumber(serverInfo, JSVal::ServerInfo::MatchStatus, servInfoLoc.MatchStatus)) {}
+				}
+
+				serversInfoList.Add(servInfoLoc);
+			}
+		}
+	}
 
 	/*for (auto file : val.Value->AsArray())
 	{

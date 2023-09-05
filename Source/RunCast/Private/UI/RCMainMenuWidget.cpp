@@ -16,32 +16,43 @@ void URCMainMenuWidget::NativeConstruct()
 	if (SoloGame_Btn)
 	{
 		SoloGame_Btn->OnClicked.Clear();
-		SoloGame_Btn->OnClicked.AddUniqueDynamic(this, &URCMainMenuWidget::OnSoloGamePressed);
+		SoloGame_Btn->OnClicked.AddUniqueDynamic(this, &URCMainMenuWidget::OnSoloGameClicked);
 	}
 
 	if (HostGame_Btn)
 	{
 		HostGame_Btn->OnClicked.Clear();
-		HostGame_Btn->OnClicked.AddUniqueDynamic(this, &URCMainMenuWidget::OnHostGamePressed);
+		HostGame_Btn->OnClicked.AddUniqueDynamic(this, &URCMainMenuWidget::OnHostGameClicked);
 		//HostGame_Btn->OnPressed.AddDynamic(this, &URCMainMenuWidget::OnHostGamePressed);
 	}
 
 	if (SearchGame_Btn)
 	{
 		SearchGame_Btn->OnClicked.Clear();
-		SearchGame_Btn->OnClicked.AddUniqueDynamic(this, &URCMainMenuWidget::OnSearchGamePressed);
+		SearchGame_Btn->OnClicked.AddUniqueDynamic(this, &URCMainMenuWidget::OnSearchGameClicked);
 	}
 
 	if (ExitGame_Btn)
 	{
 		ExitGame_Btn->OnClicked.Clear();
-		ExitGame_Btn->OnClicked.AddUniqueDynamic(this, &URCMainMenuWidget::OnExitGamePressed);
+		ExitGame_Btn->OnClicked.AddUniqueDynamic(this, &URCMainMenuWidget::OnExitGameClicked);
 	}
 
-	if (WB_ServersList)
+	if (RefreshServerListBtn)
+	{
+		RefreshServerListBtn->OnClicked.Clear();
+		RefreshServerListBtn->OnClicked.AddUniqueDynamic(this, &URCMainMenuWidget::OnRefreshClicked);
+	}
+
+	if (ServerListOverlay)
+	{
+		ServerListOverlay->SetVisibility(ESlateVisibility::Hidden);
+	}
+
+	/*if (WB_ServersList)
 	{
 		WB_ServersList->SetVisibility(ESlateVisibility::Hidden);
-	}
+	}*/
 }
 
 void URCMainMenuWidget::NativeDestruct()
@@ -54,36 +65,82 @@ void URCMainMenuWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTim
 	Super::NativeTick(MyGeometry, InDeltaTime);
 }
 
-void URCMainMenuWidget::OnSoloGamePressed()
+void URCMainMenuWidget::OnSoloGameClicked()
 {
 	if (GameInstancePtr)
 	{
 		GameInstancePtr->StartSoloGame();
 	}
+
+	if (ServerListOverlay)
+	{
+		ServerListOverlay->SetVisibility(ESlateVisibility::Hidden);
+	}
 }
 
-void URCMainMenuWidget::OnHostGamePressed()
+void URCMainMenuWidget::OnHostGameClicked()
 {
-	/*if (GameInstancePtr)
-	{
-		GameInstancePtr->Connect();
-	}*/
 	if (GameInstancePtr)
 	{
-		FString msg = "{ CPU: 'Intel', Drives : ['DVD read/writer',	'500 gigabyte hard drive' ]	}";
-		//GameInstancePtr->GetServerManager()->GetConnectionManager()->SendRequest(msg);
 		GameInstancePtr->GetServerManager()->RequestNewSessionServer("");
+	}
 
-		//UGameplayStatics::OpenLevel(this, FName(res));
+	if (ServerListOverlay)
+	{
+		ServerListOverlay->SetVisibility(ESlateVisibility::Hidden);
 	}
 	
 }
 
-void URCMainMenuWidget::OnSearchGamePressed()
+void URCMainMenuWidget::OnSearchGameClicked()
 {
 	if (GameInstancePtr)
 	{
-		//OnListRecieved
+		GameInstancePtr->GetServerManager()->OnServerListRecieved.AddDynamic(this, &URCMainMenuWidget::OnListRecieved);
+		GameInstancePtr->GetServerManager()->RequestSessionsList();
+	}
+
+	if (ServerListOverlay)
+	{
+		ServerListOverlay->SetVisibility(ESlateVisibility::Visible);
+
+	}
+
+	if (NoAvailableText)
+	{
+		NoAvailableText->SetVisibility(ESlateVisibility::Hidden);
+	}
+	
+}
+
+void URCMainMenuWidget::OnExitGameClicked()
+{
+	if (GameInstancePtr)
+	{
+		GameInstancePtr->GetServerManager()->GetConnectionManager()->CloseConnection();
+	}
+	UKismetSystemLibrary::QuitGame(this, UGameplayStatics::GetPlayerController(this, 0),EQuitPreference::Quit,false);
+}
+
+void URCMainMenuWidget::OnRefreshClicked()
+{
+	if (ServerListOverlay)
+	{
+		ServerListOverlay->SetVisibility(ESlateVisibility::Visible);
+	}
+
+	if (WB_ServersList)
+	{
+		WB_ServersList->ClearList();
+	}
+
+	if (NoAvailableText)
+	{
+		NoAvailableText->SetVisibility(ESlateVisibility::Hidden);
+	}
+
+	if (GameInstancePtr)
+	{
 		GameInstancePtr->GetServerManager()->OnServerListRecieved.AddDynamic(this, &URCMainMenuWidget::OnListRecieved);
 		GameInstancePtr->GetServerManager()->RequestSessionsList();
 	}
@@ -91,29 +148,25 @@ void URCMainMenuWidget::OnSearchGamePressed()
 	
 }
 
-void URCMainMenuWidget::OnExitGamePressed()
-{
-	if (GameInstancePtr)
-	{
-		GameInstancePtr->GetServerManager()->GetConnectionManager()->CloseConnection();
-	}
-	UKismetSystemLibrary::QuitGame(this, UGameplayStatics::GetPlayerController(this, 0),EQuitPreference::Quit,false);
-	//FGenericPlatformMisc::RequestExit(false);
-}
-
 void URCMainMenuWidget::OnListRecieved(TArray<FServerInfo> serverList)
 {
-	FServerInfo tmp = FServerInfo();
-	serverList.Add(tmp);
+	GameInstancePtr->GetServerManager()->OnServerListRecieved.Clear();
 	// construct List
 	if (WB_ServersList)
 	{
+		WB_ServersList->SetVisibility(ESlateVisibility::Visible);
 		if (serverList.Num() > 0)
 		{
-			WB_ServersList->SetVisibility(ESlateVisibility::Visible);
 			for (int32 i =0; i < serverList.Num(); i++)
 			{
 				WB_ServersList->AddListItem(serverList[i]);
+			}
+		}
+		else
+		{
+			if (NoAvailableText)
+			{
+				NoAvailableText->SetVisibility(ESlateVisibility::Visible);
 			}
 		}
 		

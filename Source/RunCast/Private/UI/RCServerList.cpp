@@ -23,3 +23,11 @@ void URCServerList::AddListItem(FServerInfo& data)
 		ListView->AddItem(dataContainer);
 	}
 }
+
+void URCServerList::ClearList()
+{
+	if (ListView)
+	{
+		ListView->ClearListItems();
+	}
+}
