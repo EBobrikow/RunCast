@@ -5,83 +5,77 @@
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
 #include "Components/Button.h"
-#include "Components/Overlay.h"
-#include "Components/TextBlock.h"
-#include "Components/Border.h"
-#include "Core/RCGameInstance.h"
-#include "Kismet/KismetSystemLibrary.h"
-#include "UI/RCServerList.h"
-#include "UI/Settings/RCSettingsWidget.h"
-#include "RCMainMenuWidget.generated.h"
+#include "Components/VerticalBox.h"
+#include "Components/Slider.h"
+#include "Components/WidgetSwitcher.h"
+#include "RCSettingsWidget.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class RUNCAST_API URCMainMenuWidget : public UUserWidget
+class RUNCAST_API URCSettingsWidget : public UUserWidget
 {
 	GENERATED_BODY()
-	
+
 public:
 
 	virtual void NativeConstruct() override;
-	virtual void NativeDestruct() override;
 	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
 
+	// Buttons
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
-	UButton* SoloGame_Btn;
+	UButton* VideoSectionSettingBtn;
 
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
-	UButton* HostGame_Btn;
+	UButton* AudioSectionSettingBtn;
 
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
-	UButton* SearchGame_Btn;
+	UButton* ApplyAudioChangesBtn;
 
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
-	UButton* Settings_Btn;
+	UButton* RetunBtn;
+
+	// Vertical Boxes
+	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
+	UVerticalBox* VideoVerticalBox;
 
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
-	UButton* ExitGame_Btn;
+	UVerticalBox* AudioVerticalBox;
 
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
-	URCServerList* WB_ServersList;
+	UVerticalBox* EmptyBox;
+
+	//Sliders
+	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
+	USlider* MusicVoluemSlider;
 
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
-	URCSettingsWidget* WB_SettingsMenu;
+	USlider* AmbientVoluemSlider;
 
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
-	UButton* RefreshServerListBtn;
+	USlider* EffectsVoluemSlider;
 
+	//Widget switcher
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
-	UTextBlock* NoAvailableText;
-
-	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
-	UBorder* ServerListBorder;
+	UWidgetSwitcher* SettingsWidgetSwitcher;
 
 protected:
 
 	UFUNCTION(BlueprintCallable)
-	void OnSoloGameClicked();
+	void OnVideoSectionClicked();
 
 	UFUNCTION(BlueprintCallable)
-	void OnHostGameClicked();
+	void OnAudioSectionClicked();
 
 	UFUNCTION(BlueprintCallable)
-	void OnSearchGameClicked();
+	void OnApplyAudioChangesClicked();
 
 	UFUNCTION(BlueprintCallable)
-	void OnSettingsClicked();
+	void OnReturnClicked();
+
 
 	UFUNCTION(BlueprintCallable)
-	void OnExitGameClicked();
-
-	UFUNCTION(BlueprintCallable)
-	void OnRefreshClicked();
-
-	UFUNCTION()
-	void OnListRecieved(TArray<FServerInfo> serverList);
-
-
-	UPROPERTY()
-	URCGameInstance* GameInstancePtr;
+	void HideAllSections();
+	
 };

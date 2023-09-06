@@ -39,6 +39,11 @@ public:
 	UPROPERTY()
 	FOnServerListRecieved OnServerListRecieved;
 
+
+#if UE_SERVER
+
+#endif
+
 protected: 
 
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)

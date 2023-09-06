@@ -29,9 +29,7 @@ public:
 
 
 	//UE server function to update server status shutdown etc.
-#if UE_SERVER
 
-#endif
 
 	
 protected:
