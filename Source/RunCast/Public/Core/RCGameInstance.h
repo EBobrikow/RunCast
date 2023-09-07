@@ -4,8 +4,9 @@
 
 #include "CoreMinimal.h"
 #include "Engine/GameInstance.h"
-#include "Tools/ConnectionManager.h"
-#include "Tools/ServerManager.h"
+#include "Tools/Server/ConnectionManager.h"
+#include "Tools/Server/ServerManager.h"
+#include "Tools/SaveGame/SaveManager.h"
 #include "RCGameInstance.generated.h"
 
 /**
@@ -27,9 +28,11 @@ public:
 	UFUNCTION(BlueprintCallable)
 	UServerManager* GetServerManager();
 
-
-	//UE server function to update server status shutdown etc.
-
+	UFUNCTION(BlueprintCallable)
+	USaveManager* GetSaveManager();
+	
+	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
+	void ShowMainMenu();
 
 	
 protected:
@@ -41,4 +44,7 @@ protected:
 
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
 	UServerManager* ServerManager = nullptr;
+
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
+	USaveManager* SaveManager = nullptr;
 };

@@ -23,3 +23,12 @@ UServerManager* URCGameInstance::GetServerManager()
 	}
 	return ServerManager;
 }
+
+USaveManager* URCGameInstance::GetSaveManager()
+{
+	if (!SaveManager)
+	{
+		SaveManager = NewObject<USaveManager>(this);
+	}
+	return SaveManager;
+}
