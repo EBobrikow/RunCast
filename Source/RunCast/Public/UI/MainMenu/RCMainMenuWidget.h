@@ -10,7 +10,7 @@
 #include "Components/Border.h"
 #include "Core/RCGameInstance.h"
 #include "Kismet/KismetSystemLibrary.h"
-#include "UI/RCServerList.h"
+#include "UI/MainMenu/RCServerList.h"
 #include "UI/Settings/RCSettingsWidget.h"
 #include "RCMainMenuWidget.generated.h"
 

@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "UI/RCServerListViewItem.h"
+#include "UI/MainMenu/RCServerListViewItem.h"
 
 void URCServerListViewItem::NativeConstruct()
 {

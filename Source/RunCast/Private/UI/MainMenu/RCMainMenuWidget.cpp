@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "UI/RCMainMenuWidget.h"
+#include "UI/MainMenu/RCMainMenuWidget.h"
 #include "Kismet/GameplayStatics.h"
 #include "GenericPlatform/GenericPlatformMisc.h"
 #include "Core/RCGameInstance.h"
