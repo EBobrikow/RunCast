@@ -52,7 +52,75 @@ struct FServerInfo
 
 };
 
+USTRUCT(BlueprintType, Blueprintable)
+struct FArenaMapData
+{
+	GENERATED_BODY()
 
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	FString MapName;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	FString MapPath;
+
+	/*UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	UImage* MapPreviewImage;*/
+
+};
+
+
+
+
+UENUM(BlueprintType)
+enum class ELobbyState : uint8
+{
+	Entrance,
+	DeathMatchLobby,
+};
+
+UENUM(BlueprintType)
+enum class EMatchType : uint8
+{
+	TeamFight,
+	DeathMatch,
+	CaptureFlag,
+};
+
+
+USTRUCT(BlueprintType, Blueprintable)
+struct FArenaMatchData
+{
+	GENERATED_BODY()
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	TEnumAsByte<EMatchType> MatchType;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	FString MatchName;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	int32 DefaultMaxPlayers;
+
+};
+
+
+USTRUCT(BlueprintType, Blueprintable)
+struct FCurrentServerInfo
+{
+	GENERATED_BODY()
+
+	
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	FString ServerName;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	int32 OwnPort;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	int32 ServerID;
+
+};
 
 UCLASS()
 class RUNCAST_API UGlobals : public UObject

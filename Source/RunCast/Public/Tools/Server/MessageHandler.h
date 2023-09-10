@@ -80,6 +80,21 @@ public:
 	UPROPERTY()
 	TArray<FServerInfo> serversInfoList;
 
+protected:
+
+	void virtual ParseJsonObject(TSharedPtr<FJsonObject> JsonObj) override;
+};
+
+UCLASS()
+class RUNCAST_API UServerInfoByPortHandler : public UMessageHandler
+{
+	GENERATED_BODY()
+
+public:
+
+	UPROPERTY()
+	FCurrentServerInfo currentServersInfo;
+
 	//virtual void OnRecieved(FString message) override;
 
 protected:

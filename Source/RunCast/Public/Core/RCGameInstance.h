@@ -7,6 +7,7 @@
 #include "Tools/Server/ConnectionManager.h"
 #include "Tools/Server/ServerManager.h"
 #include "Tools/SaveGame/SaveManager.h"
+#include "GameFramework/GameModeBase.h"
 #include "RCGameInstance.generated.h"
 
 /**
@@ -35,6 +36,11 @@ public:
 	void ShowMainMenu();
 
 	
+
+	UFUNCTION()
+	void SetCurrentServerInfo(FCurrentServerInfo servInfo);
+
+	
 protected:
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
@@ -47,4 +53,7 @@ protected:
 
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
 	USaveManager* SaveManager = nullptr;
+
+	UPROPERTY()
+	FCurrentServerInfo CurrentServerInfo;
 };

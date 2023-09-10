@@ -8,6 +8,7 @@
 #include "Components/TextBlock.h"
 #include "Components/EditableText.h"
 #include "Components/ComboBoxString.h"
+#include "Core/Lobby/RCLobbyGameState.h"
 #include "RCLobbyWidget.generated.h"
 
 /**
@@ -49,4 +50,11 @@ protected:
 
 	UFUNCTION(BlueprintCallable)
 	void OnCreateClicked();
+
+	UFUNCTION(BlueprintCallable)
+	void FillComboBoxes();
+
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	int32 MaxPlayers;
 };

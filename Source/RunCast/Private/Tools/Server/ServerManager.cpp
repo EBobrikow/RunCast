@@ -60,6 +60,19 @@ void UServerManager::RequestSessionsList()
 
 }
 
+void UServerManager::RequestSessionInfoByPort(int32 port)
+{
+	
+	FString action = "Action: 'ReqestServerInfoByPort',";
+	FString param = "ServerPort: '" + FString::FromInt(port) + "'";
+	FString res = "{ " + action + param + " }";
+
+	UServerInfoByPortHandler* newRequest = NewObject<UServerInfoByPortHandler>(this);
+	newRequest->OnRequestFinished.AddDynamic(this, &UServerManager::RequestSessionInfoByPortHandle);
+	newRequest->SetRequestMessage(res);
+	GetConnectionManager()->AddRequest(newRequest);
+}
+
 void UServerManager::RequestSessionsListHandle(UMessageHandler* newSessionObj)
 {
 	UServersListHandler* responce = Cast<UServersListHandler>(newSessionObj);
@@ -69,6 +82,18 @@ void UServerManager::RequestSessionsListHandle(UMessageHandler* newSessionObj)
 		if (OnServerListRecieved.IsBound())
 		{
 			OnServerListRecieved.Broadcast(responce->serversInfoList);
+		}
+	}
+}
+
+void UServerManager::RequestSessionInfoByPortHandle(UMessageHandler* newSessionObj)
+{
+	UServerInfoByPortHandler* responce = Cast<UServerInfoByPortHandler>(newSessionObj);
+	if (responce)
+	{
+		if (OnCurrentServerInfoRecieved.IsBound())
+		{
+			OnCurrentServerInfoRecieved.Broadcast(responce->currentServersInfo);
 		}
 	}
 }

@@ -13,6 +13,7 @@
 
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnServerListRecieved, TArray<FServerInfo>, serversList);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnCurrentServerInfoRecieved, FCurrentServerInfo, currentServInfo);
 
 UCLASS()
 class RUNCAST_API UServerManager : public UObject
@@ -36,9 +37,14 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void RequestSessionsList();
 
+	UFUNCTION(BlueprintCallable)
+	void RequestSessionInfoByPort(int32 port);
+
 	UPROPERTY()
 	FOnServerListRecieved OnServerListRecieved;
 
+	UPROPERTY()
+	FOnCurrentServerInfoRecieved OnCurrentServerInfoRecieved;
 
 #if UE_SERVER
 
@@ -54,6 +60,9 @@ protected:
 
 	UFUNCTION()
 	void RequestSessionsListHandle(UMessageHandler* newSessionObj);
+
+	UFUNCTION()
+	void RequestSessionInfoByPortHandle(UMessageHandler* newSessionObj);
 
 private: 
 

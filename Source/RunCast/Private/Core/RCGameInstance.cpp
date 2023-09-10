@@ -32,3 +32,12 @@ USaveManager* URCGameInstance::GetSaveManager()
 	}
 	return SaveManager;
 }
+
+
+
+void URCGameInstance::SetCurrentServerInfo(FCurrentServerInfo servInfo)
+{
+#if UE_SERVER
+	CurrentServerInfo = servInfo;
+#endif
+}

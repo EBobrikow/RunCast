@@ -113,23 +113,6 @@ void URequestNewServerHandler::ParseJsonObject(TSharedPtr<FJsonObject> JsonObj)
 	serverInfo = servInfo;
 }
 
-//void UServersListHandler::OnRecieved(FString message)
-//{
-//	FString msg = "[{\"Id\":1,\"serverName\":\"Yahoo\",\"port\":1001,\"host\":\"127.0.0.1\",\"matchStatus\":0},{\"Id\":2,\"serverName\":\"Yahoo\",\"port\":1002,\"host\":\"127.0.0.1\",\"matchStatus\":0}]";
-//	TSharedPtr<FJsonObject> JsonObject;
-//	if (msg[0] != '{')
-//	{
-//		msg = FString::Printf(TEXT("{\"object\":%s}"), *msg);
-//
-//	}
-//	TSharedRef<TJsonReader<>> Reader = TJsonReaderFactory<>::Create(msg);
-//	if (FJsonSerializer::Deserialize(Reader, JsonObject))
-//	{
-//		ParseJsonObject(JsonObject);
-//	}
-//
-//	RequestAction();
-//}
 
 void UServersListHandler::ParseJsonObject(TSharedPtr<FJsonObject> JsonObj)
 {
@@ -172,4 +155,8 @@ void UServersListHandler::ParseJsonObject(TSharedPtr<FJsonObject> JsonObj)
 		{
 			if (parseAsString(tmpfile, JSVal::Course::filename, coursefile._filename)) {
 			}*/
+}
+
+void UServerInfoByPortHandler::ParseJsonObject(TSharedPtr<FJsonObject> JsonObj)
+{
 }
