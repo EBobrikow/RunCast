@@ -19,10 +19,10 @@ void ARCMainMenuHUD::BeginPlay()
 		MainMenuWidget->AddToViewport();
 	}
 
-	APlayerController* PC = UGameplayStatics::GetPlayerController(GetWorld(), 0);
+	/*APlayerController* PC = UGameplayStatics::GetPlayerController(GetWorld(), 0);
 	if (PC)
 	{
 		UWidgetBlueprintLibrary::SetInputMode_UIOnlyEx(PC);
 		PC->bShowMouseCursor = true;
-	}
+	}*/
 }

@@ -15,12 +15,12 @@ void ARCLobbyHUD::BeginPlay()
 		CreateWidgetByLobbyState(GameState->GetCurrentLobbyState());
 	}
 
-	APlayerController* PC = UGameplayStatics::GetPlayerController(GetWorld(), 0);
-	if (PC)
-	{
-		UWidgetBlueprintLibrary::SetInputMode_UIOnlyEx(PC);
-		PC->bShowMouseCursor = true;
-	}
+	//APlayerController* PC = UGameplayStatics::GetPlayerController(GetWorld(), 0);
+	//if (PC)
+	//{
+	//	UWidgetBlueprintLibrary::SetInputMode_UIOnlyEx(PC);
+	//	PC->bShowMouseCursor = true;
+	//}
 }
 
 void ARCLobbyHUD::Tick(float DeltaTime)

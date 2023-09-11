@@ -18,18 +18,6 @@ void URCLobbyWidget::NativeConstruct()
 		CreateBtn->OnClicked.Clear();
 		CreateBtn->OnClicked.AddUniqueDynamic(this, &URCLobbyWidget::OnCreateClicked);
 	}
-
-	/*if (MatchTypeComboBox)
-	{
-		MatchTypeComboBox->OnSelectionChanged.Clear();
-		MatchTypeComboBox->OnSelectionChanged.AddDynamic(this, &URCLobbyWidget::OnMatchSelectionChanged);
-	}
-
-	if (ArenaComboBox)
-	{
-		ArenaComboBox->OnSelectionChanged.Clear();
-		ArenaComboBox->OnSelectionChanged.AddDynamic(this, &URCLobbyWidget::OnMapSelectionChanged);
-	}*/
 	
 
 	FillComboBoxes();
@@ -39,6 +27,7 @@ void URCLobbyWidget::NativeConstruct()
 		MaxPlayersEdText->SetText(FText::AsNumber(MaxPlayers));
 	}
 
+	SetServerName();
 }
 
 void URCLobbyWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
