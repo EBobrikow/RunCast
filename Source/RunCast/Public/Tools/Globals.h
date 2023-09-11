@@ -5,6 +5,8 @@
 #include "CoreMinimal.h"
 #include "UObject/NoExportTypes.h"
 #include "Dom/JsonValue.h"
+#include "Engine/Texture.h"
+#include "Engine/Texture2D.h"
 #include "Globals.generated.h"
 
 
@@ -17,6 +19,10 @@ namespace JSVal
 		static const FString Port = TEXT("port");
 		static const FString Host = TEXT("host");
 		static const FString MatchStatus = TEXT("matchStatus");
+		static const FString MatchType = TEXT("matchType");
+		static const FString MapName = TEXT("mapName");
+		static const FString CurrPlayers = TEXT("currentPlayers");
+		static const FString MaxPlayers = TEXT("maxPlayers");
 	}
 }
 
@@ -40,6 +46,19 @@ struct FServerInfo
 	UPROPERTY(BlueprintReadWrite)
 	int32 MatchStatus;
 
+	UPROPERTY(BlueprintReadWrite)
+	FString MatchType;
+
+	UPROPERTY(BlueprintReadWrite)
+	FString MapName;
+
+	UPROPERTY(BlueprintReadWrite)
+	int32 CurrPlayers;
+
+	UPROPERTY(BlueprintReadWrite)
+	int32 MaxPlayers;
+
+
 	FServerInfo();
 
 	FServerInfo(
@@ -47,7 +66,11 @@ struct FServerInfo
 		const FString& _serverName,
 		int32 _port,
 		const FString& _host,
-		int32 _matchStatus
+		int32 _matchStatus,
+		const FString& _matchType,
+		const FString& _mapName,
+		int32 _currPlayers,
+		int32 maxPlayers
 	);
 
 };
@@ -63,8 +86,8 @@ struct FArenaMapData
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	FString MapPath;
 
-	/*UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	UImage* MapPreviewImage;*/
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	UTexture2D* MapPreviewImage;
 
 };
 
@@ -100,6 +123,9 @@ struct FArenaMatchData
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	int32 DefaultMaxPlayers;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	UTexture2D* MatchPreviewImage;
 
 };
 

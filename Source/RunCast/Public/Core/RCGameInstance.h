@@ -31,22 +31,23 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	USaveManager* GetSaveManager();
-	
-	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
-	void ShowMainMenu();
 
-	
+	UFUNCTION(BlueprintCallable)
+	void StartHeartBeat(AGameModeBase* gameMode);
 
 	UFUNCTION()
-	void SetCurrentServerInfo(FCurrentServerInfo servInfo);
+	void SetCurrentServerInfo(FServerInfo servInfo);
 
+	UFUNCTION()
+	void SetRemoteServerInfo(FServerInfo servInfo);
+
+	UFUNCTION()
+	FServerInfo GetRemoteServerInfo() const;
 	
 protected:
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	bool bIsSoloGame;
-
-	
 
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
 	UServerManager* ServerManager = nullptr;
@@ -55,5 +56,29 @@ protected:
 	USaveManager* SaveManager = nullptr;
 
 	UPROPERTY()
-	FCurrentServerInfo CurrentServerInfo;
+	FServerInfo CurrentServerInfo = FServerInfo();
+
+	UPROPERTY()
+	FServerInfo RemoteServerInfo = FServerInfo();
+
+	UPROPERTY(BlueprintReadOnly, EditAnywhere)
+	float HeartBeatWaitRate = 0.5f;
+
+	UPROPERTY()
+	FTimerHandle HeartBeatWaitTimer;
+
+	UPROPERTY()
+	AGameModeBase* cashedGameMode;
+
+	UFUNCTION()
+	void HeartBeatPing();
+
+	UFUNCTION()
+	void HeartBeatPong(FServerInfo servInfo);
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Map names")
+	FString MainMenuMapName;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Map names")
+	FString SoloGameMapName;
 };

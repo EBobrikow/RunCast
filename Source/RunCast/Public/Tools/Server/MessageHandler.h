@@ -30,6 +30,8 @@ public:
 	virtual void SetRequestMessage(const FString& message);
 
 	virtual void RequestAction();
+
+	virtual FServerInfo ParseServerInfoObject(TSharedPtr<FJsonObject> JsonObj);
 	
 	UPROPERTY()
 	FOnRequestFinished OnRequestFinished;
@@ -93,7 +95,24 @@ class RUNCAST_API UServerInfoByPortHandler : public UMessageHandler
 public:
 
 	UPROPERTY()
-	FCurrentServerInfo currentServersInfo;
+	FServerInfo currentServersInfo;
+
+	//virtual void OnRecieved(FString message) override;
+
+protected:
+
+	void virtual ParseJsonObject(TSharedPtr<FJsonObject> JsonObj) override;
+};
+
+UCLASS()
+class RUNCAST_API UHeartBeatHandler : public UMessageHandler
+{
+	GENERATED_BODY()
+
+public:
+
+	UPROPERTY()
+	FServerInfo heartBeatServersInfo;
 
 	//virtual void OnRecieved(FString message) override;
 

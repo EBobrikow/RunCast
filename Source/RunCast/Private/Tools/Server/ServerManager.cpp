@@ -73,6 +73,23 @@ void UServerManager::RequestSessionInfoByPort(int32 port)
 	GetConnectionManager()->AddRequest(newRequest);
 }
 
+void UServerManager::HeartBeatSend(FServerInfo& serverInfo)
+{
+	FString action = "Update: 'HeartBeat',";
+	FString param = "MatchStatus: '" + FString::FromInt(serverInfo.MatchStatus) + "',";
+	FString param1 = "MatchType: '" + serverInfo.MatchType + "',";
+	FString param2 = "MapName: '" + serverInfo.MapName + "',";
+	FString param3 = "CurrPlayers: '" + FString::FromInt(serverInfo.CurrPlayers) + "',";
+	FString param4 = "MaxPlayers: '" + FString::FromInt(serverInfo.MaxPlayers) + "',";
+	FString res = "{ " + action + param + param1 + param2 + param3 + param4 + " }";
+
+	UHeartBeatHandler* newRequest = NewObject<UHeartBeatHandler>(this);
+	newRequest->OnRequestFinished.AddDynamic(this, &UServerManager::HeartBeatRecieve);
+	newRequest->SetRequestMessage(res);
+	GetConnectionManager()->AddRequest(newRequest);
+
+}
+
 void UServerManager::RequestSessionsListHandle(UMessageHandler* newSessionObj)
 {
 	UServersListHandler* responce = Cast<UServersListHandler>(newSessionObj);
@@ -96,6 +113,20 @@ void UServerManager::RequestSessionInfoByPortHandle(UMessageHandler* newSessionO
 			OnCurrentServerInfoRecieved.Broadcast(responce->currentServersInfo);
 		}
 	}
+}
+
+void UServerManager::HeartBeatRecieve(UMessageHandler* newSessionObj)
+{
+	UHeartBeatHandler* responce = Cast<UHeartBeatHandler>(newSessionObj);
+	if (responce)
+	{
+		if (OnRemoteServerInfoRecieved.IsBound())
+		{
+			OnRemoteServerInfoRecieved.Broadcast(responce->heartBeatServersInfo);
+		}
+	}
+
+	
 }
 
 void UServerManager::ServerStartDelayFinished()

@@ -46,11 +46,30 @@ void UMessageHandler::RequestAction()
 	}
 }
 
-//void UMessageHandler::AddCallback(FOnMessageRecieved& callback)
-//{
-//	OnMessageRecievedCallback = callback;
-//	OnMessageRecievedCallback.AddDynamic(this, &UMessageHandler::OnURecieved);
-//}
+FServerInfo UMessageHandler::ParseServerInfoObject(TSharedPtr<FJsonObject> JsonObj)
+{
+	FServerInfo tmp = FServerInfo();
+
+	for (auto val : JsonObj->Values)
+	{
+		if (val.Value->IsNull())
+		{
+			continue;
+		}
+		if (parseAsNumber(val, JSVal::ServerInfo::Id, tmp.Id)) {}
+		else if (parseAsString(val, JSVal::ServerInfo::ServerName, tmp.ServerName)) {}
+		else if (parseAsNumber(val, JSVal::ServerInfo::Port, tmp.Port)) {}
+		else if (parseAsString(val, JSVal::ServerInfo::Host, tmp.host)) {}
+		else if (parseAsNumber(val, JSVal::ServerInfo::MatchStatus, tmp.MatchStatus)) {}
+		else if (parseAsString(val, JSVal::ServerInfo::MatchType, tmp.MatchType)) {}
+		else if (parseAsString(val, JSVal::ServerInfo::MapName, tmp.MapName)) {}
+		else if (parseAsNumber(val, JSVal::ServerInfo::CurrPlayers, tmp.CurrPlayers)) {}
+		else if (parseAsNumber(val, JSVal::ServerInfo::MaxPlayers, tmp.MaxPlayers)) {}
+	}
+
+	return tmp;
+}
+
 
 void UMessageHandler::ParseJsonObject(TSharedPtr<FJsonObject> JsonObj)
 {
@@ -96,9 +115,9 @@ bool UMessageHandler::parseAsBool(TPair<FString, TSharedPtr<FJsonValue>> const& 
 void URequestNewServerHandler::ParseJsonObject(TSharedPtr<FJsonObject> JsonObj)
 {
 	//{"Id":1,"serverName":"Yahoo","port":1001,"host":"ws://127.0.0.1","matchStatus":0}
-	FServerInfo servInfo = FServerInfo();
+	serverInfo = ParseServerInfoObject(JsonObj);//FServerInfo();
 	
-	for (auto val : JsonObj->Values)
+	/*for (auto val : JsonObj->Values)
 	{
 		if (val.Value->IsNull())
 		{
@@ -109,8 +128,12 @@ void URequestNewServerHandler::ParseJsonObject(TSharedPtr<FJsonObject> JsonObj)
 		else if (parseAsNumber(val, JSVal::ServerInfo::Port, servInfo.Port)) {}
 		else if (parseAsString(val, JSVal::ServerInfo::Host, servInfo.host)) {}
 		else if (parseAsNumber(val, JSVal::ServerInfo::MatchStatus, servInfo.MatchStatus)) {}
-	}
-	serverInfo = servInfo;
+		else if (parseAsString(val, JSVal::ServerInfo::MatchType, servInfo.MatchType)) {}
+		else if (parseAsString(val, JSVal::ServerInfo::MapName, servInfo.MapName)) {}
+		else if (parseAsNumber(val, JSVal::ServerInfo::CurrPlayers, servInfo.CurrPlayers)) {}
+		else if (parseAsNumber(val, JSVal::ServerInfo::MaxPlayers, servInfo.MaxPlayers)) {}
+	}*/
+	//serverInfo = servInfo;
 }
 
 
@@ -130,7 +153,8 @@ void UServersListHandler::ParseJsonObject(TSharedPtr<FJsonObject> JsonObj)
 			{
 				FServerInfo servInfoLoc = FServerInfo();
 				TSharedPtr<FJsonObject> inst = serverInfoObj->AsObject();
-				for (auto serverInfo : inst->Values)
+				servInfoLoc = ParseServerInfoObject(inst);
+				/*for (auto serverInfo : inst->Values)
 				{
 					if (val.Value->IsNull())
 					{
@@ -141,22 +165,45 @@ void UServersListHandler::ParseJsonObject(TSharedPtr<FJsonObject> JsonObj)
 					else if (parseAsNumber(serverInfo, JSVal::ServerInfo::Port, servInfoLoc.Port)) {}
 					else if (parseAsString(serverInfo, JSVal::ServerInfo::Host, servInfoLoc.host)) {}
 					else if (parseAsNumber(serverInfo, JSVal::ServerInfo::MatchStatus, servInfoLoc.MatchStatus)) {}
-				}
+					else if (parseAsString(serverInfo, JSVal::ServerInfo::MatchType, servInfoLoc.MatchType)) {}
+					else if (parseAsString(serverInfo, JSVal::ServerInfo::MapName, servInfoLoc.MapName)) {}
+					else if (parseAsNumber(serverInfo, JSVal::ServerInfo::CurrPlayers, servInfoLoc.CurrPlayers)) {}
+					else if (parseAsNumber(serverInfo, JSVal::ServerInfo::MaxPlayers, servInfoLoc.MaxPlayers)) {}
+				}*/
 
 				serversInfoList.Add(servInfoLoc);
 			}
 		}
 	}
 
-	/*for (auto file : val.Value->AsArray())
-	{
-		TSharedPtr<FJsonObject> inst = file->AsObject();
-		for (auto tmpfile : inst->Values)
-		{
-			if (parseAsString(tmpfile, JSVal::Course::filename, coursefile._filename)) {
-			}*/
 }
 
 void UServerInfoByPortHandler::ParseJsonObject(TSharedPtr<FJsonObject> JsonObj)
 {
+	//{"Id":1,"serverName":"Yahoo","port":1001,"host":"127.0.0.1","matchStatus":0,"matchType":null,"mapName":null,"currentPlayers":0,"maxPlayers":0}
+
+	currentServersInfo = ParseServerInfoObject(JsonObj);//FServerInfo();
+
+	/*for (auto val : JsonObj->Values)
+	{
+		if (val.Value->IsNull())
+		{
+			continue;
+		}
+		if (parseAsNumber(val, JSVal::ServerInfo::Id, servInfo.Id)) {}
+		else if (parseAsString(val, JSVal::ServerInfo::ServerName, servInfo.ServerName)) {}
+		else if (parseAsNumber(val, JSVal::ServerInfo::Port, servInfo.Port)) {}
+		else if (parseAsString(val, JSVal::ServerInfo::Host, servInfo.host)) {}
+		else if (parseAsNumber(val, JSVal::ServerInfo::MatchStatus, servInfo.MatchStatus)) {}
+		else if (parseAsString(val, JSVal::ServerInfo::MatchType, servInfo.MatchType)) {}
+		else if (parseAsString(val, JSVal::ServerInfo::MapName, servInfo.MapName)) {}
+		else if (parseAsNumber(val, JSVal::ServerInfo::CurrPlayers, servInfo.CurrPlayers)) {}
+		else if (parseAsNumber(val, JSVal::ServerInfo::MaxPlayers, servInfo.MaxPlayers)) {}
+	}*/
+	
+}
+
+void UHeartBeatHandler::ParseJsonObject(TSharedPtr<FJsonObject> JsonObj)
+{
+	heartBeatServersInfo = ParseServerInfoObject(JsonObj);//FServerInfo();
 }

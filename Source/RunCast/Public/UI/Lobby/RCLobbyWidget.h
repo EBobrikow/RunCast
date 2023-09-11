@@ -8,6 +8,7 @@
 #include "Components/TextBlock.h"
 #include "Components/EditableText.h"
 #include "Components/ComboBoxString.h"
+#include "Components/Image.h"
 #include "Core/Lobby/RCLobbyGameState.h"
 #include "RCLobbyWidget.generated.h"
 
@@ -42,6 +43,11 @@ public:
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
 	UButton* CreateBtn;
 
+	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
+	UImage* MatchPreviewImg;
+
+	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
+	UImage* MapPreviewImg;
 
 protected:
 
@@ -52,9 +58,37 @@ protected:
 	void OnCreateClicked();
 
 	UFUNCTION(BlueprintCallable)
+	void OnMatchSelectionChanged(FString sItem);
+
+	UFUNCTION(BlueprintCallable)
+	void OnMapSelectionChanged(FString sItem);
+
+	UFUNCTION(BlueprintCallable)
 	void FillComboBoxes();
 
+	UFUNCTION(BlueprintCallable)
+	void SetServerName();
+
+	UPROPERTY()
+	FTimerHandle ServerNameAwaitTimer;
+
+	UPROPERTY()
+	float AwaitRate = 0.2f;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	int32 MaxPlayers;
+
+private: 
+
+	UPROPERTY()
+	TArray<FArenaMapData> mapsInfo;
+
+	UPROPERTY()
+	TArray<FArenaMatchData> matchesData;
+
+	UPROPERTY()
+	FArenaMapData currentMap;
+
+	UPROPERTY()
+	FArenaMatchData currentMatch;
 };

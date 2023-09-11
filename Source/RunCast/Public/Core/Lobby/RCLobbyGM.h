@@ -8,9 +8,9 @@
 #include "Tools/Globals.h"
 #include "RCLobbyGM.generated.h"
 
-/**
- * 
- */
+
+
+
 UCLASS()
 class RUNCAST_API ARCLobbyGM : public AGameMode
 {
@@ -48,7 +48,13 @@ protected:
 	void FillCurrentServerInfoRequest();
 
 	UFUNCTION()
-	void CurrentServerInfoRequestHandle(FCurrentServerInfo servInfo);
+	void CurrentServerInfoRequestHandle(FServerInfo servInfo);
+
+	UFUNCTION()
+	void GetServerInfoWhenReady();
+
+	UPROPERTY()
+	FTimerHandle InfoReuestTimer;
 
 private: 
 

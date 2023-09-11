@@ -37,7 +37,12 @@ public:
 
 	UFUNCTION()
 	TArray<FArenaMatchData> GetMatchesData() const;
+
+	UFUNCTION()
+	void StartSyncServerInfo();
 	
+	UFUNCTION()
+	FServerInfo GetSuncServerInfo() const;
 
 protected:
 
@@ -55,6 +60,16 @@ protected:
 	
 	UPROPERTY(Replicated)
 	int32 MaxPlayers;
+
+	UPROPERTY(Replicated)
+	FServerInfo SyncServerInfo;
+
+
+	UPROPERTY()
+	FTimerHandle SyncServerInfoTimer;
+
+	UPROPERTY()
+	float SyncPeriod = 1.0f;
 
 private: 
 

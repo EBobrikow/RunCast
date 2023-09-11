@@ -9,8 +9,13 @@ void ARCLobbyGM::BeginPlay()
 
 	GameInstance = Cast<URCGameInstance>(UGameplayStatics::GetGameInstance(this));
 	
+
 #if UE_SERVER
-	FillCurrentServerInfoRequest();
+	GetServerInfoWhenReady();
+	if (GameInstance)
+	{
+		GameInstance->StartHeartBeat(this);
+	}	
 #endif
 }
 
@@ -41,10 +46,28 @@ void ARCLobbyGM::FillCurrentServerInfoRequest()
 	
 }
 
-void ARCLobbyGM::CurrentServerInfoRequestHandle(FCurrentServerInfo servInfo)
+void ARCLobbyGM::CurrentServerInfoRequestHandle(FServerInfo servInfo)
 {
 	if (GameInstance)
 	{
+		GameInstance->GetServerManager()->OnCurrentServerInfoRecieved.Clear();
 		GameInstance->SetCurrentServerInfo(servInfo);
+	}
+}
+
+void ARCLobbyGM::GetServerInfoWhenReady()
+{
+	if (GameInstance)
+	{
+		if (!GameInstance->GetServerManager()->GetConnectionManager()->IsConnected())
+		{
+			GetWorld()->GetTimerManager().ClearTimer(InfoReuestTimer);
+			GetWorld()->GetTimerManager().SetTimer(InfoReuestTimer, this, &ARCLobbyGM::GetServerInfoWhenReady, 0.01f, false, 0.5f);
+		}
+		else
+		{
+			GetWorld()->GetTimerManager().ClearTimer(InfoReuestTimer);
+			FillCurrentServerInfoRequest();
+		}
 	}
 }

@@ -13,7 +13,8 @@
 
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnServerListRecieved, TArray<FServerInfo>, serversList);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnCurrentServerInfoRecieved, FCurrentServerInfo, currentServInfo);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnCurrentServerInfoRecieved, FServerInfo, currentServInfo);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnRemoteServerInfoRecieved, FServerInfo, remoteServInfo);
 
 UCLASS()
 class RUNCAST_API UServerManager : public UObject
@@ -40,11 +41,17 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void RequestSessionInfoByPort(int32 port);
 
+	UFUNCTION(BlueprintCallable)
+	void HeartBeatSend(FServerInfo& serverInfo);
+
 	UPROPERTY()
 	FOnServerListRecieved OnServerListRecieved;
 
 	UPROPERTY()
 	FOnCurrentServerInfoRecieved OnCurrentServerInfoRecieved;
+
+	UPROPERTY()
+	FOnRemoteServerInfoRecieved OnRemoteServerInfoRecieved;
 
 #if UE_SERVER
 
@@ -63,6 +70,9 @@ protected:
 
 	UFUNCTION()
 	void RequestSessionInfoByPortHandle(UMessageHandler* newSessionObj);
+
+	UFUNCTION()
+	void HeartBeatRecieve(UMessageHandler* newSessionObj);
 
 private: 
 
