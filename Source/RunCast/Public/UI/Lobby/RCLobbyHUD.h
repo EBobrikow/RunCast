@@ -6,6 +6,7 @@
 #include "GameFramework/HUD.h"
 #include "Core/Lobby/RCLobbyGameState.h"
 #include "UI/Lobby/RCLobbyWidget.h"
+#include "UI/Lobby/RCDeathMatchLobby.h"
 #include "RCLobbyHUD.generated.h"
 
 /**
@@ -25,6 +26,9 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Widget classes")
 	TSubclassOf<URCLobbyWidget> LobbyEntranceWidgetClass;
 
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Widget classes")
+	TSubclassOf<URCDeathMatchLobby> DeathMatchLobbyWidgetClass;
+
 protected: 
 
 	UFUNCTION()
@@ -32,4 +36,10 @@ protected:
 
 	UPROPERTY()
 	UUserWidget* CurrentWidget;
+
+	UPROPERTY()
+	UUserWidget* PreviosWidget;
+
+	UFUNCTION()
+	void CreateWidgetByClass(TSubclassOf<UUserWidget> widgetClass);
 };

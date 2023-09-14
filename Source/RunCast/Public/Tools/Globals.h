@@ -109,6 +109,31 @@ enum class EMatchType : uint8
 	CaptureFlag,
 };
 
+UENUM(BlueprintType)
+enum class ELobbyPlayerAuthority : uint8
+{
+	None,
+	GameMaster,
+	ConnectedPlayer,
+};
+
+USTRUCT(BlueprintType, Blueprintable)
+struct FPlayerData
+{
+	GENERATED_BODY()
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	FString PlayerName;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	TEnumAsByte<ELobbyPlayerAuthority> PlayerAuthority;
+
+	FPlayerData();
+
+	FPlayerData(FString name, ELobbyPlayerAuthority authority);
+
+};
+
 
 USTRUCT(BlueprintType, Blueprintable)
 struct FArenaMatchData

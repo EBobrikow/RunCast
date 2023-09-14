@@ -21,3 +21,14 @@ FServerInfo::FServerInfo(int32 _id, const FString& _serverName, int32 _port, con
 	, MaxPlayers(maxPlayers)
 {
 }
+
+FPlayerData::FPlayerData()
+	: FPlayerData(TEXT(""), ELobbyPlayerAuthority::None)
+{
+}
+
+FPlayerData::FPlayerData(FString name, ELobbyPlayerAuthority authority)
+	: PlayerName(name)
+	, PlayerAuthority(authority)
+{
+}

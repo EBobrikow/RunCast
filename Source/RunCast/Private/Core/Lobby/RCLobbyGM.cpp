@@ -35,6 +35,108 @@ TArray<FArenaMapData> ARCLobbyGM::GetArenasData() const
 	return ArenaDataList;
 }
 
+void ARCLobbyGM::PostLogin(APlayerController* NewPlayer)
+{
+	Super::PostLogin(NewPlayer);
+
+	ARCPlayerController* PC = Cast<ARCPlayerController>(NewPlayer);
+	if (PC)
+	{
+		if (GameInstance->ConnectedPlayersNum == 1)
+		{
+			FPlayerData pData = PC->GetPlayerData();
+			pData.PlayerAuthority = ELobbyPlayerAuthority::GameMaster;
+			PC->Server_SetPlayerData(pData);
+			//PC->Client_PreservePlayerData();
+		}
+		else
+		{
+			FPlayerData pData = PC->GetPlayerData();
+			pData.PlayerAuthority = ELobbyPlayerAuthority::ConnectedPlayer;
+			PC->Server_SetPlayerData(pData);
+			//PC->Client_PreservePlayerData();
+		}
+	}
+
+	if (GameInstance)
+	{
+		FServerInfo servInfo = GameInstance->GetRemoteServerInfo();
+		if (servInfo.Id != -1)
+		{
+			servInfo.CurrPlayers = GameInstance->ConnectedPlayersNum;
+			GameInstance->SetCurrentServerInfo(servInfo);
+		}
+		
+	}
+
+	if (OnLobbyPlayerLogin.IsBound())
+	{
+		OnLobbyPlayerLogin.Broadcast(NewPlayer);
+	}
+
+}
+
+void ARCLobbyGM::Logout(AController* Exiting)
+{
+	Super::Logout(Exiting);
+
+	bool bIsGameMasterExist = false;
+	if (GameInstance)
+	{
+		if (GameInstance->ConnectedPlayersNum > 0)
+		{
+			for (FConstPlayerControllerIterator Iterator = GetWorld()->GetPlayerControllerIterator(); Iterator; ++Iterator)
+			{
+				ARCPlayerController* Controller = Cast<ARCPlayerController>(Iterator->Get());
+				if (Controller)
+				{
+					FPlayerData pData = Controller->GetPlayerData();
+					if (pData.PlayerAuthority == ELobbyPlayerAuthority::GameMaster)
+					{
+						bIsGameMasterExist = true;
+						break;
+					}
+				}
+			}
+
+			if (!bIsGameMasterExist)
+			{
+				for (FConstPlayerControllerIterator Iterator = GetWorld()->GetPlayerControllerIterator(); Iterator; ++Iterator)
+				{
+					ARCPlayerController* Controller = Cast<ARCPlayerController>(Iterator->Get());
+					if (Controller)
+					{
+						FPlayerData pData = Controller->GetPlayerData();
+						pData.PlayerAuthority = ELobbyPlayerAuthority::GameMaster;
+						Controller->Server_SetPlayerData(pData);
+						//Controller->Client_PreservePlayerData();
+						break;
+					}
+				}
+			}
+		}
+
+		FServerInfo servInfo = GameInstance->GetRemoteServerInfo();
+		if (servInfo.Id != -1)
+		{
+			servInfo.CurrPlayers = GameInstance->ConnectedPlayersNum;
+			GameInstance->SetCurrentServerInfo(servInfo);
+		}
+
+	}
+
+
+	if (OnLobbyPlayerLogout.IsBound())
+	{
+		OnLobbyPlayerLogout.Broadcast(Exiting);
+	}
+	
+}
+
+
+
+
+
 void ARCLobbyGM::FillCurrentServerInfoRequest()
 {
 	if (GameInstance)

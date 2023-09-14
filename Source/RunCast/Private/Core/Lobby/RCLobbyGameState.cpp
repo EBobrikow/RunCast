@@ -14,6 +14,14 @@ void ARCLobbyGameState::BeginPlay()
 
 	Server_GetMatchCreationData();
 	StartSyncServerInfo();
+
+	ARCLobbyGM* GM = Cast<ARCLobbyGM>(UGameplayStatics::GetGameMode(this));
+	if (GM)
+	{
+		GM->OnLobbyPlayerLogin.AddDynamic(this, &ARCLobbyGameState::OnPlayerLogin);
+		GM->OnLobbyPlayerLogout.AddDynamic(this, &ARCLobbyGameState::OnPlayerLogout);
+	}
+	
 }
 
 ELobbyState ARCLobbyGameState::GetCurrentLobbyState() const
@@ -21,13 +29,14 @@ ELobbyState ARCLobbyGameState::GetCurrentLobbyState() const
 	return LobbyState;
 }
 
-void ARCLobbyGameState::SetNewLobbyState(ELobbyState newState)
+void ARCLobbyGameState::Server_SetNewLobbyState_Implementation(ELobbyState newState)
 { 
-	LobbyState = newState;
-	if (OnLobbyStateChanged.IsBound())
+	if (HasAuthority())
 	{
-		OnLobbyStateChanged.Broadcast(LobbyState);
+		LobbyState = newState;
+		NetMulticast_BroadcastLobbyState();
 	}
+	
 }
 
 TArray<FArenaMapData> ARCLobbyGameState::GetMapsData() const
@@ -64,6 +73,69 @@ FServerInfo ARCLobbyGameState::GetSuncServerInfo() const
 	return SyncServerInfo;
 }
 
+void ARCLobbyGameState::NetMulticast_BroadcastPlayersList_Implementation()
+{
+	if (OnPlayersListChanged.IsBound())
+	{
+		OnPlayersListChanged.Broadcast(PlayersDataList);
+	}
+}
+
+void ARCLobbyGameState::Server_UpdateServerInfo_Implementation(FServerInfo info)
+{
+	if (HasAuthority())
+	{
+		URCGameInstance* gameInst = Cast<URCGameInstance>(UGameplayStatics::GetGameInstance(this));
+		if (gameInst)
+		{
+			gameInst->SetCurrentServerInfo(info);
+		}
+	}
+}
+
+void ARCLobbyGameState::OnPlayerLogin(APlayerController* NewPlayer)
+{
+	if (HasAuthority())
+	{
+		PlayersDataList.Empty();
+		for (FConstPlayerControllerIterator Iterator = GetWorld()->GetPlayerControllerIterator(); Iterator; ++Iterator)
+		{
+			ARCPlayerController* Controller = Cast<ARCPlayerController>(Iterator->Get());
+			if (Controller)
+			{
+				PlayersDataList.Add(Controller->GetPlayerData());
+			}
+		}
+		NetMulticast_BroadcastPlayersList();
+	}
+	
+}
+
+void ARCLobbyGameState::OnPlayerLogout(AController* Exiting)
+{
+	if (HasAuthority())
+	{
+		PlayersDataList.Empty();
+		for (FConstPlayerControllerIterator Iterator = GetWorld()->GetPlayerControllerIterator(); Iterator; ++Iterator)
+		{
+			ARCPlayerController* Controller = Cast<ARCPlayerController>(Iterator->Get());
+			if (Controller)
+			{
+				PlayersDataList.Add(Controller->GetPlayerData());
+			}
+		}
+		NetMulticast_BroadcastPlayersList();
+	}
+}
+
+void ARCLobbyGameState::NetMulticast_BroadcastLobbyState_Implementation()
+{
+	if (OnLobbyStateChanged.IsBound())
+	{
+		OnLobbyStateChanged.Broadcast(LobbyState);
+	}
+}
+
 
 
 void ARCLobbyGameState::GetMatchCreationData()
@@ -97,4 +169,5 @@ void ARCLobbyGameState::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& 
 	DOREPLIFETIME(ARCLobbyGameState, MatchDataList);
 	DOREPLIFETIME(ARCLobbyGameState, MaxPlayers);
 	DOREPLIFETIME(ARCLobbyGameState, SyncServerInfo);
+	DOREPLIFETIME(ARCLobbyGameState, PlayersDataList);
 }

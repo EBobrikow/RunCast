@@ -90,6 +90,22 @@ void UServerManager::HeartBeatSend(FServerInfo& serverInfo)
 
 }
 
+void UServerManager::RequestCloseServer(int32 ServerID)
+{
+	FString action = "Action: 'StopServerByID',";
+	FString param = "ServerID: '" + FString::FromInt(ServerID) + "'";
+	FString res = "{ " + action + param + " }";
+	UStopServerHandler* newRequest = NewObject<UStopServerHandler>(this);
+	newRequest->SetRequestMessage(res);
+	GetConnectionManager()->AddRequest(newRequest);
+}
+
+void UServerManager::ConnectToMocupServer()
+{
+	FString res = "open 127.0.0.1:1001";
+	UKismetSystemLibrary::ExecuteConsoleCommand(GetWorld(), res, UGameplayStatics::GetPlayerController(this, 0));
+}
+
 void UServerManager::RequestSessionsListHandle(UMessageHandler* newSessionObj)
 {
 	UServersListHandler* responce = Cast<UServersListHandler>(newSessionObj);

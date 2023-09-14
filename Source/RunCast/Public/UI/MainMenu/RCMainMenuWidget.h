@@ -8,6 +8,8 @@
 #include "Components/Overlay.h"
 #include "Components/TextBlock.h"
 #include "Components/Border.h"
+#include "Components/EditableText.h"
+#include "Components/CircularThrobber.h"
 #include "Core/RCGameInstance.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "UI/MainMenu/RCServerList.h"
@@ -58,6 +60,21 @@ public:
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
 	UBorder* ServerListBorder;
 
+	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
+	UEditableText* PlayerNameEdText;
+
+	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
+	UBorder* ServerNameBorder;
+
+	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
+	UEditableText* ServerNameEdText;
+
+	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
+	UButton* CreateServerBtn;
+
+	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
+	UCircularThrobber* LoadingThrobber;
+
 protected:
 
 	UFUNCTION(BlueprintCallable)
@@ -78,10 +95,30 @@ protected:
 	UFUNCTION(BlueprintCallable)
 	void OnRefreshClicked();
 
+	UFUNCTION(BlueprintCallable)
+	void OnCreateServerClicked();
+
 	UFUNCTION()
 	void OnListRecieved(TArray<FServerInfo> serverList);
 
+	UFUNCTION(BlueprintCallable)
+	void PlayerNameCommited(FString name);
+
+	UFUNCTION()
+	void LoadPlayerName();
+
+	UFUNCTION(BlueprintCallable)
+	void HideAll();
+
+	UFUNCTION(BlueprintCallable)
+	void ButtonSetup();
+
+	UFUNCTION()
+	void EnableButtons();
 
 	UPROPERTY()
 	URCGameInstance* GameInstancePtr;
+
+	UPROPERTY()
+	FTimerHandle DisableButtonsHandler;
 };

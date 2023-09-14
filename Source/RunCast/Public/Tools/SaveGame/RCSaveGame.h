@@ -24,4 +24,7 @@ public:
 
 	UPROPERTY()
 	float EffectsVoluem;
+
+	UPROPERTY()
+	FString PlayerName;
 };

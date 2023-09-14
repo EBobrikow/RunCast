@@ -61,6 +61,17 @@ FServerInfo URCGameInstance::GetRemoteServerInfo() const
 	return RemoteServerInfo;
 }
 
+FPlayerData URCGameInstance::GetPlayerData() const
+{
+	return LocalPlayerData;
+}
+
+void URCGameInstance::SetPlayerData(const FPlayerData& name)
+{
+	LocalPlayerData = name;
+}
+
+
 void URCGameInstance::HeartBeatPing()
 {
 	if (CurrentServerInfo.Id == -1)

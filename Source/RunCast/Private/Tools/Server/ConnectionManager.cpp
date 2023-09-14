@@ -43,6 +43,10 @@ void UConnectionManager::SendRequest(const FString& msg)
 	{
 		WebSocketConnection->Send(msg);
 	}
+	else
+	{
+		UE_LOG(LogTemp, Error, TEXT("UConnectionManager::SendRequest invalid WebSocketConnection or socket not connected!"));
+	}
 }
 
 void UConnectionManager::AddRequest(UMessageHandler* RequestObj)

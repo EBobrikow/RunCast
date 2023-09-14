@@ -44,6 +44,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void HeartBeatSend(FServerInfo& serverInfo);
 
+	UFUNCTION(BlueprintCallable)
+	void RequestCloseServer(int32 ServerID);
+
 	UPROPERTY()
 	FOnServerListRecieved OnServerListRecieved;
 
@@ -52,6 +55,9 @@ public:
 
 	UPROPERTY()
 	FOnRemoteServerInfoRecieved OnRemoteServerInfoRecieved;
+
+	UFUNCTION()
+	void ConnectToMocupServer();
 
 #if UE_SERVER
 
@@ -73,6 +79,8 @@ protected:
 
 	UFUNCTION()
 	void HeartBeatRecieve(UMessageHandler* newSessionObj);
+
+	
 
 private: 
 

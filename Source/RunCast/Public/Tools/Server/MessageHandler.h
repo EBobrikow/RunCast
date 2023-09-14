@@ -97,8 +97,6 @@ public:
 	UPROPERTY()
 	FServerInfo currentServersInfo;
 
-	//virtual void OnRecieved(FString message) override;
-
 protected:
 
 	void virtual ParseJsonObject(TSharedPtr<FJsonObject> JsonObj) override;
@@ -114,9 +112,18 @@ public:
 	UPROPERTY()
 	FServerInfo heartBeatServersInfo;
 
-	//virtual void OnRecieved(FString message) override;
-
 protected:
 
 	void virtual ParseJsonObject(TSharedPtr<FJsonObject> JsonObj) override;
+};
+
+UCLASS()
+class RUNCAST_API UStopServerHandler : public UMessageHandler
+{
+	GENERATED_BODY()
+
+public:
+
+protected:
+
 };
