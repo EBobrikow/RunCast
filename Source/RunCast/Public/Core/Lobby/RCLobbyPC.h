@@ -18,4 +18,8 @@ class RUNCAST_API ARCLobbyPC : public ARCPlayerController
 public:
 
 	virtual void BeginPlay() override;
+
+	UFUNCTION(Server, Reliable)
+	void Server_SetNewLobbyState(const ELobbyState& state);
+
 };

@@ -43,11 +43,26 @@ public:
 
 	UFUNCTION()
 	FServerInfo GetRemoteServerInfo() const;
+
+	UFUNCTION()
+	FPlayerData GetPlayerData() const;
+
+	UFUNCTION()
+	void SetPlayerData(const FPlayerData& name);
 	
+	UPROPERTY()
+	int32 ConnectedPlayersNum = 0;
+
 protected:
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	bool bIsSoloGame;
+
+	UPROPERTY()
+	FString PlayerName;
+
+	UPROPERTY()
+	FPlayerData LocalPlayerData;
 
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
 	UServerManager* ServerManager = nullptr;

@@ -29,19 +29,25 @@ void ARCPlayerController::Server_SetPlayerData_Implementation(const FPlayerData&
 		PlayerData = playerData;
 	}
 
-	Client_PreservePlayerData();
+	Client_PreservePlayerData(playerData);
 }
 
 FPlayerData ARCPlayerController::GetPlayerData()
 {
+	URCGameInstance* GameInstancePtr = Cast<URCGameInstance>(UGameplayStatics::GetGameInstance(this));
+	if (GameInstancePtr && !HasAuthority())
+	{
+		PlayerData = GameInstancePtr->GetPlayerData();
+	}
 	return PlayerData;
 }
 
-void ARCPlayerController::Client_PreservePlayerData_Implementation()
+void ARCPlayerController::Client_PreservePlayerData_Implementation(const FPlayerData& playerData)
 {
 	URCGameInstance* GameInstancePtr = Cast<URCGameInstance>(UGameplayStatics::GetGameInstance(this));
 	if (GameInstancePtr)
 	{
+		PlayerData = playerData;
 		GameInstancePtr->SetPlayerData(PlayerData);
 	}
 }

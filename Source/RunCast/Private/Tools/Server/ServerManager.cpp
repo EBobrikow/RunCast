@@ -102,7 +102,7 @@ void UServerManager::RequestCloseServer(int32 ServerID)
 
 void UServerManager::ConnectToMocupServer()
 {
-	FString res = "open 127.0.0.1:1001";
+	FString res = "open 127.0.0.1";
 	UKismetSystemLibrary::ExecuteConsoleCommand(GetWorld(), res, UGameplayStatics::GetPlayerController(this, 0));
 }
 

@@ -3,7 +3,8 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/GameMode.h"
+//#include "GameFramework/GameMode.h"
+#include "Core/RCGameMode.h"
 #include "Core/RCGameInstance.h"
 #include "RCMainMenuGM.generated.h"
 
@@ -11,7 +12,7 @@
  * 
  */
 UCLASS()
-class RUNCAST_API ARCMainMenuGM : public AGameMode
+class RUNCAST_API ARCMainMenuGM : public ARCGameMode
 {
 	GENERATED_BODY()
 

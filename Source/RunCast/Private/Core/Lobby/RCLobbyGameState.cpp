@@ -29,12 +29,12 @@ ELobbyState ARCLobbyGameState::GetCurrentLobbyState() const
 	return LobbyState;
 }
 
-void ARCLobbyGameState::Server_SetNewLobbyState_Implementation(ELobbyState newState)
+void ARCLobbyGameState::Server_SetNewLobbyState_Implementation(const ELobbyState& newState)
 { 
 	if (HasAuthority())
 	{
 		LobbyState = newState;
-		NetMulticast_BroadcastLobbyState();
+		NetMulticast_BroadcastLobbyState(newState);
 	}
 	
 }
@@ -73,15 +73,15 @@ FServerInfo ARCLobbyGameState::GetSuncServerInfo() const
 	return SyncServerInfo;
 }
 
-void ARCLobbyGameState::NetMulticast_BroadcastPlayersList_Implementation()
+void ARCLobbyGameState::NetMulticast_BroadcastPlayersList_Implementation(const TArray<FPlayerData>& list)
 {
 	if (OnPlayersListChanged.IsBound())
 	{
-		OnPlayersListChanged.Broadcast(PlayersDataList);
+		OnPlayersListChanged.Broadcast(list);
 	}
 }
 
-void ARCLobbyGameState::Server_UpdateServerInfo_Implementation(FServerInfo info)
+void ARCLobbyGameState::Server_UpdateServerInfo_Implementation(const FServerInfo& info)
 {
 	if (HasAuthority())
 	{
@@ -106,7 +106,7 @@ void ARCLobbyGameState::OnPlayerLogin(APlayerController* NewPlayer)
 				PlayersDataList.Add(Controller->GetPlayerData());
 			}
 		}
-		NetMulticast_BroadcastPlayersList();
+		NetMulticast_BroadcastPlayersList(PlayersDataList);
 	}
 	
 }
@@ -124,15 +124,15 @@ void ARCLobbyGameState::OnPlayerLogout(AController* Exiting)
 				PlayersDataList.Add(Controller->GetPlayerData());
 			}
 		}
-		NetMulticast_BroadcastPlayersList();
+		NetMulticast_BroadcastPlayersList(PlayersDataList);
 	}
 }
 
-void ARCLobbyGameState::NetMulticast_BroadcastLobbyState_Implementation()
+void ARCLobbyGameState::NetMulticast_BroadcastLobbyState_Implementation(const ELobbyState& newState)
 {
 	if (OnLobbyStateChanged.IsBound())
 	{
-		OnLobbyStateChanged.Broadcast(LobbyState);
+		OnLobbyStateChanged.Broadcast(newState);
 	}
 }
 

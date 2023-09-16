@@ -9,9 +9,9 @@ void ARCLobbyHUD::BeginPlay()
 	Super::BeginPlay();
 
 	ARCLobbyGameState* GameState = GetWorld()->GetGameState<ARCLobbyGameState>();
-	GameState->OnLobbyStateChanged.AddDynamic(this, &ARCLobbyHUD::CreateWidgetByLobbyState);
 	if (GameState)
 	{
+		GameState->OnLobbyStateChanged.AddDynamic(this, &ARCLobbyHUD::CreateWidgetByLobbyState);
 		CreateWidgetByLobbyState(GameState->GetCurrentLobbyState());
 	}
 
@@ -33,21 +33,31 @@ void ARCLobbyHUD::CreateWidgetByLobbyState(ELobbyState state)
 	switch (state)
 	{
 	case ELobbyState::Entrance:
-		if (LobbyEntranceWidgetClass)
-		{
-			if (CurrentWidget)
-			{
-				CurrentWidget->RemoveFromViewport();
-			}
 
-			CurrentWidget = CreateWidget<UUserWidget>(GetWorld(), LobbyEntranceWidgetClass);
-			CurrentWidget->AddToViewport();
-		}
+		CreateWidgetByClass(LobbyEntranceWidgetClass);
 		
 		break;
 	case ELobbyState::DeathMatchLobby:
+
+		CreateWidgetByClass(DeathMatchLobbyWidgetClass);
+
 		break;
 	default:
 		break;
+	}
+}
+
+void ARCLobbyHUD::CreateWidgetByClass(TSubclassOf<UUserWidget> widgetClass)
+{
+	if (widgetClass)
+	{
+		if (CurrentWidget)
+		{
+			CurrentWidget->RemoveFromViewport();
+		}
+		PreviosWidget = CurrentWidget;
+		auto PC = GetOwner();
+		CurrentWidget = CreateWidget<UUserWidget>(Cast<APlayerController>(GetOwner()), widgetClass);
+		CurrentWidget->AddToViewport();
 	}
 }

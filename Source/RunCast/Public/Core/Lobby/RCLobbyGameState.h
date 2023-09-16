@@ -11,6 +11,7 @@
 
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnLobbyStateChanged, ELobbyState, NewState);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnPlayersListChanged, TArray<FPlayerData>, playersList);
 
 UCLASS()
 class RUNCAST_API ARCLobbyGameState : public AGameState
@@ -25,12 +26,18 @@ public:
 	UFUNCTION(BlueprintCallable)
 	ELobbyState GetCurrentLobbyState() const;
 
-	UFUNCTION(BlueprintCallable)
-	void SetNewLobbyState(ELobbyState newState);
+	UFUNCTION(Server, Reliable)
+	void Server_SetNewLobbyState(const ELobbyState& newState);
+
+	UFUNCTION(Server, Reliable)
+	void Server_UpdateServerInfo(const FServerInfo& info);
 
 	
 	UPROPERTY()
 	FOnLobbyStateChanged OnLobbyStateChanged;
+
+	UPROPERTY()
+	FOnPlayersListChanged OnPlayersListChanged;
 
 	UFUNCTION()
 	TArray<FArenaMapData> GetMapsData() const;
@@ -44,10 +51,26 @@ public:
 	UFUNCTION()
 	FServerInfo GetSuncServerInfo() const;
 
+
+
 protected:
 
 	UFUNCTION(Server, Reliable)
 	void Server_GetMatchCreationData();
+
+	UFUNCTION(NetMulticast, Reliable)
+	void NetMulticast_BroadcastLobbyState(const ELobbyState& newState);
+
+	UFUNCTION(NetMulticast, Reliable)
+	void NetMulticast_BroadcastPlayersList(const TArray<FPlayerData>& list);
+
+	
+
+	UFUNCTION()
+	void OnPlayerLogin(APlayerController* NewPlayer);
+
+	UFUNCTION()
+	void OnPlayerLogout(AController* Exiting);
 
 	UPROPERTY(Replicated)
 	TEnumAsByte<ELobbyState> LobbyState;
@@ -75,6 +98,9 @@ private:
 
 	UFUNCTION()
 	void GetMatchCreationData();
+
+	UPROPERTY(Replicated)
+	TArray<FPlayerData> PlayersDataList;
 
 	
 };

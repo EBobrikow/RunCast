@@ -3,16 +3,20 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/GameMode.h"
-#include "Core/RCGameInstance.h"
+//#include "GameFramework/GameMode.h"
+#include "Core/RCGameMode.h"
+#include "Core/RCPlayerController.h"
 #include "Tools/Globals.h"
 #include "RCLobbyGM.generated.h"
 
+class ARCLobbyGameState;
 
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnLobbyPlayerLogin, APlayerController*, playerController);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnLobbyPlayerLogout, AController*, exitController);
 
 UCLASS()
-class RUNCAST_API ARCLobbyGM : public AGameMode
+class RUNCAST_API ARCLobbyGM : public ARCGameMode
 {
 	GENERATED_BODY()
 	
@@ -29,6 +33,15 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	TArray<FArenaMapData> GetArenasData() const;
+
+	virtual void PostLogin(APlayerController* NewPlayer) override;
+	virtual void Logout(AController* Exiting) override;
+
+	UPROPERTY()
+	FOnLobbyPlayerLogin OnLobbyPlayerLogin;
+
+	UPROPERTY()
+	FOnLobbyPlayerLogout OnLobbyPlayerLogout;
 
 protected:
 

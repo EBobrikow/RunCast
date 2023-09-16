@@ -2,6 +2,7 @@
 
 
 #include "UI/Lobby/RCLobbyWidget.h"
+#include "Core/Lobby/RCLobbyPC.h"
 
 void URCLobbyWidget::NativeConstruct()
 {
@@ -19,6 +20,15 @@ void URCLobbyWidget::NativeConstruct()
 		CreateBtn->OnClicked.AddUniqueDynamic(this, &URCLobbyWidget::OnCreateClicked);
 	}
 	
+	ARCPlayerController* PC = Cast<ARCPlayerController>(GetOwningPlayer());//UGameplayStatics::GetPlayerController(this, 0));
+	if (PC)
+	{
+		FPlayerData pData = PC->GetPlayerData();
+		if (pData.PlayerAuthority != ELobbyPlayerAuthority::GameMaster)
+		{
+			CreateBtn->SetIsEnabled(false);
+		}
+	}
 
 	FillComboBoxes();
 
@@ -46,6 +56,33 @@ void URCLobbyWidget::OnReturnClicked()
 
 void URCLobbyWidget::OnCreateClicked()
 {
+	ARCLobbyGameState* GameState = GetWorld()->GetGameState<ARCLobbyGameState>();
+	if (GameState)
+	{
+
+		URCGameInstance* GameInstance = Cast<URCGameInstance>(UGameplayStatics::GetGameInstance(this));
+		if (GameInstance)
+		{
+			FServerInfo info = GameInstance->GetRemoteServerInfo();
+			info.MapName = currentMap.MapName;
+			info.MatchType = currentMatch.MatchName;
+			info.MaxPlayers = MaxPlayers;
+			GameState->Server_UpdateServerInfo(info);
+		}
+		
+	}
+
+	ARCLobbyPC* own = Cast<ARCLobbyPC>(GetOwningPlayer());
+	if (own)
+	{
+		if (currentMatch.MatchType == EMatchType::DeathMatch)
+		{
+			own->Server_SetNewLobbyState(ELobbyState::DeathMatchLobby);
+		}
+	}
+	
+
+	
 }
 
 void URCLobbyWidget::OnMatchSelectionChanged(FString sItem)
