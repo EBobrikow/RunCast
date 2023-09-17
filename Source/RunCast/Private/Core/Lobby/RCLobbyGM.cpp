@@ -46,14 +46,16 @@ void ARCLobbyGM::PostLogin(APlayerController* NewPlayer)
 		{
 			FPlayerData pData = PC->GetPlayerData();
 			pData.PlayerAuthority = ELobbyPlayerAuthority::GameMaster;
-			PC->Server_SetPlayerData(pData);
+			pData.PlayerReady = ELobbyPlayerReady::Indle;
+			PC->Client_SetupPlayerData(pData);
 			//PC->Client_PreservePlayerData();
 		}
 		else
 		{
 			FPlayerData pData = PC->GetPlayerData();
 			pData.PlayerAuthority = ELobbyPlayerAuthority::ConnectedPlayer;
-			PC->Server_SetPlayerData(pData);
+			pData.PlayerReady = ELobbyPlayerReady::Indle;
+			PC->Client_SetupPlayerData(pData);
 			//PC->Client_PreservePlayerData();
 		}
 	}
@@ -131,6 +133,12 @@ void ARCLobbyGM::Logout(AController* Exiting)
 		OnLobbyPlayerLogout.Broadcast(Exiting);
 	}
 	
+}
+
+void ARCLobbyGM::StartTravel(const FString& route)
+{
+	UE_LOG(LogTemp, Warning, TEXT("ARCLobbyGM::StartTravel route = %s"), *route);
+	GetWorld()->ServerTravel(route, true);
 }
 
 

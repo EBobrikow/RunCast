@@ -43,6 +43,9 @@ public:
 	UPROPERTY()
 	FOnLobbyPlayerLogout OnLobbyPlayerLogout;
 
+	UFUNCTION()
+	void StartTravel(const FString& route);
+
 protected:
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "GM | Lobby settings")

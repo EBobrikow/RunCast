@@ -12,3 +12,11 @@ void URCDeathMatchListEntry::NativeTick(const FGeometry& MyGeometry, float InDel
 {
 	Super::NativeTick(MyGeometry,InDeltaTime);
 }
+
+void URCDeathMatchListEntry::SetTextureToImage(UImage* Img, UTexture2D* texture)
+{
+	if (Img)
+	{
+		Img->SetBrushFromTexture(texture);
+	}
+}

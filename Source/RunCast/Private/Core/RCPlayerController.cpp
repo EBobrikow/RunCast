@@ -3,6 +3,7 @@
 
 #include "Core/RCPlayerController.h"
 #include "Kismet/GameplayStatics.h"
+#include "Core/Lobby/RCLobbyGameState.h"
 
 ARCPlayerController::ARCPlayerController()
 {
@@ -40,6 +41,37 @@ FPlayerData ARCPlayerController::GetPlayerData()
 		PlayerData = GameInstancePtr->GetPlayerData();
 	}
 	return PlayerData;
+}
+
+void ARCPlayerController::Server_UpdatePlayerData_Implementation(const FPlayerData& playerData)
+{
+	if (HasAuthority())
+	{
+		PlayerData = playerData;
+		ARCLobbyGameState* GameState = GetWorld()->GetGameState<ARCLobbyGameState>();
+		if (GameState)
+		{
+			GameState->Server_UpdatePlayerList();
+		}
+	}
+}
+
+void ARCPlayerController::Client_SetupPlayerData_Implementation(const FPlayerData& playerData)
+{
+	URCGameInstance* GameInstancePtr = Cast<URCGameInstance>(UGameplayStatics::GetGameInstance(this));
+	if (GameInstancePtr)
+	{
+		FPlayerData data = GameInstancePtr->GetPlayerData();
+		PlayerData = playerData;
+		PlayerData.PlayerName = data.PlayerName;
+		GameInstancePtr->SetPlayerData(PlayerData);
+		Server_SetPlayerData(PlayerData);
+	}
+}
+
+void ARCPlayerController::UpdatePlayerToServer()
+{
+	Server_UpdatePlayerData(PlayerData);
 }
 
 void ARCPlayerController::Client_PreservePlayerData_Implementation(const FPlayerData& playerData)

@@ -117,6 +117,14 @@ enum class ELobbyPlayerAuthority : uint8
 	ConnectedPlayer,
 };
 
+UENUM(BlueprintType)
+enum class ELobbyPlayerReady : uint8
+{
+	None,
+	Ready,
+	Indle,
+};
+
 USTRUCT(BlueprintType, Blueprintable)
 struct FPlayerData
 {
@@ -128,9 +136,12 @@ struct FPlayerData
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	TEnumAsByte<ELobbyPlayerAuthority> PlayerAuthority;
 
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	TEnumAsByte<ELobbyPlayerReady> PlayerReady;
+
 	FPlayerData();
 
-	FPlayerData(FString name, ELobbyPlayerAuthority authority);
+	FPlayerData(FString name, ELobbyPlayerAuthority authority, ELobbyPlayerReady isReady);
 
 };
 
@@ -145,6 +156,9 @@ struct FArenaMatchData
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	FString MatchName;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	FString MatchGameModePath;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	int32 DefaultMaxPlayers;

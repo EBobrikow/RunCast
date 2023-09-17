@@ -29,8 +29,17 @@ public:
 	UFUNCTION(Server, Reliable)
 	void Server_SetNewLobbyState(const ELobbyState& newState);
 
-	UFUNCTION(Server, Reliable)
+	UFUNCTION(Server, Unreliable)
 	void Server_UpdateServerInfo(const FServerInfo& info);
+
+	UFUNCTION(Server, Reliable)
+	void Server_UpdatePlayerList();
+
+	UFUNCTION(Server, Reliable)
+	void Server_SetCurrentMatchAndMap(const FArenaMapData& arena, const FArenaMatchData& match);
+
+	UFUNCTION(Server, Reliable)
+	void Server_TryStartMatch();
 
 	
 	UPROPERTY()
@@ -49,9 +58,10 @@ public:
 	void StartSyncServerInfo();
 	
 	UFUNCTION()
-	FServerInfo GetSuncServerInfo() const;
+	FServerInfo GetSyncServerInfo() const;
 
-
+	UFUNCTION()
+	TArray<FPlayerData> GetPlayerDataList() const;
 
 protected:
 
@@ -87,6 +97,11 @@ protected:
 	UPROPERTY(Replicated)
 	FServerInfo SyncServerInfo;
 
+	UPROPERTY(Replicated)
+	FArenaMapData CurrentMap;
+
+	UPROPERTY(Replicated)
+	FArenaMatchData CurrentMatch;
 
 	UPROPERTY()
 	FTimerHandle SyncServerInfoTimer;
@@ -99,7 +114,10 @@ private:
 	UFUNCTION()
 	void GetMatchCreationData();
 
-	UPROPERTY(Replicated)
+	UFUNCTION()
+	void OnRep_PlayerList();
+
+	UPROPERTY(ReplicatedUsing = OnRep_PlayerList)
 	TArray<FPlayerData> PlayersDataList;
 
 	

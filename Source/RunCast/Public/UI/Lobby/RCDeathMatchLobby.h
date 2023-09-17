@@ -7,6 +7,7 @@
 #include "Components/TextBlock.h"
 #include "Components/ListView.h"
 #include "Components/Button.h"
+#include "Core/Lobby/RCLobbyGameState.h"
 #include "RCDeathMatchLobby.generated.h"
 
 /**
@@ -37,10 +38,18 @@ public:
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
 	UListView* PlayersListView;
 
+	
+
 
 protected:
 
 	UFUNCTION()
 	void OnReadyButtonClicked();
+
+	UFUNCTION()
+	void CreatePlayerList(TArray<FPlayerData> list);
+
+	UPROPERTY()
+	TArray<FPlayerData> localPlayerList;
 	
 };

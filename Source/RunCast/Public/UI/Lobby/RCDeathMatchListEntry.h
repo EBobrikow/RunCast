@@ -6,6 +6,7 @@
 #include "Blueprint/UserWidget.h"
 #include "Components/TextBlock.h"
 #include "Components/Image.h"
+#include "Engine/Texture2D.h"
 #include "RCDeathMatchListEntry.generated.h"
 
 /**
@@ -29,5 +30,20 @@ public:
 
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
 	UImage* ReadyImg;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	UTexture2D* GameMasterIcon;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	UTexture2D* ConnectedPlayerIcon;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	UTexture2D* PlayerReadyIcon;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	UTexture2D* PlayerIdleIcon;
+
+	UFUNCTION(BlueprintCallable)
+	void SetTextureToImage(UImage* Img, UTexture2D* texture);
 	
 };

@@ -23,12 +23,13 @@ FServerInfo::FServerInfo(int32 _id, const FString& _serverName, int32 _port, con
 }
 
 FPlayerData::FPlayerData()
-	: FPlayerData(TEXT(""), ELobbyPlayerAuthority::None)
+	: FPlayerData(TEXT(""), ELobbyPlayerAuthority::None, ELobbyPlayerReady::None)
 {
 }
 
-FPlayerData::FPlayerData(FString name, ELobbyPlayerAuthority authority)
+FPlayerData::FPlayerData(FString name, ELobbyPlayerAuthority authority, ELobbyPlayerReady isReady)
 	: PlayerName(name)
 	, PlayerAuthority(authority)
+	, PlayerReady(isReady)
 {
 }

@@ -60,21 +60,20 @@ void URCLobbyWidget::OnCreateClicked()
 	if (GameState)
 	{
 
-		URCGameInstance* GameInstance = Cast<URCGameInstance>(UGameplayStatics::GetGameInstance(this));
-		if (GameInstance)
-		{
-			FServerInfo info = GameInstance->GetRemoteServerInfo();
-			info.MapName = currentMap.MapName;
-			info.MatchType = currentMatch.MatchName;
-			info.MaxPlayers = MaxPlayers;
-			GameState->Server_UpdateServerInfo(info);
-		}
+		FServerInfo info = GameState->GetSyncServerInfo();
+
+		info.MapName = currentMap.MapName;
+		info.MatchType = currentMatch.MatchName;
+		info.MaxPlayers = MaxPlayers;
+		GameState->Server_UpdateServerInfo(info);
 		
 	}
 
 	ARCLobbyPC* own = Cast<ARCLobbyPC>(GetOwningPlayer());
 	if (own)
 	{
+		own->Server_SetupMatchConfig(currentMap, currentMatch);
+
 		if (currentMatch.MatchType == EMatchType::DeathMatch)
 		{
 			own->Server_SetNewLobbyState(ELobbyState::DeathMatchLobby);
@@ -152,7 +151,7 @@ void URCLobbyWidget::SetServerName()
 	ARCLobbyGameState* GameState = GetWorld()->GetGameState<ARCLobbyGameState>();
 	if (GameState)
 	{
-		FServerInfo info = GameState->GetSuncServerInfo();
+		FServerInfo info = GameState->GetSyncServerInfo();
 		if (info.Id != -1)
 		{
 			GetWorld()->GetTimerManager().ClearTimer(ServerNameAwaitTimer);

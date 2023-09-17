@@ -5,8 +5,10 @@
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerController.h"
 #include "Core/RCGameInstance.h"
+//#include "Core/Lobby/RCLobbyGameState.h"
 #include "Net/UnrealNetwork.h"
 #include "RCPlayerController.generated.h"
+
 
 /**
  * 
@@ -30,6 +32,14 @@ public:
 	UFUNCTION(Client, Reliable)
 	void Client_PreservePlayerData(const FPlayerData& playerData);
 
+	UFUNCTION(Server, Reliable)
+	void Server_UpdatePlayerData(const FPlayerData& playerData);
+
+	UFUNCTION(Client, Reliable)
+	void Client_SetupPlayerData(const FPlayerData& playerData);
+
+	UFUNCTION()
+	void UpdatePlayerToServer();
 
 protected: 
 

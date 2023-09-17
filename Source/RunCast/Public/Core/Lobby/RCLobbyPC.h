@@ -22,4 +22,13 @@ public:
 	UFUNCTION(Server, Reliable)
 	void Server_SetNewLobbyState(const ELobbyState& state);
 
+	UFUNCTION(Server, Reliable)
+	void Server_TryRunMatch();
+
+	UFUNCTION(Server, Reliable)
+	void Server_SetupMatchConfig(const FArenaMapData& arena, const FArenaMatchData& match);
+
+	UFUNCTION()
+	void PlayerReadyClicked();
+
 };
