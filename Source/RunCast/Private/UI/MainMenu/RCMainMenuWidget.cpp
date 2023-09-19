@@ -165,9 +165,11 @@ void URCMainMenuWidget::OnCreateServerClicked()
 	HostGame_Btn->SetIsEnabled(false);
 	SoloGame_Btn->SetIsEnabled(false);
 
-	if (LoadingThrobber)
+	if (LoadingThrobber && LoadingThrobber_1 && FadeBorder)
 	{
 		LoadingThrobber->SetVisibility(ESlateVisibility::Visible);
+		LoadingThrobber_1->SetVisibility(ESlateVisibility::Visible);
+		FadeBorder->SetVisibility(ESlateVisibility::Visible);
 	}
 
 	GetWorld()->GetTimerManager().ClearTimer(DisableButtonsHandler);
@@ -293,9 +295,11 @@ void URCMainMenuWidget::HideAll()
 		ServerNameBorder->SetVisibility(ESlateVisibility::Hidden);
 	}
 
-	if (LoadingThrobber)
+	if (LoadingThrobber && LoadingThrobber_1 && FadeBorder)
 	{
 		LoadingThrobber->SetVisibility(ESlateVisibility::Hidden);
+		LoadingThrobber_1->SetVisibility(ESlateVisibility::Hidden);
+		FadeBorder->SetVisibility(ESlateVisibility::Hidden);
 	}
 }
 
@@ -351,8 +355,10 @@ void URCMainMenuWidget::EnableButtons()
 	HostGame_Btn->SetIsEnabled(true);
 	SoloGame_Btn->SetIsEnabled(true);
 
-	if (LoadingThrobber)
+	if (LoadingThrobber && LoadingThrobber_1 && FadeBorder)
 	{
 		LoadingThrobber->SetVisibility(ESlateVisibility::Hidden);
+		LoadingThrobber_1->SetVisibility(ESlateVisibility::Hidden);
+		FadeBorder->SetVisibility(ESlateVisibility::Hidden);
 	}
 }

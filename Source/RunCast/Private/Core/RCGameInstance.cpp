@@ -37,9 +37,10 @@ USaveManager* URCGameInstance::GetSaveManager()
 
 void URCGameInstance::StartHeartBeat(AGameModeBase* gameMode)
 {
+	UE_LOG(LogTemp, Warning, TEXT("URCGameInstance::StartHeartBeat"));
 	cashedGameMode = gameMode;
-	GetServerManager()->OnCurrentServerInfoRecieved.Clear();
-	GetServerManager()->OnCurrentServerInfoRecieved.AddDynamic(this, &URCGameInstance::HeartBeatPong);
+	GetServerManager()->OnHeartBeatInfoRecieved.Clear();
+	GetServerManager()->OnHeartBeatInfoRecieved.AddDynamic(this, &URCGameInstance::HeartBeatPong);
 
 	HeartBeatPing();
 }
@@ -47,6 +48,7 @@ void URCGameInstance::StartHeartBeat(AGameModeBase* gameMode)
 void URCGameInstance::SetCurrentServerInfo(FServerInfo servInfo)
 {
 #if UE_SERVER
+	UE_LOG(LogTemp, Warning, TEXT("URCGameInstance::SetCurrentServerInfo SERVER"));
 	CurrentServerInfo = servInfo;
 #endif
 }
@@ -76,10 +78,15 @@ void URCGameInstance::HeartBeatPing()
 {
 	if (CurrentServerInfo.Id == -1)
 	{
+		UE_LOG(LogTemp, Warning, TEXT("URCGameInstance::HeartBeatPing ServerID == -1"));
 		if (cashedGameMode)
 		{
 			cashedGameMode->GetWorld()->GetTimerManager().ClearTimer(HeartBeatWaitTimer);
 			cashedGameMode->GetWorld()->GetTimerManager().SetTimer(HeartBeatWaitTimer, this, &URCGameInstance::HeartBeatPing, 0.01f, false, HeartBeatWaitRate);
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("URCGameInstance::HeartBeatPing No cashed game mode"));
 		}
 	}
 	else
@@ -90,6 +97,7 @@ void URCGameInstance::HeartBeatPing()
 
 void URCGameInstance::HeartBeatPong(FServerInfo servInfo)
 {
+	UE_LOG(LogTemp, Warning, TEXT("URCGameInstance::HeartBeatPong"));
 	RemoteServerInfo = servInfo;
 	if (cashedGameMode)
 	{

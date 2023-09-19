@@ -56,6 +56,33 @@ void ARCLobbyPC::PlayerReadyClicked()
 	
 }
 
+void ARCLobbyPC::Server_CreateMatchClicked_Implementation(const FArenaMapData& arena, const FArenaMatchData& match, int32 maxPlayers)
+{
+	if (HasAuthority() && PlayerData.PlayerAuthority == ELobbyPlayerAuthority::GameMaster)
+	{
+		ARCLobbyGameState* GameState = GetWorld()->GetGameState<ARCLobbyGameState>();
+		if (GameState)
+		{
+
+			FServerInfo info = GameState->GetSyncServerInfo();
+
+			info.MapName = arena.MapName;
+			info.MatchType = match.MatchName;
+			info.MaxPlayers = maxPlayers;
+			GameState->Server_UpdateServerInfo(info);
+
+		}
+
+		Server_SetupMatchConfig(arena, match);
+
+		if (match.MatchType == EMatchType::DeathMatch)
+		{
+			Server_SetNewLobbyState(ELobbyState::DeathMatchLobby);
+		}
+	}
+	
+}
+
 void ARCLobbyPC::Server_SetNewLobbyState_Implementation(const ELobbyState& state)
 {
 	ARCLobbyGameState* GameState = GetWorld()->GetGameState<ARCLobbyGameState>();

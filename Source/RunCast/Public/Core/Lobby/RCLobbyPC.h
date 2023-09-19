@@ -31,4 +31,7 @@ public:
 	UFUNCTION()
 	void PlayerReadyClicked();
 
+	UFUNCTION(Server, Reliable)
+	void Server_CreateMatchClicked(const FArenaMapData& arena, const FArenaMatchData& match, int32 maxPlayers);
+
 };

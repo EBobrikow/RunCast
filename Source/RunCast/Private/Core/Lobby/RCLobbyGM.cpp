@@ -12,9 +12,11 @@ void ARCLobbyGM::BeginPlay()
 
 #if UE_SERVER
 	GetServerInfoWhenReady();
+	
 	if (GameInstance)
 	{
 		GameInstance->StartHeartBeat(this);
+		UE_LOG(LogTemp, Warning, TEXT("ARCLobbyGM::BeginPlay StartHeartBeat"));
 	}	
 #endif
 }

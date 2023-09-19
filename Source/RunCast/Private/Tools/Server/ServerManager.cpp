@@ -24,9 +24,8 @@ void UServerManager::ConnectToUEServer(FServerInfo& serverInfo)
 
 void UServerManager::RequestNewSessionServer(const FString& serverName)
 {
-	FString name = "Yahoo";
 	FString action = "Action: 'ReqestServer',";
-	FString param = "ServerName: '" + name + "'";
+	FString param = "ServerName: '" + serverName + "'";
 	FString res = "{ " + action + param + " }";
 
 	URequestNewServerHandler* newRequest = NewObject<URequestNewServerHandler>(this);
@@ -76,12 +75,15 @@ void UServerManager::RequestSessionInfoByPort(int32 port)
 void UServerManager::HeartBeatSend(FServerInfo& serverInfo)
 {
 	FString action = "Update: 'HeartBeat',";
+	FString param0 = "ServerID: '" + FString::FromInt(serverInfo.Id) + "',";
 	FString param = "MatchStatus: '" + FString::FromInt(serverInfo.MatchStatus) + "',";
 	FString param1 = "MatchType: '" + serverInfo.MatchType + "',";
 	FString param2 = "MapName: '" + serverInfo.MapName + "',";
 	FString param3 = "CurrPlayers: '" + FString::FromInt(serverInfo.CurrPlayers) + "',";
 	FString param4 = "MaxPlayers: '" + FString::FromInt(serverInfo.MaxPlayers) + "',";
-	FString res = "{ " + action + param + param1 + param2 + param3 + param4 + " }";
+	FString res = "{ " + action + param + param0 + param1 + param2 + param3 + param4 + " }";
+
+	UE_LOG(LogTemp, Warning, TEXT("UServerManager::HeartBeatSend Server info \n %s"), *res);
 
 	UHeartBeatHandler* newRequest = NewObject<UHeartBeatHandler>(this);
 	newRequest->OnRequestFinished.AddDynamic(this, &UServerManager::HeartBeatRecieve);
@@ -133,12 +135,13 @@ void UServerManager::RequestSessionInfoByPortHandle(UMessageHandler* newSessionO
 
 void UServerManager::HeartBeatRecieve(UMessageHandler* newSessionObj)
 {
+	UE_LOG(LogTemp, Warning, TEXT("UServerManager::HeartBeatRecieve "));
 	UHeartBeatHandler* responce = Cast<UHeartBeatHandler>(newSessionObj);
 	if (responce)
 	{
-		if (OnRemoteServerInfoRecieved.IsBound())
+		if (OnHeartBeatInfoRecieved.IsBound())
 		{
-			OnRemoteServerInfoRecieved.Broadcast(responce->heartBeatServersInfo);
+			OnHeartBeatInfoRecieved.Broadcast(responce->heartBeatServersInfo);
 		}
 	}
 

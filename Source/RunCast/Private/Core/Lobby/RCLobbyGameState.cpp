@@ -187,10 +187,13 @@ void ARCLobbyGameState::Server_UpdateServerInfo_Implementation(const FServerInfo
 {
 	if (HasAuthority())
 	{
+		FServerInfo local = info;
 		URCGameInstance* gameInst = Cast<URCGameInstance>(UGameplayStatics::GetGameInstance(this));
 		if (gameInst)
 		{
-			gameInst->SetCurrentServerInfo(info);
+			local.CurrPlayers = gameInst->ConnectedPlayersNum;
+			gameInst->SetCurrentServerInfo(local);
+			gameInst->SetRemoteServerInfo(local);
 		}
 	}
 }

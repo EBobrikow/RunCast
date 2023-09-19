@@ -15,6 +15,7 @@
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnServerListRecieved, TArray<FServerInfo>, serversList);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnCurrentServerInfoRecieved, FServerInfo, currentServInfo);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnRemoteServerInfoRecieved, FServerInfo, remoteServInfo);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnHeartBeatInfoRecieved, FServerInfo, heartBeatServInfo);
 
 UCLASS()
 class RUNCAST_API UServerManager : public UObject
@@ -55,6 +56,9 @@ public:
 
 	UPROPERTY()
 	FOnRemoteServerInfoRecieved OnRemoteServerInfoRecieved;
+
+	UPROPERTY()
+	FOnHeartBeatInfoRecieved OnHeartBeatInfoRecieved;
 
 	UFUNCTION()
 	void ConnectToMocupServer();

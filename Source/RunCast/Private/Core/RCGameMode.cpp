@@ -42,8 +42,11 @@ void ARCGameMode::Logout(AController* Exiting)
 		if (GameInstance->ConnectedPlayersNum == 0)
 		{
 			FServerInfo info = GameInstance->GetRemoteServerInfo();
+			if (info.Id != -1)
+			{
+				GameInstance->GetServerManager()->RequestCloseServer(info.Id);
+			}
 			
-			GameInstance->GetServerManager()->RequestCloseServer(info.Id);
 		}
 	}
 }

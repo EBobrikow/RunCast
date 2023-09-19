@@ -75,6 +75,12 @@ public:
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
 	UCircularThrobber* LoadingThrobber;
 
+	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
+	UCircularThrobber* LoadingThrobber_1;
+
+	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
+	UBorder* FadeBorder;
+
 protected:
 
 	UFUNCTION(BlueprintCallable)

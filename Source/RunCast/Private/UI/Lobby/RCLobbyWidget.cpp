@@ -56,7 +56,7 @@ void URCLobbyWidget::OnReturnClicked()
 
 void URCLobbyWidget::OnCreateClicked()
 {
-	ARCLobbyGameState* GameState = GetWorld()->GetGameState<ARCLobbyGameState>();
+	/*ARCLobbyGameState* GameState = GetWorld()->GetGameState<ARCLobbyGameState>();
 	if (GameState)
 	{
 
@@ -67,17 +67,18 @@ void URCLobbyWidget::OnCreateClicked()
 		info.MaxPlayers = MaxPlayers;
 		GameState->Server_UpdateServerInfo(info);
 		
-	}
+	}*/
 
 	ARCLobbyPC* own = Cast<ARCLobbyPC>(GetOwningPlayer());
 	if (own)
 	{
-		own->Server_SetupMatchConfig(currentMap, currentMatch);
+		own->Server_CreateMatchClicked(currentMap, currentMatch, MaxPlayers);
+		/*own->Server_SetupMatchConfig(currentMap, currentMatch);
 
 		if (currentMatch.MatchType == EMatchType::DeathMatch)
 		{
 			own->Server_SetNewLobbyState(ELobbyState::DeathMatchLobby);
-		}
+		}*/
 	}
 	
 
@@ -142,7 +143,7 @@ void URCLobbyWidget::FillComboBoxes()
 			currentMatch = matchesData[0];
 
 		}
-		//MatchTypeComboBox->GetSelectedOption();
+		
 	}
 }
 

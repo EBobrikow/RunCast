@@ -29,7 +29,7 @@ public:
 	UFUNCTION(Server, Reliable)
 	void Server_SetNewLobbyState(const ELobbyState& newState);
 
-	UFUNCTION(Server, Unreliable)
+	UFUNCTION(Server, Reliable)
 	void Server_UpdateServerInfo(const FServerInfo& info);
 
 	UFUNCTION(Server, Reliable)
