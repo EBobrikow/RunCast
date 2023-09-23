@@ -12,6 +12,7 @@
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnLobbyStateChanged, ELobbyState, NewState);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnPlayersListChanged, TArray<FPlayerData>, playersList);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnSyncInfoChanged, FServerInfo, syncServerInfo);
 
 UCLASS()
 class RUNCAST_API ARCLobbyGameState : public AGameState
@@ -41,12 +42,18 @@ public:
 	UFUNCTION(Server, Reliable)
 	void Server_TryStartMatch();
 
+	UFUNCTION(Client, Reliable)
+	void Client_SetSyncServerInfo(const FServerInfo& info);
+
 	
 	UPROPERTY()
 	FOnLobbyStateChanged OnLobbyStateChanged;
 
 	UPROPERTY()
 	FOnPlayersListChanged OnPlayersListChanged;
+
+	UPROPERTY()
+	FOnSyncInfoChanged OnSyncInfoChanged;
 
 	UFUNCTION()
 	TArray<FArenaMapData> GetMapsData() const;
@@ -94,7 +101,7 @@ protected:
 	UPROPERTY(Replicated)
 	int32 MaxPlayers;
 
-	UPROPERTY(Replicated)
+	UPROPERTY(ReplicatedUsing = OnRep_SyncServerInfo)
 	FServerInfo SyncServerInfo;
 
 	UPROPERTY(Replicated)
@@ -116,6 +123,9 @@ private:
 
 	UFUNCTION()
 	void OnRep_PlayerList();
+
+	UFUNCTION()
+	void OnRep_SyncServerInfo();
 
 	UPROPERTY(ReplicatedUsing = OnRep_PlayerList)
 	TArray<FPlayerData> PlayersDataList;

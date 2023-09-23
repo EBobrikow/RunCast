@@ -29,6 +29,11 @@ ELobbyState ARCLobbyGameState::GetCurrentLobbyState() const
 	return LobbyState;
 }
 
+void ARCLobbyGameState::Client_SetSyncServerInfo_Implementation(const FServerInfo& info)
+{
+	SyncServerInfo = info;
+}
+
 TArray<FArenaMapData> ARCLobbyGameState::GetMapsData() const
 {
 	return ArenaDataList;
@@ -46,10 +51,11 @@ void ARCLobbyGameState::StartSyncServerInfo()
 		URCGameInstance* gameInst = Cast<URCGameInstance>(UGameplayStatics::GetGameInstance(this));
 		if (gameInst)
 		{
-			FServerInfo info = gameInst->GetRemoteServerInfo();
+			FServerInfo info = gameInst->GetCurrentServerInfo();
 			if (info.Id != -1)
 			{
 				SyncServerInfo = info;
+				Client_SetSyncServerInfo(info);
 			}
 		}
 
@@ -227,6 +233,17 @@ void ARCLobbyGameState::OnRep_PlayerList()
 	{
 		OnPlayersListChanged.Broadcast(PlayersDataList);
 	}
+}
+
+void ARCLobbyGameState::OnRep_SyncServerInfo()
+{
+	
+	if (OnSyncInfoChanged.IsBound())
+	{
+		OnSyncInfoChanged.Broadcast(SyncServerInfo);
+	}
+	
+	
 }
 
 void ARCLobbyGameState::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const

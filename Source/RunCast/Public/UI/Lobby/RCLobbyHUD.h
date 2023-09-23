@@ -34,11 +34,17 @@ protected:
 	UFUNCTION()
 	void CreateWidgetByLobbyState(ELobbyState state);
 
+	UFUNCTION()
+	void DelayDeathMatchLobbyCreation();
+
 	UPROPERTY()
 	UUserWidget* CurrentWidget;
 
 	UPROPERTY()
 	UUserWidget* PreviosWidget;
+
+	UPROPERTY()
+	FTimerHandle DeathMatchDelayTimer;
 
 	UFUNCTION()
 	void CreateWidgetByClass(TSubclassOf<UUserWidget> widgetClass);

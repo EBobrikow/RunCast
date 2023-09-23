@@ -83,7 +83,7 @@ void UServerManager::HeartBeatSend(FServerInfo& serverInfo)
 	FString param4 = "MaxPlayers: '" + FString::FromInt(serverInfo.MaxPlayers) + "',";
 	FString res = "{ " + action + param + param0 + param1 + param2 + param3 + param4 + " }";
 
-	UE_LOG(LogTemp, Warning, TEXT("UServerManager::HeartBeatSend Server info \n %s"), *res);
+	UE_LOG(LogTemp, Log, TEXT("UServerManager::HeartBeatSend Server info \n %s"), *res);
 
 	UHeartBeatHandler* newRequest = NewObject<UHeartBeatHandler>(this);
 	newRequest->OnRequestFinished.AddDynamic(this, &UServerManager::HeartBeatRecieve);
@@ -135,7 +135,6 @@ void UServerManager::RequestSessionInfoByPortHandle(UMessageHandler* newSessionO
 
 void UServerManager::HeartBeatRecieve(UMessageHandler* newSessionObj)
 {
-	UE_LOG(LogTemp, Warning, TEXT("UServerManager::HeartBeatRecieve "));
 	UHeartBeatHandler* responce = Cast<UHeartBeatHandler>(newSessionObj);
 	if (responce)
 	{

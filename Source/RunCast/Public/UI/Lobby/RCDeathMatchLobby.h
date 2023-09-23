@@ -49,6 +49,9 @@ protected:
 	UFUNCTION()
 	void CreatePlayerList(TArray<FPlayerData> list);
 
+	UFUNCTION()
+	void FillServerInfo(FServerInfo info);
+
 	UPROPERTY()
 	TArray<FPlayerData> localPlayerList;
 	

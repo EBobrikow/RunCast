@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerController.h"
 #include "Core/RCGameInstance.h"
+#include "Character/ALSPlayerController.h"
 //#include "Core/Lobby/RCLobbyGameState.h"
 #include "Net/UnrealNetwork.h"
 #include "RCPlayerController.generated.h"
@@ -14,7 +15,7 @@
  * 
  */
 UCLASS()
-class RUNCAST_API ARCPlayerController : public APlayerController
+class RUNCAST_API ARCPlayerController : public AALSPlayerController
 {
 	GENERATED_BODY()
 	

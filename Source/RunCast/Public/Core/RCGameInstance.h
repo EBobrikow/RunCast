@@ -45,6 +45,9 @@ public:
 	FServerInfo GetRemoteServerInfo() const;
 
 	UFUNCTION()
+	FServerInfo GetCurrentServerInfo() const;
+
+	UFUNCTION()
 	FPlayerData GetPlayerData() const;
 
 	UFUNCTION()

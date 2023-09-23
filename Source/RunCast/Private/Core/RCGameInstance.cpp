@@ -63,6 +63,14 @@ FServerInfo URCGameInstance::GetRemoteServerInfo() const
 	return RemoteServerInfo;
 }
 
+FServerInfo URCGameInstance::GetCurrentServerInfo() const
+{
+#if UE_SERVER
+	return CurrentServerInfo;
+#endif
+	return FServerInfo();
+}
+
 FPlayerData URCGameInstance::GetPlayerData() const
 {
 	return LocalPlayerData;

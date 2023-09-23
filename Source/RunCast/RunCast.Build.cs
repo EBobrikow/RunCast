@@ -17,7 +17,8 @@ public class RunCast : ModuleRules
 				"InputCore",
 				"WebSockets",
                 "Json",
-                "JsonUtilities"
+                "JsonUtilities",
+                "ALSV4_CPP"
             });
 
 		PrivateDependencyModuleNames.AddRange(new string[] {  });

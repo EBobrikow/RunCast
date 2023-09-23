@@ -3,6 +3,7 @@
 
 #include "UI/Lobby/RCLobbyHUD.h"
 #include "Blueprint/WidgetBlueprintLibrary.h"
+#include "Core/Lobby/RCLobbyPC.h"
 
 void ARCLobbyHUD::BeginPlay()
 {
@@ -39,12 +40,26 @@ void ARCLobbyHUD::CreateWidgetByLobbyState(ELobbyState state)
 		break;
 	case ELobbyState::DeathMatchLobby:
 
+		
+		if (ARCLobbyPC* PC = Cast<ARCLobbyPC>(GetOwner()))
+		{
+			if (PC->GetPlayerData().PlayerAuthority == ELobbyPlayerAuthority::GameMaster)
+			{
+				GetWorld()->GetTimerManager().SetTimer(DeathMatchDelayTimer, this, &ARCLobbyHUD::DelayDeathMatchLobbyCreation, 1.2f, false);
+				break;
+			}
+		}
 		CreateWidgetByClass(DeathMatchLobbyWidgetClass);
 
 		break;
 	default:
 		break;
 	}
+}
+
+void ARCLobbyHUD::DelayDeathMatchLobbyCreation()
+{
+	CreateWidgetByClass(DeathMatchLobbyWidgetClass);
 }
 
 void ARCLobbyHUD::CreateWidgetByClass(TSubclassOf<UUserWidget> widgetClass)
@@ -56,7 +71,7 @@ void ARCLobbyHUD::CreateWidgetByClass(TSubclassOf<UUserWidget> widgetClass)
 			CurrentWidget->RemoveFromViewport();
 		}
 		PreviosWidget = CurrentWidget;
-		auto PC = GetOwner();
+		
 		CurrentWidget = CreateWidget<UUserWidget>(Cast<APlayerController>(GetOwner()), widgetClass);
 		CurrentWidget->AddToViewport();
 	}

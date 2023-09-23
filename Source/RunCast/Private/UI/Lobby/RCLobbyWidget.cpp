@@ -56,33 +56,18 @@ void URCLobbyWidget::OnReturnClicked()
 
 void URCLobbyWidget::OnCreateClicked()
 {
-	/*ARCLobbyGameState* GameState = GetWorld()->GetGameState<ARCLobbyGameState>();
-	if (GameState)
-	{
-
-		FServerInfo info = GameState->GetSyncServerInfo();
-
-		info.MapName = currentMap.MapName;
-		info.MatchType = currentMatch.MatchName;
-		info.MaxPlayers = MaxPlayers;
-		GameState->Server_UpdateServerInfo(info);
-		
-	}*/
-
 	ARCLobbyPC* own = Cast<ARCLobbyPC>(GetOwningPlayer());
 	if (own)
 	{
 		own->Server_CreateMatchClicked(currentMap, currentMatch, MaxPlayers);
-		/*own->Server_SetupMatchConfig(currentMap, currentMatch);
-
-		if (currentMatch.MatchType == EMatchType::DeathMatch)
-		{
-			own->Server_SetNewLobbyState(ELobbyState::DeathMatchLobby);
-		}*/
 	}
 	
-
-	
+	if (CreateBtn)
+	{
+		CreateBtn->SetIsEnabled(false);
+		GetWorld()->GetTimerManager().ClearTimer(ButtonUnlockTimer);
+		GetWorld()->GetTimerManager().SetTimer(ButtonUnlockTimer, this, &URCLobbyWidget::UnlockButton, 2.0f, false);
+	}
 }
 
 void URCLobbyWidget::OnMatchSelectionChanged(FString sItem)
@@ -163,6 +148,15 @@ void URCLobbyWidget::SetServerName()
 			GetWorld()->GetTimerManager().ClearTimer(ServerNameAwaitTimer);
 			GetWorld()->GetTimerManager().SetTimer(ServerNameAwaitTimer, this, &URCLobbyWidget::SetServerName, 0.01f, false, AwaitRate);
 		}
+	}
+}
+
+void URCLobbyWidget::UnlockButton()
+{
+	if (CreateBtn)
+	{
+		CreateBtn->SetIsEnabled(true);
+		GetWorld()->GetTimerManager().ClearTimer(ButtonUnlockTimer);
 	}
 }
 

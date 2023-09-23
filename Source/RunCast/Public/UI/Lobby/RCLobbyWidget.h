@@ -69,8 +69,14 @@ protected:
 	UFUNCTION(BlueprintCallable)
 	void SetServerName();
 
+	UFUNCTION()
+	void UnlockButton();
+
 	UPROPERTY()
 	FTimerHandle ServerNameAwaitTimer;
+
+	UPROPERTY()
+	FTimerHandle ButtonUnlockTimer;
 
 	UPROPERTY()
 	float AwaitRate = 0.2f;
