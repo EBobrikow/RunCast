@@ -54,5 +54,11 @@ protected:
 
 	UPROPERTY()
 	TArray<FPlayerData> localPlayerList;
+
+	UPROPERTY()
+	FTimerHandle FillInfoTimer;
+
+	UFUNCTION()
+	void FillInfo();
 	
 };

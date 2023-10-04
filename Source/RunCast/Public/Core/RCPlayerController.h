@@ -46,4 +46,6 @@ protected:
 
 	UPROPERTY(Replicated)
 	FPlayerData PlayerData;
+
+	virtual void LightAttack(bool val) override;
 };

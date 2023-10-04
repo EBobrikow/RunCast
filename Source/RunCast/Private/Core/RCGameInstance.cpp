@@ -40,7 +40,7 @@ void URCGameInstance::StartHeartBeat(AGameModeBase* gameMode)
 	UE_LOG(LogTemp, Warning, TEXT("URCGameInstance::StartHeartBeat"));
 	cashedGameMode = gameMode;
 	GetServerManager()->OnHeartBeatInfoRecieved.Clear();
-	GetServerManager()->OnHeartBeatInfoRecieved.AddDynamic(this, &URCGameInstance::HeartBeatPong);
+	GetServerManager()->OnHeartBeatInfoRecieved.AddUniqueDynamic(this, &URCGameInstance::HeartBeatPong);
 
 	HeartBeatPing();
 }

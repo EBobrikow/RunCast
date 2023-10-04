@@ -22,12 +22,9 @@ void URCDeathMatchLobby::NativeConstruct()
 		localPlayerList = GameState->GetPlayerDataList();
 		GameState->OnPlayersListChanged.AddDynamic(this, &URCDeathMatchLobby::CreatePlayerList);
 		CreatePlayerList(localPlayerList);
-
-		GameState->OnSyncInfoChanged.AddDynamic(this, &URCDeathMatchLobby::FillServerInfo);
-		FServerInfo  servInfo = GameState->GetSyncServerInfo();
-		FillServerInfo(servInfo);
-		
 	}
+
+	FillInfo();
 
 	ARCLobbyPC* PC = Cast<ARCLobbyPC>(GetOwningPlayer());
 	if (PC)
@@ -71,7 +68,7 @@ void URCDeathMatchLobby::CreatePlayerList(TArray<FPlayerData> list)
 void URCDeathMatchLobby::FillServerInfo(FServerInfo info)
 {
 	FString servName = ServerNameText->GetText().ToString();
-	if (info.Id != -1 && servName != info.ServerName)
+	if (info.Id != -1)
 	{
 		if (ServerNameText)
 		{
@@ -86,4 +83,25 @@ void URCDeathMatchLobby::FillServerInfo(FServerInfo info)
 			MapNameText->SetText(FText::FromString(info.MapName));
 		}
 	}
+}
+
+void URCDeathMatchLobby::FillInfo()
+{
+	ARCLobbyGameState* GameState = GetWorld()->GetGameState<ARCLobbyGameState>();
+	if (GameState)
+	{
+		FServerInfo  servInfo = GameState->GetSyncServerInfo();
+		if (servInfo.MapName.IsEmpty() && servInfo.MatchType.IsEmpty())
+		{
+			GetWorld()->GetTimerManager().ClearTimer(FillInfoTimer);
+			GetWorld()->GetTimerManager().SetTimer(FillInfoTimer, this, &URCDeathMatchLobby::FillInfo, 1.0f, false);
+		}
+		else
+		{
+			FillServerInfo(servInfo);
+		}
+
+		
+	}
+	
 }

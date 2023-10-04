@@ -21,4 +21,8 @@ public:
 	
 	UFUNCTION()
 	void CreateCharacter();
+
+protected: 
+
+	
 };

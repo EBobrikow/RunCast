@@ -187,6 +187,8 @@ struct FCurrentServerInfo
 
 };
 
+
+
 UCLASS()
 class RUNCAST_API UGlobals : public UObject
 {

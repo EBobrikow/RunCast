@@ -4,6 +4,7 @@
 #include "Core/RCPlayerController.h"
 #include "Kismet/GameplayStatics.h"
 #include "Core/Lobby/RCLobbyGameState.h"
+#include "Characters/RCCharacter.h"
 
 ARCPlayerController::ARCPlayerController()
 {
@@ -72,6 +73,17 @@ void ARCPlayerController::Client_SetupPlayerData_Implementation(const FPlayerDat
 void ARCPlayerController::UpdatePlayerToServer()
 {
 	Server_UpdatePlayerData(PlayerData);
+}
+
+void ARCPlayerController::LightAttack(bool val)
+{
+	UE_LOG(LogTemp, Warning, TEXT("ARCPlayerController::LightAttack"));
+
+	ARCCharacter* character = Cast<ARCCharacter>(PossessedCharacter);
+	if (character)
+	{
+		character->LightAttackAction(val);
+	}
 }
 
 void ARCPlayerController::Client_PreservePlayerData_Implementation(const FPlayerData& playerData)

@@ -19,7 +19,7 @@ void ARCDeathMatchPC::CreateCharacter()
 		ARCDeathMatchGM* GM = Cast<ARCDeathMatchGM>(UGameplayStatics::GetGameMode(this));
 		if (GM)
 		{
-			UClass* pawnClass = GM->GetDefaultPawnClassForController(this);
+			UClass* pawnClass = GM->GetDefaultCharacterClass();
 			if (pawnClass)
 			{
 				TArray<AActor*> FoundActors;
@@ -36,8 +36,16 @@ void ARCDeathMatchPC::CreateCharacter()
 						Possess(pawn);
 					}
 				}
+				else
+				{
+					UE_LOG(LogTemp, Warning, TEXT("ARCDeathMatchPC::CreateCharacter No spawn points was found"));
+				}
 
 				
+			}
+			else
+			{
+				UE_LOG(LogTemp, Warning, TEXT("ARCDeathMatchPC::CreateCharacter Invalid pawn class to spawn"));
 			}
 		}
 	}

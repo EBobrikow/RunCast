@@ -138,6 +138,7 @@ void UServerManager::HeartBeatRecieve(UMessageHandler* newSessionObj)
 	UHeartBeatHandler* responce = Cast<UHeartBeatHandler>(newSessionObj);
 	if (responce)
 	{
+		responce->OnRequestFinished.Clear();
 		if (OnHeartBeatInfoRecieved.IsBound())
 		{
 			OnHeartBeatInfoRecieved.Broadcast(responce->heartBeatServersInfo);

@@ -7,3 +7,8 @@ void ARCDeathMatchGM::BeginPlay()
 {
 	Super::BeginPlay();
 }
+
+TSubclassOf<APawn> ARCDeathMatchGM::GetDefaultCharacterClass() const
+{
+	return DefaultCharacterClass;
+}

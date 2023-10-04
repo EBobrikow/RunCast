@@ -18,6 +18,11 @@ public:
 
 	virtual void BeginPlay() override;
 
-	
-	
+	UFUNCTION(BlueprintCallable)
+	TSubclassOf<APawn> GetDefaultCharacterClass() const;
+
+protected:
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Character classes")
+	TSubclassOf<APawn> DefaultCharacterClass;
 };
