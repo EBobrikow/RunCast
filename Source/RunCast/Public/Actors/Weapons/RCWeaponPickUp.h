@@ -6,7 +6,7 @@
 #include "GameFramework/Actor.h"
 #include "Components/SphereComponent.h"
 #include "Components/StaticMeshComponent.h"
-#include "Actors/BaseWeapon.h"
+#include "Actors/Weapons/BaseWeapon.h"
 #include "RCWeaponPickUp.generated.h"
 
 UCLASS()
@@ -19,7 +19,7 @@ public:
 	ARCWeaponPickUp();
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Weapon")
-	UStaticMeshComponent* MaseMesh = nullptr;
+	UStaticMeshComponent* BaseMesh = nullptr;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Weapon")
 	USphereComponent* BaseSphere = nullptr;
@@ -36,6 +36,15 @@ protected:
 
 	UFUNCTION(BlueprintCallable)
 	void OnEndOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
+
+	UPROPERTY()
+	FTimerHandle PickUpResetTimer;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	float ResetTime = 15.0f;
+
+	UFUNCTION()
+	void ResetSpawn();
 
 public:	
 	// Called every frame

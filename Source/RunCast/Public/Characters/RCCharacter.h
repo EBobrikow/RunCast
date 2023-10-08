@@ -4,14 +4,15 @@
 
 #include "CoreMinimal.h"
 #include "Character/ALSCharacter.h"
-
+#include "Actors/Weapons/BaseWeapon.h"
+#include "Interfaces/DamagebleInterface.h"
 #include "RCCharacter.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class RUNCAST_API ARCCharacter : public AALSCharacter
+class RUNCAST_API ARCCharacter : public AALSCharacter, public IDamagebleInterface
 {
 	GENERATED_BODY()
 
@@ -28,6 +29,13 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void SetAttackAlpha(float alpha);
 
+	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
+	void SpawnBaseWeapon(TSubclassOf<ABaseWeapon> WeaponClass);
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	TSubclassOf<ABaseWeapon> DefaultWeaponClass;
+
+	virtual void ApplyDamage(float dmg) override;
 protected: 
 
 	

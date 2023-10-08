@@ -20,3 +20,8 @@ void ARCCharacter::SetAttackAlpha(float alpha)
 {
 	SetAttackBlendAlpha(alpha);
 }
+
+void ARCCharacter::ApplyDamage(float dmg)
+{
+	UE_LOG(LogTemp, Warning, TEXT("Character take damage %f"), dmg);
+}
