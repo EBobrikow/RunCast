@@ -5,6 +5,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Kismet/KismetSystemLibrary.h"
+#include "Characters/RCCharacter.h"
 
 // Sets default values
 ABaseWeapon::ABaseWeapon()
@@ -30,6 +31,21 @@ void ABaseWeapon::Server_WeaponFire_Implementation()
 	WeaponFire();
 }
 
+void ABaseWeapon::Multicast_PlayMontage_Implementation(UAnimMontage* montage)
+{
+	if (WeaponSkeletalMesh)
+	{
+		auto animInst = WeaponSkeletalMesh->GetAnimInstance();
+		if (animInst && montage)
+		{
+			float lenth = animInst->Montage_Play(montage);
+			UE_LOG(LogTemp, Warning, TEXT("Fire montage lenth = %f"), lenth);
+
+		}
+	}
+	
+}
+
 // Called when the game starts or when spawned
 void ABaseWeapon::BeginPlay()
 {
@@ -39,23 +55,23 @@ void ABaseWeapon::BeginPlay()
 
 void ABaseWeapon::WeaponFire()
 {
-	//if (FireSound)
-	//{
-	//	UGameplayStatics::PlaySoundAtLocation(GetWorld(), FireSound, GetActorLocation());
-	//}
-
+	
 	if (WeaponSkeletalMesh && bCanAttack)
 	{
-		auto animInst = WeaponSkeletalMesh->GetAnimInstance();
-		if (animInst && FireMontage)
+		Multicast_PlayMontage(FireMontage);
+
+
+		auto cameraManager = UGameplayStatics::GetPlayerCameraManager(GetWorld(), 0);
+		if (ARCCharacter* character = Cast<ARCCharacter>(OwnerCharacter))
 		{
-			float lenth = animInst->Montage_Play(FireMontage);
-			UE_LOG(LogTemp, Warning, TEXT("Fire montage lenth = %f"), lenth);
-			
+			APlayerController* PC = Cast<APlayerController>(character->Controller);
+			if (PC)
+			{
+				cameraManager = PC->PlayerCameraManager;
+			}
 		}
 
 		FVector socketLoc = WeaponSkeletalMesh->GetSocketLocation(FName("Launch"));
-		auto cameraManager = UGameplayStatics::GetPlayerCameraManager(GetWorld(),0);
 		if (cameraManager)
 		{
 			FRotator cameraRot = cameraManager->GetCameraRotation();
@@ -74,7 +90,8 @@ void ABaseWeapon::WeaponFire()
 			FTransform transform = UKismetMathLibrary::MakeTransform(socketLoc, finaleRot);
 			if (ProjectileClass)
 			{
-				GetWorld()->SpawnActor<ABaseProjectile>(ProjectileClass, transform);
+				auto bullet = GetWorld()->SpawnActor<ABaseProjectile>(ProjectileClass, transform);
+				bullet->SetReplicates(true);
 				
 				bCanAttack = false;
 				
@@ -97,6 +114,13 @@ void ABaseWeapon::CooldownOff()
 void ABaseWeapon::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+	if (WeaponSkeletalMesh)
+	{
+		FVector socketLoc = WeaponSkeletalMesh->GetSocketLocation(FName("Launch"));//("Launch"));
+		UE_LOG(LogTemp, Warning, TEXT("WeaponSkeletalMesh location = %f, %f, %f"), socketLoc.X, socketLoc.Y, socketLoc.Z);
+	}
+	
 
 }
 

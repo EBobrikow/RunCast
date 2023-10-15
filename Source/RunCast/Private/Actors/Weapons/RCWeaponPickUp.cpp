@@ -36,8 +36,9 @@ void ARCWeaponPickUp::OnBeginOverlap(UPrimitiveComponent* OverlappedComp, AActor
 	ARCCharacter* Char = Cast<ARCCharacter>(OtherActor);
 	if (Char)
 	{
-		Char->SpawnBaseWeapon(WeaponClass);
-
+		Char->Server_SpawnBaseWeapon(WeaponClass);
+		//Char->SpawnBaseWeapon(WeaponClass);
+		
 		/*BaseSphere->OnComponentBeginOverlap.Clear();
 	
 		GetWorld()->GetTimerManager().ClearTimer(PickUpResetTimer);

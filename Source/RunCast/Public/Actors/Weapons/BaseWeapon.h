@@ -42,6 +42,11 @@ public:
 	UFUNCTION(Server, Reliable, BlueprintCallable)
 	void Server_WeaponFire();
 
+	UFUNCTION(NetMulticast, Reliable)
+	void Multicast_PlayMontage(UAnimMontage* montage);
+
+	UPROPERTY()
+	ACharacter* OwnerCharacter = nullptr;
 
 protected:
 	// Called when the game starts or when spawned

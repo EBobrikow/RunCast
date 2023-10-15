@@ -75,16 +75,24 @@ void ARCPlayerController::UpdatePlayerToServer()
 	Server_UpdatePlayerData(PlayerData);
 }
 
-void ARCPlayerController::LightAttack(bool val)
-{
-	UE_LOG(LogTemp, Warning, TEXT("ARCPlayerController::LightAttack"));
+//void ARCPlayerController::Server_LightAttack(const bool val)
+//{
+//	if (HasAuthority())
+//	{
+//		LightAttack(val);
+//	}
+//}
 
-	ARCCharacter* character = Cast<ARCCharacter>(PossessedCharacter);
-	if (character)
-	{
-		character->LightAttackAction(val);
-	}
-}
+//void ARCPlayerController::LightAttack(bool val)
+//{
+//	UE_LOG(LogTemp, Warning, TEXT("ARCPlayerController::LightAttack"));
+//
+//	ARCCharacter* character = Cast<ARCCharacter>(PossessedCharacter);
+//	if (character)
+//	{
+//		character->Server_LightAttackAction(val);
+//	}
+//}
 
 void ARCPlayerController::Client_PreservePlayerData_Implementation(const FPlayerData& playerData)
 {

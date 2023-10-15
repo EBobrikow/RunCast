@@ -42,10 +42,13 @@ public:
 	UFUNCTION()
 	void UpdatePlayerToServer();
 
+	//UFUNCTION(Server, Reliable)
+	//void Server_LightAttack(const bool val);
+
 protected: 
 
 	UPROPERTY(Replicated)
 	FPlayerData PlayerData;
 
-	virtual void LightAttack(bool val) override;
+	//virtual void LightAttack(bool val) override;
 };

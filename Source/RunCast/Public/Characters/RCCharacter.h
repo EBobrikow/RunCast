@@ -6,6 +6,9 @@
 #include "Character/ALSCharacter.h"
 #include "Actors/Weapons/BaseWeapon.h"
 #include "Interfaces/DamagebleInterface.h"
+#include "Components/HealthComponent.h"
+#include "Components/ChildActorComponent.h"
+#include "Net/UnrealNetwork.h"
 #include "RCCharacter.generated.h"
 
 /**
@@ -22,21 +25,35 @@ public:
 
 	virtual void BeginPlay() override;
 	
-
-	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
-	void LightAttackAction(bool val);
-
-	UFUNCTION(BlueprintCallable)
-	void SetAttackAlpha(float alpha);
-
-	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
+	UFUNCTION(BlueprintImplementableEvent)
 	void SpawnBaseWeapon(TSubclassOf<ABaseWeapon> WeaponClass);
+
+	UFUNCTION(Server, Reliable)
+	void Server_LightAttackAction(const bool val);
+
+	UFUNCTION(NetMulticast, Reliable)
+	void Multicast_SetAnimState(EALSOverlayState overlay);
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	ABaseWeapon* HoldWeaponRef;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	TSubclassOf<ABaseWeapon> DefaultWeaponClass;
 
+	UFUNCTION(Server, Reliable)
+	void Server_SpawnBaseWeapon(TSubclassOf<ABaseWeapon> WeaponClass);
+
 	virtual void ApplyDamage(float dmg) override;
 protected: 
 
-	
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	UHealthComponent* HealthComponent = nullptr;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	UChildActorComponent* ChildActorComponent = nullptr;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	TSubclassOf<ABaseWeapon> CurrentWeaponClass;
+
+	virtual void AttackActionBase(bool val) override;
 };
