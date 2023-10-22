@@ -4,6 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/HUD.h"
+#include "UI/Common/RCGameOverlay.h"
+#include "Characters/RCCharacter.h"
 #include "RCDeathMatchHUD.generated.h"
 
 /**
@@ -17,5 +19,26 @@ class RUNCAST_API ARCDeathMatchHUD : public AHUD
 public: 
 
 	virtual void BeginPlay() override;
+	virtual void Tick(float DeltaTime) override;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	TSubclassOf<URCGameOverlay> GameOverlayClass;
+
+	UFUNCTION()
+	void UpdateHealthBar(float val);
+
+	UFUNCTION()
+	float GetCharacterHP();
+
+protected: 
+
+	UPROPERTY()
+	URCGameOverlay* GameOverlayWidget = nullptr;
+
+	UPROPERTY()
+	ARCCharacter* CharacterRef = nullptr;
+
+
+	
 	
 };

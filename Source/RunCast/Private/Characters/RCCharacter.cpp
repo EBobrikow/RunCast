@@ -15,6 +15,8 @@ ARCCharacter::ARCCharacter(const FObjectInitializer& ObjectInitializer)
 void ARCCharacter::BeginPlay()
 {
 	Super::BeginPlay();
+	GetWorld()->GetTimerManager().ClearTimer(DefWeaponSpawnDelay);
+	GetWorld()->GetTimerManager().SetTimer(DefWeaponSpawnDelay, this, &ARCCharacter::SpawnDefaultWeapon, 1.0f, false);
 }
 
 void ARCCharacter::Multicast_SetAnimState_Implementation(EALSOverlayState overlay)
@@ -22,7 +24,7 @@ void ARCCharacter::Multicast_SetAnimState_Implementation(EALSOverlayState overla
 	
 	SetOverlayState(overlay);
 	AimAction(true);
-	//Server_SetRotationMode(rotation, true);
+	//Server_SetRotationMode(EALSRotationMode::Aiming, true);
 	
 	
 }
@@ -76,6 +78,13 @@ void ARCCharacter::Server_SpawnBaseWeapon_Implementation(TSubclassOf<ABaseWeapon
 	
 }
 
+void ARCCharacter::ApplyDamageBP(float dmg)
+{
+	ApplyDamage(dmg);
+}
+
+
+
 void ARCCharacter::ApplyDamage(float dmg)
 {
 	UE_LOG(LogTemp, Warning, TEXT("Character take damage %f"), dmg);
@@ -83,6 +92,16 @@ void ARCCharacter::ApplyDamage(float dmg)
 	{
 		HealthComponent->Multicast_DoDamage(dmg);
 	}
+}
+
+UHealthComponent* ARCCharacter::GetHealthComponent() const
+{
+	return HealthComponent;
+}
+
+void ARCCharacter::SpawnDefaultWeapon()
+{
+	Server_SpawnBaseWeapon(DefaultWeaponClass);
 }
 
 void ARCCharacter::AttackActionBase(bool val)

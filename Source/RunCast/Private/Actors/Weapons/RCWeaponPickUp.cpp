@@ -26,7 +26,7 @@ ARCWeaponPickUp::ARCWeaponPickUp()
 void ARCWeaponPickUp::BeginPlay()
 {
 	Super::BeginPlay();
-	
+	Multicast_DrawSphere();
 }
 
 void ARCWeaponPickUp::OnBeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
@@ -52,6 +52,11 @@ void ARCWeaponPickUp::OnEndOverlap(UPrimitiveComponent* OverlappedComp, AActor* 
 
 void ARCWeaponPickUp::ResetSpawn()
 {
+}
+
+void ARCWeaponPickUp::Multicast_DrawSphere_Implementation()
+{
+	DrawDebugSphere(GetWorld(), BaseMesh->GetComponentLocation(), 100.0f, 6, FColor::Cyan);
 }
 
 // Called every frame

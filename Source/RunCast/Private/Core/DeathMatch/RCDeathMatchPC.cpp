@@ -4,6 +4,8 @@
 #include "Core/DeathMatch/RCDeathMatchPC.h"
 #include "Core/DeathMatch/RCDeathMatchGM.h"
 #include "Actors/NetSpawnPoint.h"
+#include "Characters/RCCharacter.h"
+#include "UI/DeathMatch/RCDeathMatchHUD.h"
 
 void ARCDeathMatchPC::BeginPlay()
 {
@@ -34,6 +36,14 @@ void ARCDeathMatchPC::CreateCharacter()
 					if (pawn)
 					{
 						Possess(pawn);
+						if (ARCCharacter* character = Cast<ARCCharacter>(pawn))
+						{
+							auto hp = character->GetHealthComponent();
+							if (hp)
+							{
+								hp->OnActorKilled.AddDynamic(this, &ARCDeathMatchPC::CharacterKilled);
+							}
+						}
 					}
 				}
 				else
@@ -47,6 +57,42 @@ void ARCDeathMatchPC::CreateCharacter()
 			{
 				UE_LOG(LogTemp, Warning, TEXT("ARCDeathMatchPC::CreateCharacter Invalid pawn class to spawn"));
 			}
+		}
+	}
+}
+
+void ARCDeathMatchPC::CharacterKilled()
+{
+	ARCCharacter* character = Cast<ARCCharacter>(PossessedCharacter);
+	if (character)
+	{
+		auto hp = character->GetHealthComponent();
+		if (hp)
+		{
+			hp->OnActorKilled.Clear();
+		}
+
+		character->RagdollAction();
+		character->DisableInput(this);
+		//character->EnableInput(this);
+		GetWorld()->GetTimerManager().ClearTimer(RestartDelay);
+		GetWorld()->GetTimerManager().SetTimer(RestartDelay, this, &ARCDeathMatchPC::Restart, RestartDelayTime, false);
+	}
+	
+}
+
+void ARCDeathMatchPC::Restart()
+{
+	ARCCharacter* character = Cast<ARCCharacter>(PossessedCharacter);
+	if (character)
+	{
+		UnPossess();
+		character->Destroy();
+		CreateCharacter();
+		ARCDeathMatchHUD* hud = Cast<ARCDeathMatchHUD>(GetHUD());
+		if (hud)
+		{
+			hud->UpdateHealthBar(hud->GetCharacterHP());
 		}
 	}
 }

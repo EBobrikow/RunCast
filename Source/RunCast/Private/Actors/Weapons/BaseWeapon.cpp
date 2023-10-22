@@ -6,6 +6,7 @@
 #include "Kismet/KismetMathLibrary.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "Characters/RCCharacter.h"
+#include "DrawDebugHelpers.h"
 
 // Sets default values
 ABaseWeapon::ABaseWeapon()
@@ -17,11 +18,7 @@ ABaseWeapon::ABaseWeapon()
 	RootComponent = DefaultRoot;
 	WeaponSkeletalMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("WeaponSkeletalMesh"));
 	WeaponSkeletalMesh->SetupAttachment(DefaultRoot);
-	//auto transrofm = WeaponSkeletalMesh->GetRelativeTransform();
-	//FVector loc = transrofm.GetTranslation();
-	//loc.Z -= 3.0f;
-	//transrofm.SetTranslation(loc);
-	//WeaponSkeletalMesh->SetRelativeTransform(transrofm);
+	WeaponSkeletalMesh->VisibilityBasedAnimTickOption = EVisibilityBasedAnimTickOption::AlwaysTickPoseAndRefreshBones;
 
 	SetReplicates(true);
 }
@@ -114,13 +111,6 @@ void ABaseWeapon::CooldownOff()
 void ABaseWeapon::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
-	if (WeaponSkeletalMesh)
-	{
-		FVector socketLoc = WeaponSkeletalMesh->GetSocketLocation(FName("Launch"));//("Launch"));
-		UE_LOG(LogTemp, Warning, TEXT("WeaponSkeletalMesh location = %f, %f, %f"), socketLoc.X, socketLoc.Y, socketLoc.Z);
-	}
-	
 
 }
 

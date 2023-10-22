@@ -24,6 +24,12 @@ public:
 	ARCCharacter(const FObjectInitializer& ObjectInitializer);
 
 	virtual void BeginPlay() override;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	ABaseWeapon* HoldWeaponRef;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	TSubclassOf<ABaseWeapon> DefaultWeaponClass;
 	
 	UFUNCTION(BlueprintImplementableEvent)
 	void SpawnBaseWeapon(TSubclassOf<ABaseWeapon> WeaponClass);
@@ -34,16 +40,17 @@ public:
 	UFUNCTION(NetMulticast, Reliable)
 	void Multicast_SetAnimState(EALSOverlayState overlay);
 
-	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	ABaseWeapon* HoldWeaponRef;
-
-	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	TSubclassOf<ABaseWeapon> DefaultWeaponClass;
-
 	UFUNCTION(Server, Reliable)
 	void Server_SpawnBaseWeapon(TSubclassOf<ABaseWeapon> WeaponClass);
 
+	UFUNCTION(BlueprintCallable)
+	void ApplyDamageBP(float dmg);
+
+
 	virtual void ApplyDamage(float dmg) override;
+
+	UHealthComponent* GetHealthComponent() const;
+
 protected: 
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
@@ -54,6 +61,12 @@ protected:
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	TSubclassOf<ABaseWeapon> CurrentWeaponClass;
+
+	UPROPERTY()
+	FTimerHandle DefWeaponSpawnDelay;
+
+	UFUNCTION()
+	void SpawnDefaultWeapon();
 
 	virtual void AttackActionBase(bool val) override;
 };

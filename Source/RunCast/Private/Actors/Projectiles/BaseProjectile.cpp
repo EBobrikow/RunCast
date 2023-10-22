@@ -41,10 +41,17 @@ void ABaseProjectile::OnHitComponent(UPrimitiveComponent* HitComponent, AActor* 
 	{
 		damageble->ApplyDamage(ProjectileDamage);
 	}
-	ApplyHitAfterEffect();
+	Multicast_AfterEffect();
 
 	Destroy();
 }
+
+void ABaseProjectile::Multicast_AfterEffect_Implementation()
+{
+	ApplyHitAfterEffect();
+}
+
+
 
 // Called every frame
 void ABaseProjectile::Tick(float DeltaTime)

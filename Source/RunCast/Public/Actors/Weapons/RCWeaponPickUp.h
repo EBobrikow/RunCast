@@ -7,6 +7,7 @@
 #include "Components/SphereComponent.h"
 #include "Components/StaticMeshComponent.h"
 #include "Actors/Weapons/BaseWeapon.h"
+#include "Net/UnrealNetwork.h"
 #include "RCWeaponPickUp.generated.h"
 
 UCLASS()
@@ -45,6 +46,9 @@ protected:
 
 	UFUNCTION()
 	void ResetSpawn();
+
+	UFUNCTION(NetMulticast, Unreliable)
+	void Multicast_DrawSphere();
 
 public:	
 	// Called every frame

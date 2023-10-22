@@ -41,6 +41,10 @@ protected:
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
 	void ApplyHitAfterEffect();
 
+	UFUNCTION(NetMulticast, Unreliable)
+	void Multicast_AfterEffect();
+
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;

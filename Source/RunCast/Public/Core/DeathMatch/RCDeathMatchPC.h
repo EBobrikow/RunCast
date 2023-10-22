@@ -22,7 +22,19 @@ public:
 	UFUNCTION()
 	void CreateCharacter();
 
+	
+
 protected: 
 
-	
+	UFUNCTION()
+	void CharacterKilled();
+
+	UFUNCTION()
+	void Restart();
+
+	UPROPERTY()
+	float RestartDelayTime = 3.0f;
+
+	UPROPERTY()
+	FTimerHandle RestartDelay;
 };
