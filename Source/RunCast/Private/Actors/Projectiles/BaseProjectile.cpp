@@ -21,6 +21,11 @@ ABaseProjectile::ABaseProjectile()
 	ProjectileMovement = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("ProjectileMovement"));
 }
 
+void ABaseProjectile::SetOwnerCharacter(ACharacter* ownerChar)
+{
+	OwnerCharacter = ownerChar;
+}
+
 // Called when the game starts or when spawned
 void ABaseProjectile::BeginPlay()
 {
@@ -31,7 +36,7 @@ void ABaseProjectile::BeginPlay()
 
 void ABaseProjectile::OnHitComponent(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 {
-	if (OtherActor == this)
+	if (OtherActor == this )//|| Cast<ACharacter>(OtherActor) == OwnerCharacter)
 	{
 		return;
 	}

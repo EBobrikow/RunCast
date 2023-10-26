@@ -11,7 +11,11 @@ void ARCDeathMatchPC::BeginPlay()
 {
 	Super::BeginPlay();
 
-	CreateCharacter();
+	if (IsLocalController())
+	{
+		Server_CreateCharacter();
+	}
+	//CreateCharacter();
 }
 
 void ARCDeathMatchPC::CreateCharacter()
@@ -21,44 +25,27 @@ void ARCDeathMatchPC::CreateCharacter()
 		ARCDeathMatchGM* GM = Cast<ARCDeathMatchGM>(UGameplayStatics::GetGameMode(this));
 		if (GM)
 		{
-			UClass* pawnClass = GM->GetDefaultCharacterClass();
-			if (pawnClass)
+			ARCCharacter* character = Cast<ARCCharacter>(GM->SpawnCharacter(this));
+			if (character)
 			{
-				TArray<AActor*> FoundActors;
-				UGameplayStatics::GetAllActorsOfClass(GetWorld(), ANetSpawnPoint::StaticClass(), FoundActors);
-				if (FoundActors.Num() > 0)
+				Possess(character);
+				auto hp = character->GetHealthComponent();
+				if (hp)
 				{
-					int32 randInd = FMath::RandRange(0, FoundActors.Num()-1);
-					FVector loc = FoundActors[randInd]->GetActorLocation();
-					UE_LOG(LogTemp, Warning, TEXT("Spawn location: %f, %f, %f"), loc.X, loc.Y, loc.Z);
-					FRotator rot = FRotator::ZeroRotator;
-					APawn* pawn = GetWorld()->SpawnActor<APawn>(pawnClass, loc, rot);
-					if (pawn)
-					{
-						Possess(pawn);
-						if (ARCCharacter* character = Cast<ARCCharacter>(pawn))
-						{
-							auto hp = character->GetHealthComponent();
-							if (hp)
-							{
-								hp->OnActorKilled.AddDynamic(this, &ARCDeathMatchPC::CharacterKilled);
-							}
-						}
-					}
+					hp->OnActorKilled.AddDynamic(this, &ARCDeathMatchPC::CharacterKilled);
+					hp->OnHealthUpdate.AddDynamic(this, &ARCDeathMatchPC::HealthUpdate);
+					//HealthUpdate(hp->GetMaxHealth());
+					HealthUpdate(hp->GetCurrentHealth());
 				}
-				else
-				{
-					UE_LOG(LogTemp, Warning, TEXT("ARCDeathMatchPC::CreateCharacter No spawn points was found"));
-				}
-
-				
 			}
-			else
-			{
-				UE_LOG(LogTemp, Warning, TEXT("ARCDeathMatchPC::CreateCharacter Invalid pawn class to spawn"));
-			}
+			
 		}
 	}
+}
+
+void ARCDeathMatchPC::Server_CreateCharacter_Implementation()
+{
+	CreateCharacter();
 }
 
 void ARCDeathMatchPC::CharacterKilled()
@@ -70,6 +57,7 @@ void ARCDeathMatchPC::CharacterKilled()
 		if (hp)
 		{
 			hp->OnActorKilled.Clear();
+			hp->OnHealthUpdate.Clear();
 		}
 
 		character->RagdollAction();
@@ -81,6 +69,20 @@ void ARCDeathMatchPC::CharacterKilled()
 	
 }
 
+void ARCDeathMatchPC::HealthUpdate(float val)
+{
+	Client_UpdateHealthStatus(val);
+}
+
+void ARCDeathMatchPC::Client_UpdateHealthStatus_Implementation(const float hp)
+{
+	ARCDeathMatchHUD* hud = Cast<ARCDeathMatchHUD>(GetHUD());
+	if (hud)
+	{
+		hud->UpdateHealthBar(hp);
+	}
+}
+
 void ARCDeathMatchPC::Restart()
 {
 	ARCCharacter* character = Cast<ARCCharacter>(PossessedCharacter);
@@ -89,10 +91,15 @@ void ARCDeathMatchPC::Restart()
 		UnPossess();
 		character->Destroy();
 		CreateCharacter();
-		ARCDeathMatchHUD* hud = Cast<ARCDeathMatchHUD>(GetHUD());
-		if (hud)
+		
+		/*UHealthComponent* hpComp = character->GetHealthComponent();
+		if (hpComp)
 		{
-			hud->UpdateHealthBar(hud->GetCharacterHP());
-		}
+			Client_UpdateHealthStatus(hpComp->GetCurrentHealth());
+		}*/
+		
+		//Client_UpdateHealthStatus(hud->GetCharacterHP());
+		//hud->UpdateHealthBar(hud->GetCharacterHP());
+		
 	}
 }

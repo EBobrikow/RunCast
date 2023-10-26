@@ -19,8 +19,9 @@ public:
 	// Sets default values for this component's properties
 	UHealthComponent();
 
-	UFUNCTION(/*NetMulticast, Reliable,*/ BlueprintCallable)
+	UFUNCTION(Server, Reliable)
 	void Multicast_DoDamage(const float dmg);
+
 
 	UPROPERTY()
 	FOnActorKilled OnActorKilled;
@@ -30,11 +31,13 @@ public:
 
 	float GetCurrentHealth() const;
 
+	float GetMaxHealth() const;
+
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
 
-	UPROPERTY(/*Replicated,*/ BlueprintReadWrite, VisibleAnywhere)
+	UPROPERTY(Replicated, BlueprintReadWrite, VisibleAnywhere)
 	float CurrentHealth;
 
 	UPROPERTY(Replicated, BlueprintReadWrite, EditAnywhere)

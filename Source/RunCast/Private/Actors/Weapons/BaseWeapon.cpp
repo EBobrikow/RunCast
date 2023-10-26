@@ -59,7 +59,8 @@ void ABaseWeapon::WeaponFire()
 
 
 		auto cameraManager = UGameplayStatics::GetPlayerCameraManager(GetWorld(), 0);
-		if (ARCCharacter* character = Cast<ARCCharacter>(OwnerCharacter))
+		ARCCharacter* character = Cast<ARCCharacter>(OwnerCharacter);
+		if (character)
 		{
 			APlayerController* PC = Cast<APlayerController>(character->Controller);
 			if (PC)
@@ -88,6 +89,7 @@ void ABaseWeapon::WeaponFire()
 			if (ProjectileClass)
 			{
 				auto bullet = GetWorld()->SpawnActor<ABaseProjectile>(ProjectileClass, transform);
+				bullet->SetOwnerCharacter(character);
 				bullet->SetReplicates(true);
 				
 				bCanAttack = false;

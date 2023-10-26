@@ -21,6 +21,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 	TSubclassOf<APawn> GetDefaultCharacterClass() const;
 
+	UFUNCTION()
+	APawn* SpawnCharacter(APlayerController* controller);
+
 protected:
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Character classes")

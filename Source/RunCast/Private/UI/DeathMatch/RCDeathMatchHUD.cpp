@@ -25,7 +25,7 @@ void ARCDeathMatchHUD::BeginPlay()
 					if (hpComp)
 					{
 						GameOverlayWidget->SetHealthBarValue(hpComp->GetCurrentHealth());
-						hpComp->OnHealthUpdate.AddDynamic(this, &ARCDeathMatchHUD::UpdateHealthBar);
+						//hpComp->OnHealthUpdate.AddDynamic(this, &ARCDeathMatchHUD::UpdateHealthBar);
 					}
 				}
 			}

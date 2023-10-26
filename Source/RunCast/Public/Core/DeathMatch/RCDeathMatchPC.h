@@ -3,13 +3,12 @@
 #pragma once
 
 #include "CoreMinimal.h"
-//#include "Character/ALSPlayerController.h"
+#include "Net/UnrealNetwork.h"
 #include "Core/RCPlayerController.h"
 #include "RCDeathMatchPC.generated.h"
 
-/**
- * 
- */
+//DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnHealthStatusUpdate, float, health);
+
 UCLASS()
 class RUNCAST_API ARCDeathMatchPC : public ARCPlayerController
 {
@@ -22,12 +21,21 @@ public:
 	UFUNCTION()
 	void CreateCharacter();
 
+	UFUNCTION(Server, Reliable)
+	void Server_CreateCharacter();
+
 	
 
 protected: 
 
 	UFUNCTION()
 	void CharacterKilled();
+
+	UFUNCTION()
+	void HealthUpdate(float val);
+
+	UFUNCTION(Client, Reliable)
+	void Client_UpdateHealthStatus(const float hp);
 
 	UFUNCTION()
 	void Restart();

@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "Interfaces/DamagebleInterface.h"
+#include "Net/UnrealNetwork.h"
 #include "DynamiteBox.generated.h"
 
 UCLASS()
@@ -36,6 +37,12 @@ protected:
 
 	UFUNCTION(BlueprintCallable)
 	void BigBadaBum(); // Just a name joke XD
+
+	UFUNCTION(Server, Reliable)
+	void Server_TakeDamage();
+
+	UFUNCTION(NetMulticast, Reliable)
+	void Multicast_AfterEffect();
 
 public:	
 	// Called every frame

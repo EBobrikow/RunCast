@@ -19,6 +19,9 @@ public:
 	// Sets default values for this actor's properties
 	ABaseProjectile();
 
+	UFUNCTION()
+	void SetOwnerCharacter(ACharacter* ownerChar);
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -34,6 +37,9 @@ protected:
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Projectile")
 	float ProjectileDamage = 10.0f;
+
+	UPROPERTY()
+	ACharacter* OwnerCharacter = nullptr;
 
 	UFUNCTION(BlueprintCallable)
 	void OnHitComponent(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);

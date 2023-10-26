@@ -15,7 +15,9 @@ UHealthComponent::UHealthComponent()
 	// ...
 }
 
-void UHealthComponent::Multicast_DoDamage(const float dmg)
+
+
+void UHealthComponent::Multicast_DoDamage_Implementation(const float dmg)
 {
 	if (CanTakeDamage)
 	{
@@ -27,6 +29,7 @@ void UHealthComponent::Multicast_DoDamage(const float dmg)
 
 		if (CurrentHealth < 0)
 		{
+			CanTakeDamage = false;
 			if (OnActorKilled.IsBound())
 			{
 				OnActorKilled.Broadcast();
@@ -43,12 +46,18 @@ float UHealthComponent::GetCurrentHealth() const
 	return CurrentHealth;
 }
 
+float UHealthComponent::GetMaxHealth() const
+{
+	return MaxHealth;
+}
+
 // Called when the game starts
 void UHealthComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
 	// ...
+	CurrentHealth = 100.0f;
 	
 }
 
@@ -58,14 +67,14 @@ void UHealthComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActo
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-	CanTakeDamage = CurrentHealth > 0;
+	//CanTakeDamage = CurrentHealth >= 1.0f;
 	// ...
 }
 
 void UHealthComponent::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
-	//DOREPLIFETIME(UHealthComponent, CurrentHealth);
+	DOREPLIFETIME(UHealthComponent, CurrentHealth);
 	DOREPLIFETIME(UHealthComponent, MaxHealth);
 
 }

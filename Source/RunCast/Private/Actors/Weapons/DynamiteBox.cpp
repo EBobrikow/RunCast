@@ -13,11 +13,14 @@ ADynamiteBox::ADynamiteBox()
 	BaseMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("BaseMesh"));
 	RootComponent = BaseMesh;
 
+	SetReplicates(true);
+
 }
 
 void ADynamiteBox::ApplyDamage(float dmg)
 {
-	BigBadaBum();
+	Server_TakeDamage();
+	//BigBadaBum();
 }
 
 // Called when the game starts or when spawned
@@ -65,9 +68,20 @@ void ADynamiteBox::BigBadaBum()
 			}
 		}
 	}
-
-	ApplyEffects();
+	Multicast_AfterEffect();
+	//ApplyEffects();
 	Destroy();
+}
+
+void ADynamiteBox::Server_TakeDamage_Implementation()
+{
+	BigBadaBum();
+}
+
+void ADynamiteBox::Multicast_AfterEffect_Implementation()
+{
+	ApplyEffects();
+	//Destroy();
 }
 
 // Called every frame
