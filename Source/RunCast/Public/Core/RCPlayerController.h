@@ -30,6 +30,8 @@ public:
 
 	virtual FPlayerData GetPlayerData();
 
+	virtual void SetPlayerData(const FPlayerData& data);
+
 	UFUNCTION(Client, Reliable)
 	void Client_PreservePlayerData(const FPlayerData& playerData);
 

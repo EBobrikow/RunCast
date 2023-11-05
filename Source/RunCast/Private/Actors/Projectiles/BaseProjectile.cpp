@@ -3,6 +3,7 @@
 
 #include "Actors/Projectiles/BaseProjectile.h"
 #include "Interfaces/DamagebleInterface.h"
+#include "GameFramework/Character.h"
 
 // Sets default values
 ABaseProjectile::ABaseProjectile()
@@ -36,6 +37,14 @@ void ABaseProjectile::BeginPlay()
 
 void ABaseProjectile::OnHitComponent(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 {
+	if (ACharacter* otherCharacter = Cast<ACharacter>(OtherActor))
+	{
+		if (otherCharacter == OwnerCharacter)
+		{
+			return;
+		}
+	}
+
 	if (OtherActor == this )//|| Cast<ACharacter>(OtherActor) == OwnerCharacter)
 	{
 		return;

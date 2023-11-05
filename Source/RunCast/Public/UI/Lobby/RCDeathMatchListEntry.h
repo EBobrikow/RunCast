@@ -38,6 +38,9 @@ public:
 	UTexture2D* ConnectedPlayerIcon;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	UTexture2D* AiBotIcon;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	UTexture2D* PlayerReadyIcon;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)

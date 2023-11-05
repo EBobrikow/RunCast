@@ -3,6 +3,7 @@
 
 #include "Core/DeathMatch/RCDeathMatchGM.h"
 #include "GameFramework/PlayerStart.h"
+#include "Core/DeathMatch/RCDeathMatchPC.h"
 
 void ARCDeathMatchGM::BeginPlay()
 {
@@ -17,7 +18,15 @@ TSubclassOf<APawn> ARCDeathMatchGM::GetDefaultCharacterClass() const
 APawn* ARCDeathMatchGM::SpawnCharacter(APlayerController* controller)
 {
 	APawn* pawn = nullptr;
-	UClass* pawnClass = GetDefaultCharacterClass(); // replace part to get pawn class from PC
+	//UClass* pawnClass = GetDefaultCharacterClass();
+
+	ARCDeathMatchPC* DMController = Cast<ARCDeathMatchPC>(controller);
+	UClass* pawnClass = DMController->GetCharacterClass();
+
+#if WITH_EDITOR
+	//pawnClass = GetDefaultCharacterClass();
+#endif
+	 
 	if (pawnClass)
 	{
 		TArray<AActor*> FoundActors;

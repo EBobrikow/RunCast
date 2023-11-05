@@ -81,6 +81,16 @@ void URCGameInstance::SetPlayerData(const FPlayerData& name)
 	LocalPlayerData = name;
 }
 
+void URCGameInstance::SetAIPlayersData(TArray<FPlayerData> data)
+{
+	AIPlayersDataList = data;
+}
+
+TArray<FPlayerData> URCGameInstance::GetAIPlayersData() const
+{
+	return AIPlayersDataList;
+}
+
 
 void URCGameInstance::HeartBeatPing()
 {

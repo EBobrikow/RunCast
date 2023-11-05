@@ -4,7 +4,7 @@
 #include "Core/DeathMatch/RCDeathMatchPC.h"
 #include "Core/DeathMatch/RCDeathMatchGM.h"
 #include "Actors/NetSpawnPoint.h"
-#include "Characters/RCCharacter.h"
+
 #include "UI/DeathMatch/RCDeathMatchHUD.h"
 
 void ARCDeathMatchPC::BeginPlay()
@@ -13,9 +13,20 @@ void ARCDeathMatchPC::BeginPlay()
 
 	if (IsLocalController())
 	{
-		Server_CreateCharacter();
+		URCGameInstance* gameInst = Cast<URCGameInstance>(UGameplayStatics::GetGameInstance(this));
+		if (gameInst)
+		{
+			FPlayerData data = gameInst->GetPlayerData();
+			Server_SetPlayerData(data);
+			CharacterClass = data.SelectedCharacterClass;
+		}
+#if WITH_EDITOR
+		CharacterClass = DefaultCharacterClass;
+#endif
+
+		Server_CreateCharacter(CharacterClass);//CharacterClass
 	}
-	//CreateCharacter();
+	
 }
 
 void ARCDeathMatchPC::CreateCharacter()
@@ -43,9 +54,15 @@ void ARCDeathMatchPC::CreateCharacter()
 	}
 }
 
-void ARCDeathMatchPC::Server_CreateCharacter_Implementation()
+void ARCDeathMatchPC::Server_CreateCharacter_Implementation(TSubclassOf<ARCCharacter> charClass)
 {
+	CharacterClass = charClass;
 	CreateCharacter();
+}
+
+UClass* ARCDeathMatchPC::GetCharacterClass() const
+{
+	return CharacterClass;
 }
 
 void ARCDeathMatchPC::CharacterKilled()
@@ -53,16 +70,17 @@ void ARCDeathMatchPC::CharacterKilled()
 	ARCCharacter* character = Cast<ARCCharacter>(PossessedCharacter);
 	if (character)
 	{
-		auto hp = character->GetHealthComponent();
+		character->KillCharacter();
+		/*auto hp = character->GetHealthComponent();
 		if (hp)
 		{
 			hp->OnActorKilled.Clear();
 			hp->OnHealthUpdate.Clear();
 		}
 
-		character->RagdollAction();
+		character->RagdollAction();*/
 		character->DisableInput(this);
-		//character->EnableInput(this);
+
 		GetWorld()->GetTimerManager().ClearTimer(RestartDelay);
 		GetWorld()->GetTimerManager().SetTimer(RestartDelay, this, &ARCDeathMatchPC::Restart, RestartDelayTime, false);
 	}

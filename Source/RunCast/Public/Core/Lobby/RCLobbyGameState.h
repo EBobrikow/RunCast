@@ -45,6 +45,11 @@ public:
 	UFUNCTION(Client, Reliable)
 	void Client_SetSyncServerInfo(const FServerInfo& info);
 
+	UFUNCTION(Server, Reliable)
+	void Server_AddAIBot(const FPlayerData& AIPlayerData);
+
+	UFUNCTION(Server, Reliable)
+	void Server_RemoveAIBot();
 	
 	UPROPERTY()
 	FOnLobbyStateChanged OnLobbyStateChanged;
@@ -130,5 +135,7 @@ private:
 	UPROPERTY(ReplicatedUsing = OnRep_PlayerList)
 	TArray<FPlayerData> PlayersDataList;
 
+	UPROPERTY()
+	TArray<FPlayerData> AIDataList;
 	
 };

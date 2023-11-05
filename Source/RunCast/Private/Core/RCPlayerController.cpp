@@ -37,11 +37,21 @@ void ARCPlayerController::Server_SetPlayerData_Implementation(const FPlayerData&
 FPlayerData ARCPlayerController::GetPlayerData()
 {
 	URCGameInstance* GameInstancePtr = Cast<URCGameInstance>(UGameplayStatics::GetGameInstance(this));
-	if (GameInstancePtr && !HasAuthority())
+	if (GameInstancePtr && IsLocalController())
 	{
 		PlayerData = GameInstancePtr->GetPlayerData();
 	}
 	return PlayerData;
+}
+
+void ARCPlayerController::SetPlayerData(const FPlayerData& data)
+{
+	URCGameInstance* GameInstancePtr = Cast<URCGameInstance>(UGameplayStatics::GetGameInstance(this));
+	if (GameInstancePtr && IsLocalController())
+	{
+		GameInstancePtr->SetPlayerData(data);
+		PlayerData = data;
+	}
 }
 
 void ARCPlayerController::Server_UpdatePlayerData_Implementation(const FPlayerData& playerData)

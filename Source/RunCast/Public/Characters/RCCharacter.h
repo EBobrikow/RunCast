@@ -46,6 +46,8 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void ApplyDamageBP(float dmg);
 
+	UFUNCTION(BlueprintCallable)
+	void KillCharacter();
 
 	virtual void ApplyDamage(float dmg) override;
 

@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Net/UnrealNetwork.h"
 #include "Core/RCPlayerController.h"
+#include "Characters/RCCharacter.h"
 #include "RCDeathMatchPC.generated.h"
 
 //DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnHealthStatusUpdate, float, health);
@@ -22,9 +23,13 @@ public:
 	void CreateCharacter();
 
 	UFUNCTION(Server, Reliable)
-	void Server_CreateCharacter();
+	void Server_CreateCharacter(TSubclassOf<ARCCharacter> charClass);
 
-	
+	UFUNCTION()
+	UClass* GetCharacterClass() const;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	TSubclassOf<ARCCharacter> DefaultCharacterClass;
 
 protected: 
 
@@ -39,6 +44,9 @@ protected:
 
 	UFUNCTION()
 	void Restart();
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	TSubclassOf<ARCCharacter> CharacterClass;
 
 	UPROPERTY()
 	float RestartDelayTime = 3.0f;

@@ -3,6 +3,7 @@
 
 #include "Core/RCGameMode.h"
 #include "Core/RCPlayerController.h"
+#include "GenericPlatform/GenericPlatformMisc.h"
 
 void ARCGameMode::BeginPlay()
 {
@@ -45,6 +46,9 @@ void ARCGameMode::Logout(AController* Exiting)
 			if (info.Id != -1)
 			{
 				GameInstance->GetServerManager()->RequestCloseServer(info.Id);
+#if UE_SERVER
+				FGenericPlatformMisc::RequestExit(false);
+#endif
 			}
 			
 		}

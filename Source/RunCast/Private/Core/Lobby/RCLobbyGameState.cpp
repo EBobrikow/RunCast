@@ -34,6 +34,23 @@ void ARCLobbyGameState::Client_SetSyncServerInfo_Implementation(const FServerInf
 	SyncServerInfo = info;
 }
 
+void ARCLobbyGameState::Server_AddAIBot_Implementation(const FPlayerData& AIPlayerData)
+{
+	FPlayerData tmp = AIPlayerData;
+	tmp.PlayerName += FString::FromInt(AIDataList.Num() + 1);
+	AIDataList.Add(tmp);
+	Server_UpdatePlayerList();
+}
+
+void ARCLobbyGameState::Server_RemoveAIBot_Implementation()
+{
+	if (AIDataList.Num() > 0)
+	{
+		AIDataList.RemoveAt(AIDataList.Num() - 1);
+		Server_UpdatePlayerList();
+	}
+}
+
 TArray<FArenaMapData> ARCLobbyGameState::GetMapsData() const
 {
 	return ArenaDataList;
@@ -139,6 +156,11 @@ void ARCLobbyGameState::Server_UpdatePlayerList_Implementation()
 				PlayersDataList.Add(Controller->GetPlayerData());
 			}
 		}
+		for (FPlayerData data : AIDataList)
+		{
+			PlayersDataList.Add(data);
+		}
+
 		NetMulticast_BroadcastPlayersList(PlayersDataList);
 	}
 }
@@ -157,6 +179,12 @@ void ARCLobbyGameState::Server_TryStartMatch_Implementation()
 				return;
 			}
 		}
+	}
+
+	URCGameInstance* gameInst = Cast<URCGameInstance>(UGameplayStatics::GetGameInstance(this));
+	if (gameInst)
+	{
+		gameInst->SetAIPlayersData(AIDataList);
 	}
 
 	FString route = "";

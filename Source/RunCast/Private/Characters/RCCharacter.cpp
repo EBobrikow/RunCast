@@ -83,6 +83,22 @@ void ARCCharacter::ApplyDamageBP(float dmg)
 	ApplyDamage(dmg);
 }
 
+void ARCCharacter::KillCharacter()
+{
+	if (HasAuthority())
+	{
+		auto hp = GetHealthComponent();
+		if (hp)
+		{
+			hp->OnActorKilled.Clear();
+			hp->OnHealthUpdate.Clear();
+		}
+
+		RagdollAction();
+	}
+	
+}
+
 
 
 void ARCCharacter::ApplyDamage(float dmg)

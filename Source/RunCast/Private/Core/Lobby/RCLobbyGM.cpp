@@ -41,29 +41,30 @@ void ARCLobbyGM::PostLogin(APlayerController* NewPlayer)
 {
 	Super::PostLogin(NewPlayer);
 
-	ARCPlayerController* PC = Cast<ARCPlayerController>(NewPlayer);
-	if (PC)
-	{
-		if (GameInstance->ConnectedPlayersNum == 1)
-		{
-			FPlayerData pData = PC->GetPlayerData();
-			pData.PlayerAuthority = ELobbyPlayerAuthority::GameMaster;
-			pData.PlayerReady = ELobbyPlayerReady::Indle;
-			PC->Client_SetupPlayerData(pData);
-			//PC->Client_PreservePlayerData();
-		}
-		else
-		{
-			FPlayerData pData = PC->GetPlayerData();
-			pData.PlayerAuthority = ELobbyPlayerAuthority::ConnectedPlayer;
-			pData.PlayerReady = ELobbyPlayerReady::Indle;
-			PC->Client_SetupPlayerData(pData);
-			//PC->Client_PreservePlayerData();
-		}
-	}
-
 	if (GameInstance)
 	{
+
+		ARCPlayerController* PC = Cast<ARCPlayerController>(NewPlayer);
+		if (PC)
+		{
+			if (GameInstance->ConnectedPlayersNum == 1)
+			{
+				FPlayerData pData = PC->GetPlayerData();
+				pData.PlayerAuthority = ELobbyPlayerAuthority::GameMaster;
+				pData.PlayerReady = ELobbyPlayerReady::Ready;
+				PC->Client_SetupPlayerData(pData);
+				//PC->Client_PreservePlayerData();
+			}
+			else
+			{
+				FPlayerData pData = PC->GetPlayerData();
+				pData.PlayerAuthority = ELobbyPlayerAuthority::ConnectedPlayer;
+				pData.PlayerReady = ELobbyPlayerReady::Idle;
+				PC->Client_SetupPlayerData(pData);
+				//PC->Client_PreservePlayerData();
+			}
+		}
+
 		FServerInfo servInfo = GameInstance->GetRemoteServerInfo();
 		if (servInfo.Id != -1)
 		{

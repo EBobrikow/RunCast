@@ -8,6 +8,8 @@
 #include "Components/ListView.h"
 #include "Components/Button.h"
 #include "Core/Lobby/RCLobbyGameState.h"
+#include "Data/RCCharacterSlotData.h"
+#include "UI/Common/RCCharacterSelectionGrid.h"
 #include "RCDeathMatchLobby.generated.h"
 
 /**
@@ -23,6 +25,8 @@ public:
 	virtual void NativeConstruct() override;
 	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
 
+protected:
+
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
 	UTextBlock* ServerNameText;
 
@@ -36,12 +40,25 @@ public:
 	UButton* ReadyBtn;
 
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
+	UButton* AddBotBtn;
+
+	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
+	UButton* RemoveBotBtn;
+
+	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
 	UListView* PlayersListView;
 
-	
+	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
+	URCCharacterSelectionGrid* CharacterSelection;
 
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	TSubclassOf<URCCharacterSlotData> CharactersSlotsDataClass;
 
-protected:
+	UFUNCTION()
+	void OnAddBotButtonClicked();
+
+	UFUNCTION()
+	void OnRemoveBotButtonClicked();
 
 	UFUNCTION()
 	void OnReadyButtonClicked();
@@ -51,6 +68,9 @@ protected:
 
 	UFUNCTION()
 	void FillServerInfo(FServerInfo info);
+
+	UFUNCTION()
+	void CreateSelectionGrid();
 
 	UPROPERTY()
 	TArray<FPlayerData> localPlayerList;

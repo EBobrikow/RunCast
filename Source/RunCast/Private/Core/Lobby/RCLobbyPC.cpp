@@ -29,31 +29,67 @@ void ARCLobbyPC::Server_SetupMatchConfig_Implementation(const FArenaMapData& are
 
 void ARCLobbyPC::PlayerReadyClicked()
 {
+	if (PlayerData.PlayerAuthority == ELobbyPlayerAuthority::GameMaster)
+	{
+		Server_UpdatePlayerData(PlayerData);
+		Server_TryRunMatch();
+		return;
+	}
+
+
 	if (PlayerData.PlayerReady == ELobbyPlayerReady::Ready)
 	{
-		PlayerData.PlayerReady = ELobbyPlayerReady::Indle;
+		PlayerData.PlayerReady = ELobbyPlayerReady::Idle;
 	}
 	else
 	{
 		PlayerData.PlayerReady = ELobbyPlayerReady::Ready;
-		Server_UpdatePlayerData(PlayerData);
-		if (PlayerData.PlayerAuthority == ELobbyPlayerAuthority::GameMaster)
-		{
-			Server_TryRunMatch();
-		}
+		
 		
 	}
 	Server_UpdatePlayerData(PlayerData);
+	
+}
 
-	/*if (PlayerData.PlayerReady == ELobbyPlayerReady::Ready && PlayerData.PlayerAuthority == ELobbyPlayerAuthority::GameMaster)
+void ARCLobbyPC::AddBotClicked(UClass* BotCharClass)
+{
+	FPlayerData AIPlayerData;
+	AIPlayerData.PlayerAuthority = ELobbyPlayerAuthority::AIBot;
+	AIPlayerData.PlayerName = "Bot";
+	AIPlayerData.PlayerReady = ELobbyPlayerReady::Ready;
+	AIPlayerData.SelectedCharacterClass = BotCharClass;
+	Server_AddBot(AIPlayerData);
+}
+
+void ARCLobbyPC::Server_AddBot_Implementation(const FPlayerData& AIPlayerData)
+{
+	if (HasAuthority() && PlayerData.PlayerAuthority == ELobbyPlayerAuthority::GameMaster)
 	{
 		ARCLobbyGameState* GameState = GetWorld()->GetGameState<ARCLobbyGameState>();
 		if (GameState)
 		{
-			GameState->Server_TryStartMatch();
+			GameState->Server_AddAIBot(AIPlayerData);
+
 		}
-	}*/
-	
+	}
+}
+
+void ARCLobbyPC::RemoveBotClicked()
+{
+	Server_RemoveBot();
+}
+
+void ARCLobbyPC::Server_RemoveBot_Implementation()
+{
+	if (HasAuthority() && PlayerData.PlayerAuthority == ELobbyPlayerAuthority::GameMaster)
+	{
+		ARCLobbyGameState* GameState = GetWorld()->GetGameState<ARCLobbyGameState>();
+		if (GameState)
+		{
+			GameState->Server_RemoveAIBot();
+
+		}
+	}
 }
 
 void ARCLobbyPC::Server_CreateMatchClicked_Implementation(const FArenaMapData& arena, const FArenaMatchData& match, int32 maxPlayers)

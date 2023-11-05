@@ -31,6 +31,18 @@ public:
 	UFUNCTION()
 	void PlayerReadyClicked();
 
+	UFUNCTION()
+	void AddBotClicked(UClass* BotCharClass);
+
+	UFUNCTION(Server, Reliable)
+	void Server_AddBot(const FPlayerData& AIPlayerData);
+
+	UFUNCTION()
+	void RemoveBotClicked();
+
+	UFUNCTION(Server, Reliable)
+	void Server_RemoveBot();
+
 	UFUNCTION(Server, Reliable)
 	void Server_CreateMatchClicked(const FArenaMapData& arena, const FArenaMatchData& match, int32 maxPlayers);
 

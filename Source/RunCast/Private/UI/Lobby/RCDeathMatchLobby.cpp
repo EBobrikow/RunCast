@@ -15,6 +15,20 @@ void URCDeathMatchLobby::NativeConstruct()
 		ReadyBtn->OnClicked.Clear();
 		ReadyBtn->OnClicked.AddUniqueDynamic(this, &URCDeathMatchLobby::OnReadyButtonClicked);
 	}
+
+	if (AddBotBtn)
+	{
+		AddBotBtn->OnClicked.Clear();
+		AddBotBtn->OnClicked.AddUniqueDynamic(this, &URCDeathMatchLobby::OnAddBotButtonClicked);
+		AddBotBtn->SetVisibility(ESlateVisibility::Hidden);
+	}
+
+	if (RemoveBotBtn)
+	{
+		RemoveBotBtn->OnClicked.Clear();
+		RemoveBotBtn->OnClicked.AddUniqueDynamic(this, &URCDeathMatchLobby::OnRemoveBotButtonClicked);
+		RemoveBotBtn->SetVisibility(ESlateVisibility::Hidden);
+	}
 	
 	ARCLobbyGameState* GameState = GetWorld()->GetGameState<ARCLobbyGameState>();
 	if (GameState)
@@ -30,9 +44,17 @@ void URCDeathMatchLobby::NativeConstruct()
 	if (PC)
 	{
 		PC->UpdatePlayerToServer();
+
+		FPlayerData pData = PC->GetPlayerData();
+		if (pData.PlayerAuthority == ELobbyPlayerAuthority::GameMaster)
+		{
+			AddBotBtn->SetVisibility(ESlateVisibility::Visible);
+			RemoveBotBtn->SetVisibility(ESlateVisibility::Visible);
+			//CreateBtn->SetIsEnabled(false);
+		}
 	}
 	
-
+	CreateSelectionGrid();
 }
 
 void URCDeathMatchLobby::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
@@ -40,11 +62,51 @@ void URCDeathMatchLobby::NativeTick(const FGeometry& MyGeometry, float InDeltaTi
 	Super::NativeTick(MyGeometry, InDeltaTime);
 }
 
-void URCDeathMatchLobby::OnReadyButtonClicked()
+void URCDeathMatchLobby::OnAddBotButtonClicked()
 {
 	ARCLobbyPC* PC = Cast<ARCLobbyPC>(GetOwningPlayer());
 	if (PC)
 	{
+		FPlayerData pData = PC->GetPlayerData();
+		if (pData.PlayerAuthority == ELobbyPlayerAuthority::GameMaster)
+		{
+			if (CharacterSelection)
+			{
+				FSlotData slotData = CharacterSelection->GetRandomSlotData();
+				PC->AddBotClicked(slotData.CharacterClass);
+			}
+		}
+	}
+}
+
+void URCDeathMatchLobby::OnRemoveBotButtonClicked()
+{
+	ARCLobbyPC* PC = Cast<ARCLobbyPC>(GetOwningPlayer());
+	if (PC)
+	{
+		FPlayerData pData = PC->GetPlayerData();
+		if (pData.PlayerAuthority == ELobbyPlayerAuthority::GameMaster)
+		{
+
+		}
+	}
+}
+
+void URCDeathMatchLobby::OnReadyButtonClicked()
+{
+
+
+	ARCLobbyPC* PC = Cast<ARCLobbyPC>(GetOwningPlayer());
+	if (PC)
+	{
+		FPlayerData PD = PC->GetPlayerData();
+		if (CharacterSelection)
+		{
+			FSlotData slotData = CharacterSelection->GetSelectedSlotData();
+			PD.SelectedCharacterClass = slotData.CharacterClass;
+			PC->SetPlayerData(PD);
+		}
+		
 		PC->PlayerReadyClicked();
 	}
 }
@@ -81,6 +143,18 @@ void URCDeathMatchLobby::FillServerInfo(FServerInfo info)
 		if (MapNameText)
 		{
 			MapNameText->SetText(FText::FromString(info.MapName));
+		}
+	}
+}
+
+void URCDeathMatchLobby::CreateSelectionGrid()
+{
+	if (CharactersSlotsDataClass)
+	{
+		URCCharacterSlotData* slotsDataObj = NewObject<URCCharacterSlotData>(this, CharactersSlotsDataClass);
+		if (CharacterSelection && slotsDataObj)
+		{
+			CharacterSelection->InitGrid(slotsDataObj);
 		}
 	}
 }

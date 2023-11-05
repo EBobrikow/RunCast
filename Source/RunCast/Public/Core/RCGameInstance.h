@@ -56,6 +56,12 @@ public:
 	UPROPERTY()
 	int32 ConnectedPlayersNum = 0;
 
+	UFUNCTION()
+	void SetAIPlayersData(TArray<FPlayerData> data);
+
+	UFUNCTION()
+	TArray<FPlayerData> GetAIPlayersData() const;
+
 protected:
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
@@ -99,4 +105,7 @@ protected:
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Map names")
 	FString SoloGameMapName;
+
+	UPROPERTY()
+	TArray<FPlayerData> AIPlayersDataList;
 };

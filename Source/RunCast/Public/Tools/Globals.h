@@ -115,6 +115,7 @@ enum class ELobbyPlayerAuthority : uint8
 	None,
 	GameMaster,
 	ConnectedPlayer,
+	AIBot
 };
 
 UENUM(BlueprintType)
@@ -122,7 +123,7 @@ enum class ELobbyPlayerReady : uint8
 {
 	None,
 	Ready,
-	Indle,
+	Idle,
 };
 
 USTRUCT(BlueprintType, Blueprintable)
@@ -139,9 +140,12 @@ struct FPlayerData
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	TEnumAsByte<ELobbyPlayerReady> PlayerReady;
 
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	UClass* SelectedCharacterClass;
+
 	FPlayerData();
 
-	FPlayerData(FString name, ELobbyPlayerAuthority authority, ELobbyPlayerReady isReady);
+	FPlayerData(FString name, ELobbyPlayerAuthority authority, ELobbyPlayerReady isReady, UClass* characterClass);
 
 };
 
