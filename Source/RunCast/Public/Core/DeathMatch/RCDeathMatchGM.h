@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Core/RCGameMode.h"
+#include "Core/RCAIController.h"
 #include "RCDeathMatchGM.generated.h"
 
 /**
@@ -22,10 +23,22 @@ public:
 	TSubclassOf<APawn> GetDefaultCharacterClass() const;
 
 	UFUNCTION()
-	APawn* SpawnCharacter(APlayerController* controller);
+	APawn* SpawnCharacter(TSubclassOf<AActor> spawnClass);
+
 
 protected:
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Character classes")
 	TSubclassOf<APawn> DefaultCharacterClass;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Character classes")
+	TSubclassOf<ARCAIController> DefaultAIControllerClass;
+
+	UFUNCTION()
+	void SpawnAIControllers();
+
+private: 
+
+	UPROPERTY()
+	TArray<ARCAIController*> AIControllers;
 };

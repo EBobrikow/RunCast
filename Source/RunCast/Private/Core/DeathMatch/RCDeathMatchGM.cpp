@@ -8,6 +8,7 @@
 void ARCDeathMatchGM::BeginPlay()
 {
 	Super::BeginPlay();
+	SpawnAIControllers();
 }
 
 TSubclassOf<APawn> ARCDeathMatchGM::GetDefaultCharacterClass() const
@@ -15,13 +16,13 @@ TSubclassOf<APawn> ARCDeathMatchGM::GetDefaultCharacterClass() const
 	return DefaultCharacterClass;
 }
 
-APawn* ARCDeathMatchGM::SpawnCharacter(APlayerController* controller)
+APawn* ARCDeathMatchGM::SpawnCharacter(TSubclassOf<AActor> spawnClass)
 {
 	APawn* pawn = nullptr;
 	//UClass* pawnClass = GetDefaultCharacterClass();
 
-	ARCDeathMatchPC* DMController = Cast<ARCDeathMatchPC>(controller);
-	UClass* pawnClass = DMController->GetCharacterClass();
+	//ARCDeathMatchPC* DMController = Cast<ARCDeathMatchPC>(controller);
+	UClass* pawnClass = spawnClass;//DMController->GetCharacterClass();
 
 #if WITH_EDITOR
 	//pawnClass = GetDefaultCharacterClass();
@@ -52,4 +53,25 @@ APawn* ARCDeathMatchGM::SpawnCharacter(APlayerController* controller)
 		UE_LOG(LogTemp, Warning, TEXT("ARCDeathMatchPC::CreateCharacter Invalid pawn class to spawn"));
 	}
 	return pawn;
+}
+
+void ARCDeathMatchGM::SpawnAIControllers()
+{
+	AIControllers.Empty();
+	URCGameInstance* gameInst = Cast<URCGameInstance>(UGameplayStatics::GetGameInstance(this));
+	if (gameInst)
+	{
+		TArray<FPlayerData> aiPlayers = gameInst->GetAIPlayersData();
+		if (DefaultAIControllerClass)
+		{
+			for (const FPlayerData& data : aiPlayers)
+			{
+				FVector loc = FVector::ZeroVector;
+				FRotator rot = FRotator::ZeroRotator;
+				ARCAIController* aiController = GetWorld()->SpawnActor<ARCAIController>(DefaultAIControllerClass, loc, rot);
+				AIControllers.Add(aiController);
+				aiController->Init(data);
+			}
+		}
+	}
 }

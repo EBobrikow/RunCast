@@ -18,7 +18,10 @@ public class RunCast : ModuleRules
 				"WebSockets",
                 "Json",
                 "JsonUtilities",
-                "ALSV4_CPP"
+                "ALSV4_CPP",
+                "NavigationSystem",
+				"AIModule", 
+				"GameplayTasks"
             });
 
 		PrivateDependencyModuleNames.AddRange(new string[] {  });

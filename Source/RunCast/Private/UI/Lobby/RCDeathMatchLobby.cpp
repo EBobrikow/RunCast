@@ -87,7 +87,7 @@ void URCDeathMatchLobby::OnRemoveBotButtonClicked()
 		FPlayerData pData = PC->GetPlayerData();
 		if (pData.PlayerAuthority == ELobbyPlayerAuthority::GameMaster)
 		{
-
+			PC->RemoveBotClicked();
 		}
 	}
 }

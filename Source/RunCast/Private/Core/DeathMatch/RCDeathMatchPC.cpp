@@ -36,7 +36,7 @@ void ARCDeathMatchPC::CreateCharacter()
 		ARCDeathMatchGM* GM = Cast<ARCDeathMatchGM>(UGameplayStatics::GetGameMode(this));
 		if (GM)
 		{
-			ARCCharacter* character = Cast<ARCCharacter>(GM->SpawnCharacter(this));
+			ARCCharacter* character = Cast<ARCCharacter>(GM->SpawnCharacter(CharacterClass));
 			if (character)
 			{
 				Possess(character);
