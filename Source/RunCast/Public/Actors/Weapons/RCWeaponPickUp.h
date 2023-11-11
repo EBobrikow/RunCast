@@ -10,6 +10,9 @@
 #include "Net/UnrealNetwork.h"
 #include "RCWeaponPickUp.generated.h"
 
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnPickup);
+
 UCLASS()
 class RUNCAST_API ARCWeaponPickUp : public AActor
 {
@@ -27,6 +30,9 @@ public:
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Weapon")
 	TSubclassOf<ABaseWeapon> WeaponClass;
+
+	UPROPERTY();
+	FOnPickup OnPickupDelegate;
 
 protected:
 	// Called when the game starts or when spawned

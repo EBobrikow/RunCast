@@ -3,8 +3,6 @@
 
 #include "Core/DeathMatch/RCDeathMatchPC.h"
 #include "Core/DeathMatch/RCDeathMatchGM.h"
-#include "Actors/NetSpawnPoint.h"
-
 #include "UI/DeathMatch/RCDeathMatchHUD.h"
 
 void ARCDeathMatchPC::BeginPlay()
@@ -45,7 +43,6 @@ void ARCDeathMatchPC::CreateCharacter()
 				{
 					hp->OnActorKilled.AddDynamic(this, &ARCDeathMatchPC::CharacterKilled);
 					hp->OnHealthUpdate.AddDynamic(this, &ARCDeathMatchPC::HealthUpdate);
-					//HealthUpdate(hp->GetMaxHealth());
 					HealthUpdate(hp->GetCurrentHealth());
 				}
 			}
@@ -71,14 +68,6 @@ void ARCDeathMatchPC::CharacterKilled()
 	if (character)
 	{
 		character->KillCharacter();
-		/*auto hp = character->GetHealthComponent();
-		if (hp)
-		{
-			hp->OnActorKilled.Clear();
-			hp->OnHealthUpdate.Clear();
-		}
-
-		character->RagdollAction();*/
 		character->DisableInput(this);
 
 		GetWorld()->GetTimerManager().ClearTimer(RestartDelay);
@@ -109,15 +98,6 @@ void ARCDeathMatchPC::Restart()
 		UnPossess();
 		character->Destroy();
 		CreateCharacter();
-		
-		/*UHealthComponent* hpComp = character->GetHealthComponent();
-		if (hpComp)
-		{
-			Client_UpdateHealthStatus(hpComp->GetCurrentHealth());
-		}*/
-		
-		//Client_UpdateHealthStatus(hud->GetCharacterHP());
-		//hud->UpdateHealthBar(hud->GetCharacterHP());
 		
 	}
 }

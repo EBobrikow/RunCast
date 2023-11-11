@@ -19,10 +19,7 @@ TSubclassOf<APawn> ARCDeathMatchGM::GetDefaultCharacterClass() const
 APawn* ARCDeathMatchGM::SpawnCharacter(TSubclassOf<AActor> spawnClass)
 {
 	APawn* pawn = nullptr;
-	//UClass* pawnClass = GetDefaultCharacterClass();
-
-	//ARCDeathMatchPC* DMController = Cast<ARCDeathMatchPC>(controller);
-	UClass* pawnClass = spawnClass;//DMController->GetCharacterClass();
+	UClass* pawnClass = spawnClass;
 
 #if WITH_EDITOR
 	//pawnClass = GetDefaultCharacterClass();

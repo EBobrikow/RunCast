@@ -37,12 +37,10 @@ void ARCWeaponPickUp::OnBeginOverlap(UPrimitiveComponent* OverlappedComp, AActor
 	if (Char)
 	{
 		Char->Server_SpawnBaseWeapon(WeaponClass);
-		//Char->SpawnBaseWeapon(WeaponClass);
-		
-		/*BaseSphere->OnComponentBeginOverlap.Clear();
-	
-		GetWorld()->GetTimerManager().ClearTimer(PickUpResetTimer);
-		GetWorld()->GetTimerManager().SetTimer(PickUpResetTimer, this, &ARCWeaponPickUp::ResetSpawn, 0.01f, false, ResetTime);*/
+		if (OnPickupDelegate.IsBound())
+		{
+			OnPickupDelegate.Broadcast();
+		}
 	}
 }
 
