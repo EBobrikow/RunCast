@@ -115,9 +115,8 @@ void URCMainMenuWidget::OnExitGameClicked()
 {
 	if (GameInstancePtr)
 	{
-		GameInstancePtr->GetServerManager()->GetConnectionManager()->CloseConnection();
+		GameInstancePtr->ExitGame();
 	}
-	UKismetSystemLibrary::QuitGame(this, UGameplayStatics::GetPlayerController(this, 0),EQuitPreference::Quit,false);
 }
 
 void URCMainMenuWidget::OnRefreshClicked()

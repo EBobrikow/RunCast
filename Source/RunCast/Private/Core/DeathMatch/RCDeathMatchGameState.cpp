@@ -2,4 +2,12 @@
 
 
 #include "Core/DeathMatch/RCDeathMatchGameState.h"
+#include "Core/DeathMatch/RCDeathMatchGM.h"
+
+void ARCDeathMatchGameState::BeginPlay()
+{
+	Super::BeginPlay();
+
+
+}
 

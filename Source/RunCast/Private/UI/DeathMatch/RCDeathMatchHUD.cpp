@@ -64,3 +64,11 @@ float ARCDeathMatchHUD::GetCharacterHP()
 	
 	return 0.0f;
 }
+
+void ARCDeathMatchHUD::UpdateTimer(int32 min, int32 sec)
+{
+	if (GameOverlayWidget)
+	{
+		GameOverlayWidget->SetTime(min, sec);
+	}
+}

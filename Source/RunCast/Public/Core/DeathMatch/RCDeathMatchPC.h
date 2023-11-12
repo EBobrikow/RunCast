@@ -33,6 +33,11 @@ public:
 
 protected: 
 
+	virtual void TimeUpdate(int32 Min, int32 Sec) override;
+
+	UFUNCTION(Client, Reliable)
+	void Client_Init();
+
 	UFUNCTION()
 	void CharacterKilled();
 

@@ -54,3 +54,60 @@ void ARCGameMode::Logout(AController* Exiting)
 		}
 	}
 }
+
+float ARCGameMode::GetMatchDuration()
+{
+	return MatchDuration;
+}
+
+void ARCGameMode::StartMatchDelay()
+{
+	GetWorld()->GetTimerManager().SetTimer(StartDelayTimer, this, &ARCGameMode::MatchStart, StartDelay, false);
+}
+
+void ARCGameMode::GetCurrentMatchTime(int32& Min, int32& Sec)
+{
+	Min = CurrentMinutes;
+	Sec = CurrentSeconds;
+}
+
+void ARCGameMode::MatchStart()
+{
+	CurrentMinutes = MatchDuration;
+	CurrentSeconds = 0;
+
+	GetWorld()->GetTimerManager().SetTimer(TimeCountTimer, this, &ARCGameMode::TimeCount, 1.0f, true);
+
+	if (OnMatchBegin.IsBound())
+	{
+		OnMatchBegin.Broadcast();
+	}
+}
+
+void ARCGameMode::TimeCount()
+{
+	if (CurrentMinutes == 0 && CurrentSeconds == 0)
+	{
+		if (OnMatchEnd.IsBound())
+		{
+			OnMatchEnd.Broadcast();
+		}
+		GetWorld()->GetTimerManager().ClearTimer(TimeCountTimer);
+		return;
+	}
+
+	if (CurrentSeconds == 0)
+	{
+		CurrentMinutes -= 1;
+		CurrentSeconds = 59;
+	}
+	else
+	{
+		CurrentSeconds -= 1;
+	}
+
+	if (OnTimeUpdate.IsBound())
+	{
+		OnTimeUpdate.Broadcast(CurrentMinutes, CurrentSeconds);
+	}
+}

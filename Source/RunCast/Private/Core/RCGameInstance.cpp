@@ -15,6 +15,12 @@ void URCGameInstance::ExitToMainMenu()
 	UGameplayStatics::OpenLevel(this, FName(MainMenuMapName));
 }
 
+void URCGameInstance::ExitGame()
+{
+	GetServerManager()->GetConnectionManager()->CloseConnection();
+	UKismetSystemLibrary::QuitGame(this, UGameplayStatics::GetPlayerController(this, 0), EQuitPreference::Quit, false);
+}
+
 UServerManager* URCGameInstance::GetServerManager()
 {
 	if (ServerManager == nullptr)

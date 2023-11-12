@@ -6,6 +6,7 @@
 #include "Blueprint/UserWidget.h"
 #include "Components/Image.h"
 #include "Components/ProgressBar.h"
+#include "Components/TextBlock.h"
 #include "RCGameOverlay.generated.h"
 
 /**
@@ -24,6 +25,9 @@ public:
 	UFUNCTION()
 	void SetHealthBarValue(float val);
 
+	UFUNCTION()
+	void SetTime(int32 Min, int32 Sec);
+
 protected: 
 
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
@@ -31,5 +35,11 @@ protected:
 	
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
 	UProgressBar* HealthBar;
+
+	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
+	UTextBlock* MinutesTxt;
+
+	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
+	UTextBlock* SecondsTxt;
 
 };

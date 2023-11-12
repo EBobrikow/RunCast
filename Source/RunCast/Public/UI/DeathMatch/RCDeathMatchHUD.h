@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/HUD.h"
+#include "UI/Common/InGameHUD.h"
 #include "UI/Common/RCGameOverlay.h"
 #include "Characters/RCCharacter.h"
 #include "RCDeathMatchHUD.generated.h"
@@ -12,7 +12,7 @@
  * 
  */
 UCLASS()
-class RUNCAST_API ARCDeathMatchHUD : public AHUD
+class RUNCAST_API ARCDeathMatchHUD : public AInGameHUD
 {
 	GENERATED_BODY()
 
@@ -29,6 +29,9 @@ public:
 
 	UFUNCTION()
 	float GetCharacterHP();
+
+	UFUNCTION()
+	void UpdateTimer(int32 min, int32 sec);
 
 protected: 
 

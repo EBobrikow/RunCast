@@ -20,3 +20,12 @@ void URCGameOverlay::SetHealthBarValue(float val)
 		HealthBar->SetPercent(val/100.0f);
 	}
 }
+
+void URCGameOverlay::SetTime(int32 Min, int32 Sec)
+{
+	if (MinutesTxt && SecondsTxt)
+	{
+		MinutesTxt->SetText(FText::FromString(FString::FromInt(Min)));
+		SecondsTxt->SetText(FText::FromString(FString::FromInt(Sec)));
+	}
+}

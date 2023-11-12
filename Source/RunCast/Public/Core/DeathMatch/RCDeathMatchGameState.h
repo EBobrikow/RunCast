@@ -13,5 +13,15 @@ UCLASS()
 class RUNCAST_API ARCDeathMatchGameState : public ARCGameState
 {
 	GENERATED_BODY()
+
+public: 
+
+	virtual void BeginPlay() override;
+
+	
+
+protected: 
+
+	
 	
 };

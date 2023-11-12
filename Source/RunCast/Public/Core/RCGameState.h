@@ -6,12 +6,19 @@
 #include "GameFramework/GameState.h"
 #include "RCGameState.generated.h"
 
-/**
- * 
- */
+
+
+
 UCLASS()
 class RUNCAST_API ARCGameState : public AGameState
 {
 	GENERATED_BODY()
 	
+public:
+
+	virtual void BeginPlay() override;
+
+protected: 
+
+
 };

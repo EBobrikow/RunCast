@@ -27,6 +27,9 @@ public:
 	void ExitToMainMenu();
 
 	UFUNCTION(BlueprintCallable)
+	void ExitGame();
+
+	UFUNCTION(BlueprintCallable)
 	UServerManager* GetServerManager();
 
 	UFUNCTION(BlueprintCallable)

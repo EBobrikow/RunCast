@@ -4,7 +4,10 @@
 #include "Core/RCPlayerController.h"
 #include "Kismet/GameplayStatics.h"
 #include "Core/Lobby/RCLobbyGameState.h"
+#include "Core/RCGameMode.h"
 #include "Characters/RCCharacter.h"
+#include "UI/Common/InGameHUD.h"
+
 
 ARCPlayerController::ARCPlayerController()
 {
@@ -20,6 +23,15 @@ void ARCPlayerController::BeginPlay()
 		FInputModeGameOnly InputMode;
 		SetInputMode(InputMode);
 		//bShowMouseCursor = false;
+	}
+
+	if (HasAuthority())
+	{
+		ARCGameMode* GM = Cast<ARCGameMode>(UGameplayStatics::GetGameMode(this));
+		if (GM)
+		{
+			GM->OnTimeUpdate.AddDynamic(this, &ARCPlayerController::Client_TimerUpdate);
+		}
 	}
 }
 
@@ -54,6 +66,11 @@ void ARCPlayerController::SetPlayerData(const FPlayerData& data)
 	}
 }
 
+void ARCPlayerController::Client_TimerUpdate_Implementation(int32 Min, int32 Sec)
+{
+	TimeUpdate(Min, Sec);
+}
+
 void ARCPlayerController::Server_UpdatePlayerData_Implementation(const FPlayerData& playerData)
 {
 	if (HasAuthority())
@@ -85,24 +102,23 @@ void ARCPlayerController::UpdatePlayerToServer()
 	Server_UpdatePlayerData(PlayerData);
 }
 
-//void ARCPlayerController::Server_LightAttack(const bool val)
-//{
-//	if (HasAuthority())
-//	{
-//		LightAttack(val);
-//	}
-//}
+void ARCPlayerController::ShowInGameMenu()
+{
+	ShowMenu();
+}
 
-//void ARCPlayerController::LightAttack(bool val)
-//{
-//	UE_LOG(LogTemp, Warning, TEXT("ARCPlayerController::LightAttack"));
-//
-//	ARCCharacter* character = Cast<ARCCharacter>(PossessedCharacter);
-//	if (character)
-//	{
-//		character->Server_LightAttackAction(val);
-//	}
-//}
+void ARCPlayerController::ShowMenu()
+{
+	AInGameHUD* hud = Cast<AInGameHUD>(GetHUD());
+	if (hud)
+	{
+		hud->ShowGameMenu(this);
+	}
+}
+
+void ARCPlayerController::TimeUpdate(int32 Min, int32 Sec)
+{
+}
 
 void ARCPlayerController::Client_PreservePlayerData_Implementation(const FPlayerData& playerData)
 {

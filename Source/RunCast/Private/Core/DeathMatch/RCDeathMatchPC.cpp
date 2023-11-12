@@ -9,20 +9,29 @@ void ARCDeathMatchPC::BeginPlay()
 {
 	Super::BeginPlay();
 
-	if (IsLocalController())
-	{
-		URCGameInstance* gameInst = Cast<URCGameInstance>(UGameplayStatics::GetGameInstance(this));
-		if (gameInst)
-		{
-			FPlayerData data = gameInst->GetPlayerData();
-			Server_SetPlayerData(data);
-			CharacterClass = data.SelectedCharacterClass;
-		}
-#if WITH_EDITOR
-		CharacterClass = DefaultCharacterClass;
-#endif
+//	if (IsLocalController())
+//	{
+//		URCGameInstance* gameInst = Cast<URCGameInstance>(UGameplayStatics::GetGameInstance(this));
+//		if (gameInst)
+//		{
+//			FPlayerData data = gameInst->GetPlayerData();
+//			Server_SetPlayerData(data);
+//			CharacterClass = data.SelectedCharacterClass;
+//		}
+//#if WITH_EDITOR
+//		CharacterClass = DefaultCharacterClass;
+//#endif
+//
+//		Server_CreateCharacter(CharacterClass);//CharacterClass
+//	}
 
-		Server_CreateCharacter(CharacterClass);//CharacterClass
+	if (HasAuthority())
+	{
+		ARCDeathMatchGM* GM = Cast<ARCDeathMatchGM>(UGameplayStatics::GetGameMode(this));
+		if (GM)
+		{
+			GM->OnMatchBegin.AddDynamic(this, &ARCDeathMatchPC::Client_Init);
+		}
 	}
 	
 }
@@ -60,6 +69,34 @@ void ARCDeathMatchPC::Server_CreateCharacter_Implementation(TSubclassOf<ARCChara
 UClass* ARCDeathMatchPC::GetCharacterClass() const
 {
 	return CharacterClass;
+}
+
+void ARCDeathMatchPC::Client_Init_Implementation()
+{
+	if (IsLocalController())
+	{
+		URCGameInstance* gameInst = Cast<URCGameInstance>(UGameplayStatics::GetGameInstance(this));
+		if (gameInst)
+		{
+			FPlayerData data = gameInst->GetPlayerData();
+			Server_SetPlayerData(data);
+			CharacterClass = data.SelectedCharacterClass;
+		}
+#if WITH_EDITOR
+		CharacterClass = DefaultCharacterClass;
+#endif
+
+		Server_CreateCharacter(CharacterClass);//CharacterClass
+	}
+}
+
+void ARCDeathMatchPC::TimeUpdate(int32 Min, int32 Sec)
+{
+	ARCDeathMatchHUD* hud = Cast<ARCDeathMatchHUD>(GetHUD());
+	if (hud)
+	{
+		hud->UpdateTimer(Min, Sec);
+	}
 }
 
 void ARCDeathMatchPC::CharacterKilled()

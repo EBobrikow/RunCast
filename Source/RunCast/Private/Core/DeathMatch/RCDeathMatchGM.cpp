@@ -8,7 +8,10 @@
 void ARCDeathMatchGM::BeginPlay()
 {
 	Super::BeginPlay();
-	SpawnAIControllers();
+
+	OnMatchBegin.AddDynamic(this, &ARCDeathMatchGM::SpawnAIControllers);
+	//SpawnAIControllers();
+	StartMatchDelay();
 }
 
 TSubclassOf<APawn> ARCDeathMatchGM::GetDefaultCharacterClass() const
@@ -19,13 +22,8 @@ TSubclassOf<APawn> ARCDeathMatchGM::GetDefaultCharacterClass() const
 APawn* ARCDeathMatchGM::SpawnCharacter(TSubclassOf<AActor> spawnClass)
 {
 	APawn* pawn = nullptr;
-	UClass* pawnClass = spawnClass;
 
-#if WITH_EDITOR
-	//pawnClass = GetDefaultCharacterClass();
-#endif
-	 
-	if (pawnClass)
+	if (spawnClass)
 	{
 		TArray<AActor*> FoundActors;
 		UGameplayStatics::GetAllActorsOfClass(GetWorld(), APlayerStart::StaticClass(), FoundActors);
@@ -35,7 +33,7 @@ APawn* ARCDeathMatchGM::SpawnCharacter(TSubclassOf<AActor> spawnClass)
 			FVector loc = FoundActors[randInd]->GetActorLocation();
 			UE_LOG(LogTemp, Warning, TEXT("Spawn location: %f, %f, %f"), loc.X, loc.Y, loc.Z);
 			FRotator rot = FRotator::ZeroRotator;
-			pawn = GetWorld()->SpawnActor<APawn>(pawnClass, loc, rot);
+			pawn = GetWorld()->SpawnActor<APawn>(spawnClass, loc, rot);
 			
 		}
 		else

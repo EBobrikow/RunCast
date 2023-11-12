@@ -24,13 +24,15 @@ public:
 	ARCPlayerController();
 	virtual void BeginPlay() override;
 
+	virtual FPlayerData GetPlayerData();
+
+	virtual void SetPlayerData(const FPlayerData& data);
 
 	UFUNCTION(Server, Reliable)
 	void Server_SetPlayerData(const FPlayerData& playerData);
 
-	virtual FPlayerData GetPlayerData();
-
-	virtual void SetPlayerData(const FPlayerData& data);
+	UFUNCTION(Client, Reliable)
+	void Client_TimerUpdate(int32 Min, int32 Sec);
 
 	UFUNCTION(Client, Reliable)
 	void Client_PreservePlayerData(const FPlayerData& playerData);
@@ -44,13 +46,17 @@ public:
 	UFUNCTION()
 	void UpdatePlayerToServer();
 
-	//UFUNCTION(Server, Reliable)
-	//void Server_LightAttack(const bool val);
+	UFUNCTION(BlueprintCallable)
+	void ShowInGameMenu();
 
 protected: 
 
 	UPROPERTY(Replicated)
 	FPlayerData PlayerData;
+
+	virtual void ShowMenu();
+
+	virtual void TimeUpdate(int32 Min, int32 Sec);
 
 	//virtual void LightAttack(bool val) override;
 };
