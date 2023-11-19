@@ -34,3 +34,15 @@ FPlayerData::FPlayerData(FString name, ELobbyPlayerAuthority authority, ELobbyPl
 	, SelectedCharacterClass(characterClass)
 {
 }
+
+FScoreBoardData::FScoreBoardData()
+	: FScoreBoardData(TEXT(""), 0, 0)
+{
+}
+
+FScoreBoardData::FScoreBoardData(const FString& _name, int32 kills, int32 death)
+	: PlayerName(_name)
+	, KillCount(kills)
+	, DeathCount(death)
+{
+}

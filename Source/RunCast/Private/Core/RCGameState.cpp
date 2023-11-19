@@ -3,19 +3,39 @@
 
 #include "Core/RCGameState.h"
 #include "Core/RCGameMode.h"
+#include "Kismet/GameplayStatics.h"
+#include "Interfaces/ScoreBoardInterface.h"
 
 void ARCGameState::BeginPlay()
 {
 	Super::BeginPlay();
 
-	/*if (HasAuthority())
+}
+
+void ARCGameState::Server_UpdateScoreBoard_Implementation()
+{
+	TArray<AActor*> Controllers;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AController::StaticClass(), Controllers);
+
+	for (AActor* cntrl : Controllers)
 	{
-		ARCGameMode* GM = Cast<ARCGameMode>(UGameplayStatics::GetGameMode(this));
-		if (GM)
+		ScoreBoardTable.Empty();
+		IScoreBoardInterface* scoreContrl = Cast<IScoreBoardInterface>(cntrl);
+		if (scoreContrl)
 		{
-			GM->OnMatchBegin.AddDynamic(this, &ARCGameState::MatchStarted);
+			ScoreBoardTable.Add(scoreContrl->GetScoreBoardData());
 		}
-	}*/
+	}
+	Multicast_OnScoreUpdated(ScoreBoardTable);
+}
+
+void ARCGameState::Multicast_OnScoreUpdated_Implementation(const TArray<FScoreBoardData>& scoreList)
+{
+	ScoreBoardTable = scoreList;
+	if (OnScoreBoardUpdate.IsBound())
+	{
+		OnScoreBoardUpdate.Broadcast(scoreList);
+	}
 }
 
 

@@ -7,7 +7,7 @@
 #include "Net/UnrealNetwork.h"
 #include "HealthComponent.generated.h"
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnActorKilled);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnActorKilled, ACharacter*, instigator);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnHealthUpdate,float,Health);
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
@@ -20,7 +20,7 @@ public:
 	UHealthComponent();
 
 	UFUNCTION(Server, Reliable)
-	void Multicast_DoDamage(const float dmg);
+	void Multicast_DoDamage(const float dmg, ACharacter* instigator);
 
 
 	UPROPERTY()

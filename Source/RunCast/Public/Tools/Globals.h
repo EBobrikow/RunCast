@@ -192,6 +192,25 @@ struct FCurrentServerInfo
 };
 
 
+USTRUCT(BlueprintType)
+struct FScoreBoardData
+{
+	GENERATED_BODY()
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	FString PlayerName;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	int32 KillCount;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	int32 DeathCount;
+
+	FScoreBoardData();
+
+	FScoreBoardData(const FString& _name, int32 kills, int32 death);
+};
+
 
 UCLASS()
 class RUNCAST_API UGlobals : public UObject

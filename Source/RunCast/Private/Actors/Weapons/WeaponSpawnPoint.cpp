@@ -10,6 +10,9 @@ AWeaponSpawnPoint::AWeaponSpawnPoint()
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
+	USceneComponent* defRoot = CreateDefaultSubobject<USceneComponent>(TEXT("defRoot"));
+	RootComponent = defRoot;
+
 }
 
 // Called when the game starts or when spawned
@@ -21,29 +24,45 @@ void AWeaponSpawnPoint::BeginPlay()
 
 void AWeaponSpawnPoint::SpawmWeaponPickup()
 {
-	if (PickupList.Num() > 0)
+	if (HasAuthority())
 	{
-		int32 randInd = FMath::RandRange(0, PickupList.Num()-1);
-		FVector loc = GetActorLocation() + SpawnOffset;
-		FRotator rot = FRotator::ZeroRotator;
-		CurrentPickup = GetWorld()->SpawnActor<ARCWeaponPickUp>(PickupList[randInd], loc, rot);
-		if (CurrentPickup)
+		if (PickupList.Num() > 0)
 		{
-			CurrentPickup->OnPickupDelegate.AddDynamic(this, &AWeaponSpawnPoint::Respawn);
-		}
+			int32 randInd = FMath::RandRange(0, PickupList.Num() - 1);
+			FVector loc = GetActorLocation() + SpawnOffset;
+			FRotator rot = FRotator::ZeroRotator;
 		
+			CurrentPickup = GetWorld()->SpawnActor<ARCWeaponPickUp>(PickupList[randInd], loc, rot);
+			if (CurrentPickup)
+			{
+				CurrentPickup->OnPickupDelegate.AddDynamic(this, &AWeaponSpawnPoint::Respawn);
+			}
+
+		}
 	}
+	
 }
 
 void AWeaponSpawnPoint::Respawn()
 {
 	if (CurrentPickup)
 	{
+		//CurrentPickup->ResetOverlap();
 		CurrentPickup->OnPickupDelegate.Clear();
-		CurrentPickup->Destroy();
+		
+		GetWorld()->GetTimerManager().ClearTimer(DestroyTimer);
+		GetWorld()->GetTimerManager().SetTimer(DestroyTimer, this, &AWeaponSpawnPoint::Destroy, 0.2f, false);
 
 		GetWorld()->GetTimerManager().ClearTimer(RespawnTimer);
 		GetWorld()->GetTimerManager().SetTimer(RespawnTimer, this, &AWeaponSpawnPoint::SpawmWeaponPickup, RespawnTime, false);
+	}
+}
+
+void AWeaponSpawnPoint::Destroy()
+{
+	if (CurrentPickup)
+	{
+		CurrentPickup->Destroy();
 	}
 }
 

@@ -5,13 +5,14 @@
 #include "CoreMinimal.h"
 #include "AI/ALSAIController.h"
 #include "Tools/Globals.h"
+#include "Interfaces/ScoreBoardInterface.h"
 #include "RCAIController.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class RUNCAST_API ARCAIController : public AALSAIController
+class RUNCAST_API ARCAIController : public AALSAIController, public IScoreBoardInterface
 {
 	GENERATED_BODY()
 	
@@ -30,7 +31,7 @@ protected:
 	void CreateCharacter();
 
 	UFUNCTION()
-	void CharacterKilled();
+	void CharacterKilled(ACharacter* killer);
 
 
 	UFUNCTION()
@@ -44,5 +45,14 @@ protected:
 
 	UPROPERTY()
 	FTimerHandle RestartDelay;
+
+	UPROPERTY()
+	FScoreBoardData ScoreData;
+
+	virtual void AddKillCount() override;
+
+	virtual void AddDeathCount() override;
+
+	virtual FScoreBoardData GetScoreBoardData() override;
 
 };

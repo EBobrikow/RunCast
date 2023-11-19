@@ -24,15 +24,15 @@ void AGrenadeLauncherProjectile::ApplyExplosionDamage()
 			{
 				if (lenthVec.Length() > (ExplosionRadius * 0.75f))
 				{
-					 damageble->ApplyDamage(ExplosionDamage * 0.25f);
+					 damageble->ApplyDamage(ExplosionDamage * 0.25f, OwnerCharacter);
 				}
 				else if (lenthVec.Length() > (ExplosionRadius * 0.5f))
 				{
-					damageble->ApplyDamage(ExplosionDamage * 0.5f);
+					damageble->ApplyDamage(ExplosionDamage * 0.5f, OwnerCharacter);
 				}
 				else if (lenthVec.Length() > (ExplosionRadius * 0.25f))
 				{
-					damageble->ApplyDamage(ExplosionDamage * 0.75f);
+					damageble->ApplyDamage(ExplosionDamage * 0.75f, OwnerCharacter);
 				}
 			}
 		}

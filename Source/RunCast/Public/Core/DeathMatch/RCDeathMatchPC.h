@@ -6,6 +6,7 @@
 #include "Net/UnrealNetwork.h"
 #include "Core/RCPlayerController.h"
 #include "Characters/RCCharacter.h"
+#include "Core/DeathMatch/RCDeathMatchGameState.h"
 #include "RCDeathMatchPC.generated.h"
 
 //DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnHealthStatusUpdate, float, health);
@@ -39,7 +40,7 @@ protected:
 	void Client_Init();
 
 	UFUNCTION()
-	void CharacterKilled();
+	void CharacterKilled(ACharacter* killer);
 
 	UFUNCTION()
 	void HealthUpdate(float val);
@@ -58,4 +59,6 @@ protected:
 
 	UPROPERTY()
 	FTimerHandle RestartDelay;
+
+	
 };

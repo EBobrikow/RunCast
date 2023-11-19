@@ -22,6 +22,6 @@ class IDamagebleInterface
 
 public: 
 
-	virtual void ApplyDamage(float dmg);
+	virtual void ApplyDamage(float dmg, ACharacter* Instigator);
 	
 };

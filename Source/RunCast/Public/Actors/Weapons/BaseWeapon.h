@@ -40,7 +40,7 @@ public:
 	float AttackCooldown = 0.2f;
 
 	UFUNCTION(Server, Reliable, BlueprintCallable)
-	void Server_WeaponFire();
+	void Server_WeaponFire(bool val);
 
 	UFUNCTION(NetMulticast, Reliable)
 	void Multicast_PlayMontage(UAnimMontage* montage);
@@ -52,16 +52,23 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-	virtual void WeaponFire();
+
+	virtual void WeaponFire(bool val);
 
 	UPROPERTY()
 	FTimerHandle AttackTimer;
 
 	UPROPERTY()
-	bool bCanAttack = true;
+	bool bCooldown = true;
+
+	UPROPERTY()
+	bool bCanAttack = false;
 
 	UFUNCTION()
 	void CooldownOff();
+
+	UFUNCTION()
+	void TickFire();
 
 public:	
 	// Called every frame

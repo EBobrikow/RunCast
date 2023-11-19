@@ -29,7 +29,7 @@ public:
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
 	void ApplyEffects();
 
-	virtual void ApplyDamage(float dmg) override;
+	virtual void ApplyDamage(float dmg, ACharacter* damager) override;
 
 protected:
 	// Called when the game starts or when spawned

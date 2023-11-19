@@ -17,7 +17,7 @@ UHealthComponent::UHealthComponent()
 
 
 
-void UHealthComponent::Multicast_DoDamage_Implementation(const float dmg)
+void UHealthComponent::Multicast_DoDamage_Implementation(const float dmg, ACharacter* instigator)
 {
 	if (CanTakeDamage)
 	{
@@ -32,7 +32,7 @@ void UHealthComponent::Multicast_DoDamage_Implementation(const float dmg)
 			CanTakeDamage = false;
 			if (OnActorKilled.IsBound())
 			{
-				OnActorKilled.Broadcast();
+				OnActorKilled.Broadcast(instigator);
 			}
 		}
 		

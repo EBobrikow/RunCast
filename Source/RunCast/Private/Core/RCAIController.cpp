@@ -5,6 +5,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "Core/DeathMatch/RCDeathMatchGM.h"
 #include "Characters/RCCharacter.h"
+#include "Core/RCGameState.h"
 
 ARCAIController::ARCAIController()
 {
@@ -13,11 +14,21 @@ ARCAIController::ARCAIController()
 void ARCAIController::BeginPlay()
 {
 	Super::BeginPlay();
+
+	ScoreData = FScoreBoardData();
+
+	
 }
 
 void ARCAIController::Init(FPlayerData playerData)
 {
 	PlayerData = playerData;
+	ScoreData.PlayerName = PlayerData.PlayerName;
+	ARCGameState* gameState = GetWorld()->GetGameState<ARCGameState>();
+	if (gameState)
+	{
+		gameState->Server_UpdateScoreBoard();
+	}
 	CreateCharacter();
 }
 
@@ -43,7 +54,7 @@ void ARCAIController::CreateCharacter()
 	}
 }
 
-void ARCAIController::CharacterKilled()
+void ARCAIController::CharacterKilled(ACharacter* killer)
 {
 	ARCCharacter* character = Cast<ARCCharacter>(GetPawn());
 	if (character)
@@ -69,4 +80,19 @@ void ARCAIController::Restart()
 		CreateCharacter();
 
 	}
+}
+
+void ARCAIController::AddKillCount()
+{
+	ScoreData.KillCount += 1;
+}
+
+void ARCAIController::AddDeathCount()
+{
+	ScoreData.DeathCount += 1;
+}
+
+FScoreBoardData ARCAIController::GetScoreBoardData()
+{
+	return ScoreData;
 }

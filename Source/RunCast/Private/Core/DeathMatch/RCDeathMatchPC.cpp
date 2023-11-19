@@ -9,21 +9,7 @@ void ARCDeathMatchPC::BeginPlay()
 {
 	Super::BeginPlay();
 
-//	if (IsLocalController())
-//	{
-//		URCGameInstance* gameInst = Cast<URCGameInstance>(UGameplayStatics::GetGameInstance(this));
-//		if (gameInst)
-//		{
-//			FPlayerData data = gameInst->GetPlayerData();
-//			Server_SetPlayerData(data);
-//			CharacterClass = data.SelectedCharacterClass;
-//		}
-//#if WITH_EDITOR
-//		CharacterClass = DefaultCharacterClass;
-//#endif
-//
-//		Server_CreateCharacter(CharacterClass);//CharacterClass
-//	}
+	ScoreData = FScoreBoardData();
 
 	if (HasAuthority())
 	{
@@ -33,6 +19,16 @@ void ARCDeathMatchPC::BeginPlay()
 			GM->OnMatchBegin.AddDynamic(this, &ARCDeathMatchPC::Client_Init);
 		}
 	}
+	
+	if (IsLocalPlayerController())
+	{
+		ARCGameState* gameState = GetWorld()->GetGameState<ARCGameState>();
+		if (gameState)
+		{
+			gameState->OnScoreBoardUpdate.AddDynamic(this, &ARCDeathMatchPC::UpdateScoreBoard);
+		}
+	}
+
 	
 }
 
@@ -99,13 +95,30 @@ void ARCDeathMatchPC::TimeUpdate(int32 Min, int32 Sec)
 	}
 }
 
-void ARCDeathMatchPC::CharacterKilled()
+void ARCDeathMatchPC::CharacterKilled(ACharacter* killer)
 {
 	ARCCharacter* character = Cast<ARCCharacter>(PossessedCharacter);
 	if (character)
 	{
 		character->KillCharacter();
 		character->DisableInput(this);
+
+		if (killer)
+		{
+			IScoreBoardInterface* scoreBoardInterface = Cast<IScoreBoardInterface>(killer->GetController());
+			if (scoreBoardInterface)
+			{
+				scoreBoardInterface->AddKillCount();
+			}
+		}
+		
+		AddDeathCount();
+
+		ARCDeathMatchGameState* gameState = GetWorld()->GetGameState<ARCDeathMatchGameState>();
+		if (gameState)
+		{
+			gameState->Server_UpdateScoreBoard();
+		}
 
 		GetWorld()->GetTimerManager().ClearTimer(RestartDelay);
 		GetWorld()->GetTimerManager().SetTimer(RestartDelay, this, &ARCDeathMatchPC::Restart, RestartDelayTime, false);

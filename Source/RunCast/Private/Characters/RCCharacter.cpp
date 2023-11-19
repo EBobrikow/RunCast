@@ -32,9 +32,9 @@ void ARCCharacter::Multicast_SetAnimState_Implementation(EALSOverlayState overla
 void ARCCharacter::Server_LightAttackAction_Implementation(const bool val)
 {
 	//LightAttackAction(val);
-	if (val && HoldWeaponRef)
+	if (HoldWeaponRef)
 	{
-		HoldWeaponRef->Server_WeaponFire();
+		HoldWeaponRef->Server_WeaponFire(val);
 	}
 }
 
@@ -50,12 +50,12 @@ void ARCCharacter::Server_LightAttackAction_Implementation(const bool val)
 
 void ARCCharacter::Server_SpawnBaseWeapon_Implementation(TSubclassOf<ABaseWeapon> WeaponClass)
 {
-	if (WeaponClass /*&& CurrentWeaponClass != WeaponClass*/)
+	if (WeaponClass)
 	{
 		CurrentWeaponClass = WeaponClass;
-		if (ChildActorComponent)
+		if (ChildActorComponent && CurrentWeaponClass)
 		{
-			ChildActorComponent->SetChildActorClass(WeaponClass);
+			ChildActorComponent->SetChildActorClass(CurrentWeaponClass);
 
 			if (HeldObjectRoot.Get())
 			{
@@ -75,12 +75,17 @@ void ARCCharacter::Server_SpawnBaseWeapon_Implementation(TSubclassOf<ABaseWeapon
 
 
 	}
+	else
+	{
+		FString msg = "Invalid weapon class";
+		GEngine->AddOnScreenDebugMessage(1, 10.0f, FColor::Cyan, *msg);
+	}
 	
 }
 
-void ARCCharacter::ApplyDamageBP(float dmg)
+void ARCCharacter::ApplyDamageBP(float dmg, ACharacter* damager)
 {
-	ApplyDamage(dmg);
+	ApplyDamage(dmg, damager);
 }
 
 void ARCCharacter::KillCharacter()
@@ -101,12 +106,12 @@ void ARCCharacter::KillCharacter()
 
 
 
-void ARCCharacter::ApplyDamage(float dmg)
+void ARCCharacter::ApplyDamage(float dmg, ACharacter* damager)
 {
 	UE_LOG(LogTemp, Warning, TEXT("Character take damage %f"), dmg);
 	if (HealthComponent)
 	{
-		HealthComponent->Multicast_DoDamage(dmg);
+		HealthComponent->Multicast_DoDamage(dmg, damager);
 	}
 }
 

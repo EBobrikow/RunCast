@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "Actors/Weapons/RCWeaponPickUp.h"
+#include "Net/UnrealNetwork.h"
 #include "WeaponSpawnPoint.generated.h"
 
 UCLASS()
@@ -32,12 +33,17 @@ protected:
 	UPROPERTY()
 	FTimerHandle RespawnTimer;
 
+	UPROPERTY()
+	FTimerHandle DestroyTimer;
+
 	UFUNCTION()
 	void SpawmWeaponPickup();
 
 	UFUNCTION()
 	void Respawn();
 
+	UFUNCTION()
+	void Destroy();
 
 public:	
 	// Called every frame

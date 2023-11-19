@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/HUD.h"
 #include "UI/Common/RCGameMenuWidget.h"
+#include "UI/Common/RCScoreBoard.h"
 #include "InGameHUD.generated.h"
 
 /**
@@ -23,16 +24,34 @@ public:
 	UFUNCTION()
 	void ShowGameMenu(APlayerController* pc);
 
+	UFUNCTION()
+	void ShowScoreBoard();
+
+	UFUNCTION()
+	void HideScoreBoard();
+
+	UFUNCTION()
+	void UpdateScoreBoardData(TArray<FScoreBoardData> dataList);
+
 protected: 
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	TSubclassOf<URCGameMenuWidget> GameMenuWidgetClass;
 
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	TSubclassOf<URCScoreBoard> ScoreBoardWidgetClass;
+
 	UPROPERTY()
 	URCGameMenuWidget* MenuWidget;
+
+	UPROPERTY()
+	URCScoreBoard* ScoreBoardWidget;
 
 
 	UFUNCTION()
 	void CreateMenuWidget();
+
+	UFUNCTION()
+	void CreateScoreBoardWidget();
 	
 };

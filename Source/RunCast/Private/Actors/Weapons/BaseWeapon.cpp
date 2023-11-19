@@ -23,9 +23,9 @@ ABaseWeapon::ABaseWeapon()
 	SetReplicates(true);
 }
 
-void ABaseWeapon::Server_WeaponFire_Implementation()
+void ABaseWeapon::Server_WeaponFire_Implementation(bool val)
 {
-	WeaponFire();
+	WeaponFire(val);
 }
 
 void ABaseWeapon::Multicast_PlayMontage_Implementation(UAnimMontage* montage)
@@ -50,10 +50,18 @@ void ABaseWeapon::BeginPlay()
 	
 }
 
-void ABaseWeapon::WeaponFire()
+// Called every frame
+void ABaseWeapon::Tick(float DeltaTime)
 {
-	
-	if (WeaponSkeletalMesh && bCanAttack)
+	Super::Tick(DeltaTime);
+	TickFire();
+}
+
+void ABaseWeapon::WeaponFire(bool val)
+{
+	bCanAttack = val;
+	//TickFire();
+	/*if (WeaponSkeletalMesh && bCooldown && bCanAttack)
 	{
 		Multicast_PlayMontage(FireMontage);
 
@@ -92,7 +100,7 @@ void ABaseWeapon::WeaponFire()
 				bullet->SetOwnerCharacter(character);
 				bullet->SetReplicates(true);
 				
-				bCanAttack = false;
+				bCooldown = false;
 				
 				GetWorld()->GetTimerManager().ClearTimer(AttackTimer);
 				GetWorld()->GetTimerManager().SetTimer(AttackTimer, this, &ABaseWeapon::CooldownOff, AttackCooldown, false);
@@ -100,25 +108,72 @@ void ABaseWeapon::WeaponFire()
 			
 		}
 		
-	}
+	}*/
 
 }
 
 void ABaseWeapon::CooldownOff()
 {
-	bCanAttack = true;
+	bCooldown = true;
+
 }
 
-// Called every frame
-void ABaseWeapon::Tick(float DeltaTime)
+void ABaseWeapon::TickFire()
 {
-	Super::Tick(DeltaTime);
+	if (!bCanAttack)
+	{
+		return;
+	}
 
+	if (WeaponSkeletalMesh && bCooldown)
+	{
+		Multicast_PlayMontage(FireMontage);
+
+
+		auto cameraManager = UGameplayStatics::GetPlayerCameraManager(GetWorld(), 0);
+		ARCCharacter* character = Cast<ARCCharacter>(OwnerCharacter);
+		if (character)
+		{
+			APlayerController* PC = Cast<APlayerController>(character->Controller);
+			if (PC)
+			{
+				cameraManager = PC->PlayerCameraManager;
+			}
+		}
+
+		FVector socketLoc = WeaponSkeletalMesh->GetSocketLocation(FName("Launch"));
+		if (cameraManager)
+		{
+			FRotator cameraRot = cameraManager->GetCameraRotation();
+			FVector cameraLoc = cameraManager->GetCameraLocation();
+			FVector forwardVec = cameraRot.Vector();
+			forwardVec *= 25000;
+			FVector end = cameraLoc + forwardVec;
+			FHitResult OutHit;
+			TEnumAsByte<ECollisionChannel> TraceChannelProperty = ECC_Visibility;
+			FCollisionQueryParams QueryParams;
+			QueryParams.AddIgnoredActor(this);
+			bool hit = GetWorld()->LineTraceSingleByChannel(OutHit, cameraLoc, end, TraceChannelProperty, QueryParams);
+			FVector hitEnd = hit ? OutHit.ImpactPoint : OutHit.TraceEnd;
+			FRotator finaleRot = UKismetMathLibrary::FindLookAtRotation(socketLoc, hitEnd);
+
+			FTransform transform = UKismetMathLibrary::MakeTransform(socketLoc, finaleRot);
+			if (ProjectileClass)
+			{
+				auto bullet = GetWorld()->SpawnActor<ABaseProjectile>(ProjectileClass, transform);
+				bullet->SetOwnerCharacter(character);
+				bullet->SetReplicates(true);
+
+				bCooldown = false;
+
+				GetWorld()->GetTimerManager().ClearTimer(AttackTimer);
+				GetWorld()->GetTimerManager().SetTimer(AttackTimer, this, &ABaseWeapon::CooldownOff, AttackCooldown, false);
+			}
+
+		}
+
+	}
 }
 
-//void ABaseWeapon::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const
-//{
-//	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
-//
-//
-//}
+
+

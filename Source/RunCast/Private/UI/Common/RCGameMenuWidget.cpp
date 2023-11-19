@@ -26,6 +26,11 @@ void URCGameMenuWidget::NativeConstruct()
 		ExitGame_Btn->OnClicked.Clear();
 		ExitGame_Btn->OnClicked.AddUniqueDynamic(this, &URCGameMenuWidget::OnExitGameClicked);
 	}
+
+	if (SettingsMenu)
+	{
+		SettingsMenu->SetVisibility(ESlateVisibility::Hidden);
+	}
 }
 
 void URCGameMenuWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)

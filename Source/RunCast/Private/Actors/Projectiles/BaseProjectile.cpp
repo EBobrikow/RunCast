@@ -45,7 +45,7 @@ void ABaseProjectile::OnHitComponent(UPrimitiveComponent* HitComponent, AActor* 
 		}
 	}
 
-	if (OtherActor == this )//|| Cast<ACharacter>(OtherActor) == OwnerCharacter)
+	if (OtherActor == this )
 	{
 		return;
 	}
@@ -53,7 +53,7 @@ void ABaseProjectile::OnHitComponent(UPrimitiveComponent* HitComponent, AActor* 
 	IDamagebleInterface* damageble = Cast<IDamagebleInterface>(OtherActor);
 	if (damageble)
 	{
-		damageble->ApplyDamage(ProjectileDamage);
+		damageble->ApplyDamage(ProjectileDamage, OwnerCharacter);
 	}
 	Multicast_AfterEffect();
 

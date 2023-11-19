@@ -3,6 +3,6 @@
 
 #include "Interfaces/DamagebleInterface.h"
 
-void IDamagebleInterface::ApplyDamage(float dmg)
+void IDamagebleInterface::ApplyDamage(float dmg, ACharacter* Instigator)
 {
 }

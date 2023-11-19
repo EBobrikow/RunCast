@@ -17,7 +17,7 @@ ADynamiteBox::ADynamiteBox()
 
 }
 
-void ADynamiteBox::ApplyDamage(float dmg)
+void ADynamiteBox::ApplyDamage(float dmg, ACharacter* damager)
 {
 	Server_TakeDamage();
 	//BigBadaBum();
@@ -49,19 +49,19 @@ void ADynamiteBox::BigBadaBum()
 			{
 				if (lenthVec.Length() > (ExplosionRadius * 0.75f))
 				{
-					damageble->ApplyDamage(ExplosionDamage * 0.25f);
+					damageble->ApplyDamage(ExplosionDamage * 0.25f, nullptr);
 				}
 				else if (lenthVec.Length() > (ExplosionRadius * 0.5f))
 				{
-					damageble->ApplyDamage(ExplosionDamage * 0.5f);
+					damageble->ApplyDamage(ExplosionDamage * 0.5f, nullptr);
 				}
 				else if (lenthVec.Length() > (ExplosionRadius * 0.25f))
 				{
-					damageble->ApplyDamage(ExplosionDamage * 0.75f);
+					damageble->ApplyDamage(ExplosionDamage * 0.75f, nullptr);
 				}
 				else
 				{
-					damageble->ApplyDamage(ExplosionDamage);
+					damageble->ApplyDamage(ExplosionDamage, nullptr);
 				}
 
 				

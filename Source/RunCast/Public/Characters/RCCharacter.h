@@ -44,12 +44,12 @@ public:
 	void Server_SpawnBaseWeapon(TSubclassOf<ABaseWeapon> WeaponClass);
 
 	UFUNCTION(BlueprintCallable)
-	void ApplyDamageBP(float dmg);
+	void ApplyDamageBP(float dmg, ACharacter* damager);
 
 	UFUNCTION(BlueprintCallable)
 	void KillCharacter();
 
-	virtual void ApplyDamage(float dmg) override;
+	virtual void ApplyDamage(float dmg, ACharacter* damager) override;
 
 	UHealthComponent* GetHealthComponent() const;
 

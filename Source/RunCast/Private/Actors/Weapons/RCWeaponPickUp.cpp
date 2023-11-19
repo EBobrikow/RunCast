@@ -9,16 +9,28 @@ ARCWeaponPickUp::ARCWeaponPickUp()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
+	bReplicates = true;
+
+	USceneComponent* defRoot = CreateDefaultSubobject<USceneComponent>(TEXT("defRoot"));
+	RootComponent = defRoot;
 
 	BaseMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("StaticMesh"));
 	BaseMesh->SetupAttachment(RootComponent);
+	BaseMesh->SetIsReplicated(true);
 	BaseSphere = CreateDefaultSubobject<USphereComponent>(TEXT("SphereComponent"));
 	BaseSphere->SetupAttachment(BaseMesh);
 	if (BaseSphere)
 	{
 		BaseSphere->SetSphereRadius(100.0f);
 		BaseSphere->OnComponentBeginOverlap.AddDynamic(this, &ARCWeaponPickUp::OnBeginOverlap);
-		BaseSphere->OnComponentEndOverlap.AddDynamic(this, &ARCWeaponPickUp::OnEndOverlap);
+	}
+}
+
+void ARCWeaponPickUp::ResetOverlap()
+{
+	if (BaseSphere)
+	{
+		BaseSphere->OnComponentBeginOverlap.Clear();
 	}
 }
 
@@ -26,7 +38,6 @@ ARCWeaponPickUp::ARCWeaponPickUp()
 void ARCWeaponPickUp::BeginPlay()
 {
 	Super::BeginPlay();
-	Multicast_DrawSphere();
 }
 
 void ARCWeaponPickUp::OnBeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
@@ -36,6 +47,7 @@ void ARCWeaponPickUp::OnBeginOverlap(UPrimitiveComponent* OverlappedComp, AActor
 	ARCCharacter* Char = Cast<ARCCharacter>(OtherActor);
 	if (Char)
 	{
+		ResetOverlap();
 		Char->Server_SpawnBaseWeapon(WeaponClass);
 		if (OnPickupDelegate.IsBound())
 		{
@@ -44,18 +56,7 @@ void ARCWeaponPickUp::OnBeginOverlap(UPrimitiveComponent* OverlappedComp, AActor
 	}
 }
 
-void ARCWeaponPickUp::OnEndOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
-{
-}
 
-void ARCWeaponPickUp::ResetSpawn()
-{
-}
-
-void ARCWeaponPickUp::Multicast_DrawSphere_Implementation()
-{
-	DrawDebugSphere(GetWorld(), BaseMesh->GetComponentLocation(), 100.0f, 6, FColor::Cyan);
-}
 
 // Called every frame
 void ARCWeaponPickUp::Tick(float DeltaTime)

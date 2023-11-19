@@ -5,8 +5,9 @@
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerController.h"
 #include "Core/RCGameInstance.h"
+#include "Core/RCGameState.h"
 #include "Character/ALSPlayerController.h"
-//#include "Core/Lobby/RCLobbyGameState.h"
+#include "Interfaces/ScoreBoardInterface.h"
 #include "Net/UnrealNetwork.h"
 #include "RCPlayerController.generated.h"
 
@@ -15,13 +16,14 @@
  * 
  */
 UCLASS()
-class RUNCAST_API ARCPlayerController : public AALSPlayerController
+class RUNCAST_API ARCPlayerController : public AALSPlayerController, public IScoreBoardInterface
 {
 	GENERATED_BODY()
 	
 public: 
 
 	ARCPlayerController();
+
 	virtual void BeginPlay() override;
 
 	virtual FPlayerData GetPlayerData();
@@ -49,14 +51,36 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void ShowInGameMenu();
 
+	UFUNCTION(BlueprintCallable)
+	void ShowScoreBoard();
+
+	UFUNCTION(BlueprintCallable)
+	void HideScoreBoard();
+
+	UFUNCTION()
+	void UpdateScoreBoard(TArray<FScoreBoardData> data);
+
+	virtual void AddKillCount() override;
+
+	virtual void AddDeathCount() override;
+
+	virtual FScoreBoardData GetScoreBoardData() override;
+
+
 protected: 
 
 	UPROPERTY(Replicated)
 	FPlayerData PlayerData;
 
+	UPROPERTY(Replicated)
+	FScoreBoardData ScoreData;
+
 	virtual void ShowMenu();
 
 	virtual void TimeUpdate(int32 Min, int32 Sec);
 
-	//virtual void LightAttack(bool val) override;
+
+
+	
+	
 };

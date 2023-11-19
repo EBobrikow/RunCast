@@ -9,6 +9,7 @@ void AInGameHUD::BeginPlay()
 	Super::BeginPlay();
 
 	CreateMenuWidget();
+	CreateScoreBoardWidget();
 }
 
 void AInGameHUD::Tick(float DeltaTime)
@@ -36,6 +37,35 @@ void AInGameHUD::ShowGameMenu(APlayerController* pc)
 	
 }
 
+void AInGameHUD::ShowScoreBoard()
+{
+	if (MenuWidget && MenuWidget->IsVisible())
+	{
+		return;
+	}
+
+	if (ScoreBoardWidget)
+	{
+		ScoreBoardWidget->SetVisibility(ESlateVisibility::Visible);
+	}
+}
+
+void AInGameHUD::HideScoreBoard()
+{
+	if (ScoreBoardWidget)
+	{
+		ScoreBoardWidget->SetVisibility(ESlateVisibility::Hidden);
+	}
+}
+
+void AInGameHUD::UpdateScoreBoardData(TArray<FScoreBoardData> dataList)
+{
+	if (ScoreBoardWidget)
+	{
+		ScoreBoardWidget->ConstructList(dataList);
+	}
+}
+
 void AInGameHUD::CreateMenuWidget()
 {
 	if (GameMenuWidgetClass)
@@ -48,4 +78,17 @@ void AInGameHUD::CreateMenuWidget()
 		}
 	}
 	
+}
+
+void AInGameHUD::CreateScoreBoardWidget()
+{
+	if (ScoreBoardWidgetClass)
+	{
+		ScoreBoardWidget = CreateWidget<URCScoreBoard>(GetWorld(), ScoreBoardWidgetClass);
+		if (ScoreBoardWidget)
+		{
+			ScoreBoardWidget->AddToViewport();
+			ScoreBoardWidget->SetVisibility(ESlateVisibility::Hidden);
+		}
+	}
 }

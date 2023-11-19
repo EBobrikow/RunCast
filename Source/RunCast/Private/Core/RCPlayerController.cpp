@@ -22,7 +22,8 @@ void ARCPlayerController::BeginPlay()
 	{
 		FInputModeGameOnly InputMode;
 		SetInputMode(InputMode);
-		//bShowMouseCursor = false;
+		
+
 	}
 
 	if (HasAuthority())
@@ -41,6 +42,7 @@ void ARCPlayerController::Server_SetPlayerData_Implementation(const FPlayerData&
 	if (HasAuthority())
 	{
 		PlayerData = playerData;
+		ScoreData.PlayerName = PlayerData.PlayerName;
 	}
 
 	Client_PreservePlayerData(playerData);
@@ -94,6 +96,13 @@ void ARCPlayerController::Client_SetupPlayerData_Implementation(const FPlayerDat
 		PlayerData.PlayerName = data.PlayerName;
 		GameInstancePtr->SetPlayerData(PlayerData);
 		Server_SetPlayerData(PlayerData);
+
+		ScoreData.PlayerName = PlayerData.PlayerName;
+		ARCGameState* gameState = GetWorld()->GetGameState<ARCGameState>();
+		if (gameState)
+		{
+			gameState->Server_UpdateScoreBoard();
+		}
 	}
 }
 
@@ -107,6 +116,33 @@ void ARCPlayerController::ShowInGameMenu()
 	ShowMenu();
 }
 
+void ARCPlayerController::ShowScoreBoard()
+{
+	AInGameHUD* hud = Cast<AInGameHUD>(GetHUD());
+	if (hud)
+	{
+		hud->ShowScoreBoard();
+	}
+}
+
+void ARCPlayerController::HideScoreBoard()
+{
+	AInGameHUD* hud = Cast<AInGameHUD>(GetHUD());
+	if (hud)
+	{
+		hud->HideScoreBoard();
+	}
+}
+
+void ARCPlayerController::UpdateScoreBoard(TArray<FScoreBoardData> data)
+{
+	AInGameHUD* hud = Cast<AInGameHUD>(GetHUD());
+	if (hud)
+	{
+		hud->UpdateScoreBoardData(data);
+	}
+}
+
 void ARCPlayerController::ShowMenu()
 {
 	AInGameHUD* hud = Cast<AInGameHUD>(GetHUD());
@@ -118,6 +154,21 @@ void ARCPlayerController::ShowMenu()
 
 void ARCPlayerController::TimeUpdate(int32 Min, int32 Sec)
 {
+}
+
+void ARCPlayerController::AddKillCount()
+{
+	ScoreData.KillCount += 1;
+}
+
+void ARCPlayerController::AddDeathCount()
+{
+	ScoreData.DeathCount += 1;
+}
+
+FScoreBoardData ARCPlayerController::GetScoreBoardData()
+{
+	return ScoreData;
 }
 
 void ARCPlayerController::Client_PreservePlayerData_Implementation(const FPlayerData& playerData)
@@ -139,4 +190,5 @@ void ARCPlayerController::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 	
 	DOREPLIFETIME(ARCPlayerController, PlayerData);
+	DOREPLIFETIME(ARCPlayerController, ScoreData);
 }
