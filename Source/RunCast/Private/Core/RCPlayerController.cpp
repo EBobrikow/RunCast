@@ -43,7 +43,15 @@ void ARCPlayerController::Server_SetPlayerData_Implementation(const FPlayerData&
 	{
 		PlayerData = playerData;
 		ScoreData.PlayerName = PlayerData.PlayerName;
+
+		ARCGameState* gameState = GetWorld()->GetGameState<ARCGameState>();
+		if (gameState)
+		{
+			gameState->Server_UpdateScoreBoard();
+		}
 	}
+
+	
 
 	Client_PreservePlayerData(playerData);
 }
@@ -97,12 +105,12 @@ void ARCPlayerController::Client_SetupPlayerData_Implementation(const FPlayerDat
 		GameInstancePtr->SetPlayerData(PlayerData);
 		Server_SetPlayerData(PlayerData);
 
-		ScoreData.PlayerName = PlayerData.PlayerName;
+		/*ScoreData.PlayerName = PlayerData.PlayerName;
 		ARCGameState* gameState = GetWorld()->GetGameState<ARCGameState>();
 		if (gameState)
 		{
 			gameState->Server_UpdateScoreBoard();
-		}
+		}*/
 	}
 }
 
@@ -141,6 +149,17 @@ void ARCPlayerController::UpdateScoreBoard(TArray<FScoreBoardData> data)
 	{
 		hud->UpdateScoreBoardData(data);
 	}
+}
+
+void ARCPlayerController::OnScoreBoardUpdateCall(TArray<FScoreBoardData> data)
+{
+	TArray<FScoreBoardData> scoreData = data;
+	Client_UpdateScoreBoard(scoreData);
+}
+
+void ARCPlayerController::Client_UpdateScoreBoard_Implementation(const TArray<FScoreBoardData>& data)
+{
+	UpdateScoreBoard(data);
 }
 
 void ARCPlayerController::ShowMenu()

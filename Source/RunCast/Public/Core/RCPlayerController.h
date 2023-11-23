@@ -60,6 +60,12 @@ public:
 	UFUNCTION()
 	void UpdateScoreBoard(TArray<FScoreBoardData> data);
 
+	UFUNCTION()
+	void OnScoreBoardUpdateCall(TArray<FScoreBoardData> data);
+
+	UFUNCTION(Client, Reliable)
+	void Client_UpdateScoreBoard(const TArray<FScoreBoardData>& data);
+
 	virtual void AddKillCount() override;
 
 	virtual void AddDeathCount() override;

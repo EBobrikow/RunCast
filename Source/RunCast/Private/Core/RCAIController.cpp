@@ -62,6 +62,22 @@ void ARCAIController::CharacterKilled(ACharacter* killer)
 		character->KillCharacter();
 		BrainComponent->StopLogic("Dead");
 
+		if (killer)
+		{
+			IScoreBoardInterface* scoreBoardInterface = Cast<IScoreBoardInterface>(killer->GetController());
+			if (scoreBoardInterface)
+			{
+				scoreBoardInterface->AddKillCount();
+			}
+		}
+
+		AddDeathCount();
+
+		ARCGameState* gameState = GetWorld()->GetGameState<ARCGameState>();
+		if (gameState)
+		{
+			gameState->Server_UpdateScoreBoard();
+		}
 
 		GetWorld()->GetTimerManager().ClearTimer(RestartDelay);
 		GetWorld()->GetTimerManager().SetTimer(RestartDelay, this, &ARCAIController::Restart, RestartDelayTime, false);

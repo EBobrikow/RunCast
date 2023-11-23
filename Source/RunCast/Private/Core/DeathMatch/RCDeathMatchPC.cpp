@@ -18,18 +18,14 @@ void ARCDeathMatchPC::BeginPlay()
 		{
 			GM->OnMatchBegin.AddDynamic(this, &ARCDeathMatchPC::Client_Init);
 		}
-	}
-	
-	if (IsLocalPlayerController())
-	{
+
 		ARCGameState* gameState = GetWorld()->GetGameState<ARCGameState>();
 		if (gameState)
 		{
-			gameState->OnScoreBoardUpdate.AddDynamic(this, &ARCDeathMatchPC::UpdateScoreBoard);
+			gameState->OnScoreBoardUpdate.AddDynamic(this, &ARCDeathMatchPC::OnScoreBoardUpdateCall);
 		}
 	}
 
-	
 }
 
 void ARCDeathMatchPC::CreateCharacter()
@@ -82,7 +78,13 @@ void ARCDeathMatchPC::Client_Init_Implementation()
 		CharacterClass = DefaultCharacterClass;
 #endif
 
-		Server_CreateCharacter(CharacterClass);//CharacterClass
+		Server_CreateCharacter(CharacterClass);
+
+		ARCDeathMatchGameState* gameState = GetWorld()->GetGameState<ARCDeathMatchGameState>();
+		if (gameState)
+		{
+			gameState->Server_UpdateScoreBoard();
+		}
 	}
 }
 

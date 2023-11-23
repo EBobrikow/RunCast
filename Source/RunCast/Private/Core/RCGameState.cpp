@@ -17,9 +17,10 @@ void ARCGameState::Server_UpdateScoreBoard_Implementation()
 	TArray<AActor*> Controllers;
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AController::StaticClass(), Controllers);
 
+	ScoreBoardTable.Empty();
 	for (AActor* cntrl : Controllers)
 	{
-		ScoreBoardTable.Empty();
+		
 		IScoreBoardInterface* scoreContrl = Cast<IScoreBoardInterface>(cntrl);
 		if (scoreContrl)
 		{
