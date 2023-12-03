@@ -29,3 +29,15 @@ void URCGameOverlay::SetTime(int32 Min, int32 Sec)
 		SecondsTxt->SetText(FText::FromString(FString::FromInt(Sec)));
 	}
 }
+
+void URCGameOverlay::ShowCrosshair(bool val)
+{
+	if (val)
+	{
+		CrosshairImg->SetVisibility(ESlateVisibility::Visible);
+	}
+	else
+	{
+		CrosshairImg->SetVisibility(ESlateVisibility::Hidden);
+	}
+}

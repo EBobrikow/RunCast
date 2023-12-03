@@ -41,6 +41,11 @@ void ADynamiteBox::BigBadaBum()
 			continue;
 		}
 
+		if (actor->GetClass() == this->GetClass())
+		{
+			continue;
+		}
+
 		FVector lenthVec = actor->GetActorLocation() - GetActorLocation();
 		if (lenthVec.Length() <= ExplosionRadius)
 		{

@@ -58,13 +58,12 @@ public:
 	void HideScoreBoard();
 
 	UFUNCTION()
-	void UpdateScoreBoard(TArray<FScoreBoardData> data);
-
-	UFUNCTION()
 	void OnScoreBoardUpdateCall(TArray<FScoreBoardData> data);
 
 	UFUNCTION(Client, Reliable)
 	void Client_UpdateScoreBoard(const TArray<FScoreBoardData>& data);
+
+
 
 	virtual void AddKillCount() override;
 
@@ -85,8 +84,15 @@ protected:
 
 	virtual void TimeUpdate(int32 Min, int32 Sec);
 
+	virtual void UpdateScoreBoard(TArray<FScoreBoardData> data);
 
+	virtual void ShowFinaleScore(TArray<FScoreBoardData> data);
 
+	UFUNCTION(Client, Reliable)
+	void Client_FinaleScoreData(const TArray<FScoreBoardData>& data);
+
+	UFUNCTION()
+	void OnFinaleScoreData(TArray<FScoreBoardData> data);
 	
 	
 };

@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/SaveGame.h"
+#include "Tools/Globals.h"
 #include "RCSaveGame.generated.h"
 
 /**
@@ -27,4 +28,25 @@ public:
 
 	UPROPERTY()
 	FString PlayerName;
+
+	UPROPERTY()
+	TEnumAsByte<ESettingsQuality> Graphics;
+
+	UPROPERTY()
+	TEnumAsByte<ESettingsQuality> Shadow;
+
+	UPROPERTY()
+	TEnumAsByte<ESettingsQuality> Aliasing;
+
+	UPROPERTY()
+	TEnumAsByte<ESettingsQuality> PostProcessing;
+
+	UPROPERTY()
+	TEnumAsByte<ESettingsQuality> ViewDistance;
+
+	UPROPERTY()
+	TEnumAsByte<ESettingsQuality> Texture;
+
+	UPROPERTY()
+	TEnumAsByte<ESettingsQuality> Effects;
 };

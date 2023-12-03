@@ -43,11 +43,17 @@ void ABaseWeapon::Multicast_PlayMontage_Implementation(UAnimMontage* montage)
 	
 }
 
+void ABaseWeapon::SetTargetLocation(FVector loc)
+{
+	TargetLocation = loc;
+}
+
 // Called when the game starts or when spawned
 void ABaseWeapon::BeginPlay()
 {
 	Super::BeginPlay();
 	
+	TargetLocation = FVector::ZeroVector;
 }
 
 // Called every frame
@@ -120,7 +126,9 @@ void ABaseWeapon::CooldownOff()
 
 void ABaseWeapon::TickFire()
 {
-	if (!bCanAttack)
+	ARCCharacter* character = Cast<ARCCharacter>(OwnerCharacter);
+
+	if (!bCanAttack || !character->IsAlive())
 	{
 		return;
 	}
@@ -131,7 +139,7 @@ void ABaseWeapon::TickFire()
 
 
 		auto cameraManager = UGameplayStatics::GetPlayerCameraManager(GetWorld(), 0);
-		ARCCharacter* character = Cast<ARCCharacter>(OwnerCharacter);
+		
 		if (character)
 		{
 			APlayerController* PC = Cast<APlayerController>(character->Controller);
@@ -155,8 +163,12 @@ void ABaseWeapon::TickFire()
 			QueryParams.AddIgnoredActor(this);
 			bool hit = GetWorld()->LineTraceSingleByChannel(OutHit, cameraLoc, end, TraceChannelProperty, QueryParams);
 			FVector hitEnd = hit ? OutHit.ImpactPoint : OutHit.TraceEnd;
-			FRotator finaleRot = UKismetMathLibrary::FindLookAtRotation(socketLoc, hitEnd);
 
+			if (TargetLocation != FVector::ZeroVector) //AI targeting
+			{
+				hitEnd = TargetLocation;
+			}
+			FRotator finaleRot = UKismetMathLibrary::FindLookAtRotation(socketLoc, hitEnd);
 			FTransform transform = UKismetMathLibrary::MakeTransform(socketLoc, finaleRot);
 			if (ProjectileClass)
 			{

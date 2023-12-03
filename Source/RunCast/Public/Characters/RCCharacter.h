@@ -49,6 +49,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void KillCharacter();
 
+	UFUNCTION(BlueprintCallable)
+	bool IsAlive() const;
+
 	virtual void ApplyDamage(float dmg, ACharacter* damager) override;
 
 	UHealthComponent* GetHealthComponent() const;

@@ -3,6 +3,8 @@
 
 #include "Actors/Weapons/RCWeaponPickUp.h"
 #include "Characters/RCCharacter.h"
+#include "NiagaraSystem.h"
+#include "NiagaraFunctionLibrary.h"
 
 // Sets default values
 ARCWeaponPickUp::ARCWeaponPickUp()
@@ -38,6 +40,8 @@ void ARCWeaponPickUp::ResetOverlap()
 void ARCWeaponPickUp::BeginPlay()
 {
 	Super::BeginPlay();
+
+
 }
 
 void ARCWeaponPickUp::OnBeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
@@ -55,7 +59,6 @@ void ARCWeaponPickUp::OnBeginOverlap(UPrimitiveComponent* OverlappedComp, AActor
 		}
 	}
 }
-
 
 
 // Called every frame

@@ -210,23 +210,23 @@ void URCMainMenuWidget::PlayerNameCommited(FString name)
 		if (SaveManager->IsSaveExist())
 		{
 			saveGame = SaveManager->LoadGameObject();
+			saveGame->PlayerName = name;
+			SaveManager->SaveGameObject(saveGame);
+
+			ARCPlayerController* PC = Cast<ARCPlayerController>(UGameplayStatics::GetPlayerController(this, 0));
+			if (GameInstancePtr && PC)
+			{
+				FPlayerData pData = GameInstancePtr->GetPlayerData();
+				pData.PlayerName = name;
+				PC->Server_SetPlayerData(pData);
+			}
 		}
-		else
+		/*else
 		{
 			saveGame = SaveManager->CreateSaveGameObj();
-		}
+		}*/
 
-		saveGame->PlayerName = name;
-		SaveManager->SaveGameObject(saveGame);
-
-		ARCPlayerController* PC = Cast<ARCPlayerController>(UGameplayStatics::GetPlayerController(this, 0));
-		if (GameInstancePtr && PC)
-		{
-			FPlayerData pData = GameInstancePtr->GetPlayerData();
-			pData.PlayerName = name;
-			PC->Server_SetPlayerData(pData);
-			//GameInstancePtr->SetPlayerData(pData);
-		}
+		
 	}
 }
 
@@ -255,24 +255,24 @@ void URCMainMenuWidget::LoadPlayerName()
 			}
 			
 		}
-		else
-		{
-			saveGame = SaveManager->CreateSaveGameObj();
-			if (saveGame && PlayerNameEdText)
-			{
-				PlayerNameEdText->SetText(FText::FromString("Player1"));
+		//else
+		//{
+		//	saveGame = SaveManager->CreateSaveGameObj();
+		//	if (saveGame && PlayerNameEdText)
+		//	{
+		//		PlayerNameEdText->SetText(FText::FromString("Player1"));
 
-				ARCPlayerController* PC = Cast<ARCPlayerController>(UGameplayStatics::GetPlayerController(this, 0));
-				if (GameInstancePtr && PC)
-				{
-					FPlayerData pData = GameInstancePtr->GetPlayerData();
-					pData.PlayerName = "Player1";
-					PC->Server_SetPlayerData(pData);
-					//GameInstancePtr->SetPlayerData(pData);
-				}
-				SaveManager->SaveGameObject(saveGame);
-			}
-		}
+		//		ARCPlayerController* PC = Cast<ARCPlayerController>(UGameplayStatics::GetPlayerController(this, 0));
+		//		if (GameInstancePtr && PC)
+		//		{
+		//			FPlayerData pData = GameInstancePtr->GetPlayerData();
+		//			pData.PlayerName = "Player1";
+		//			PC->Server_SetPlayerData(pData);
+		//			//GameInstancePtr->SetPlayerData(pData);
+		//		}
+		//		SaveManager->SaveGameObject(saveGame);
+		//	}
+		//}
 		
 	}
 }

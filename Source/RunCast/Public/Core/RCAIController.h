@@ -37,6 +37,9 @@ protected:
 	UFUNCTION()
 	void Restart();
 
+	UFUNCTION()
+	void MatchEnd();
+
 	UPROPERTY()
 	FPlayerData PlayerData;
 

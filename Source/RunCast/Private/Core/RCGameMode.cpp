@@ -47,7 +47,7 @@ void ARCGameMode::Logout(AController* Exiting)
 			{
 				GameInstance->GetServerManager()->RequestCloseServer(info.Id);
 #if UE_SERVER
-				FGenericPlatformMisc::RequestExit(false);
+				FGenericPlatformMisc::RequestExit(true);
 #endif
 			}
 			

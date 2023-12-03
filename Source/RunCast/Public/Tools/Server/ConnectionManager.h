@@ -10,7 +10,9 @@
 #include "Containers/Queue.h"
 #include "ConnectionManager.generated.h"
 
-
+const FString ServerManagerUrl = "ServerManagerUrl";
+const FString Port = "Port";
+const FString ConfigFileName = "Config.json";
 
 
 UCLASS()
@@ -68,4 +70,7 @@ private:
 
 	UFUNCTION()
 	void OnMessageRecieve(const FString& message);
+
+	UFUNCTION()
+	void ReadConfigFile();
 };

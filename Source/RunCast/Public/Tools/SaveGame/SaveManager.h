@@ -21,6 +21,9 @@ class RUNCAST_API USaveManager : public UObject
 public:
 
 	UFUNCTION()
+	void Init();
+
+	UFUNCTION()
 	URCSaveGame* CreateSaveGameObj();
 
 	UFUNCTION()

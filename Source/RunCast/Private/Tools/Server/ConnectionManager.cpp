@@ -5,6 +5,9 @@
 #include "Modules/ModuleManager.h"
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetSystemLibrary.h"
+#include "HAL/PlatformFileManager.h"
+#include "Misc/FileHelper.h"
+#include "Dom/JsonValue.h"
 
 
 void UConnectionManager::InitConnection()
@@ -13,7 +16,7 @@ void UConnectionManager::InitConnection()
 	{
 		FModuleManager::Get().LoadModule("WebSockets");
 	}
-
+	ReadConfigFile();
 	WebSocketConnection = FWebSocketsModule::Get().CreateWebSocket(SocketURL);
 
 	WebSocketConnection->OnConnected().AddUFunction(this, FName("OnConnected"));
@@ -115,5 +118,39 @@ void UConnectionManager::OnMessageRecieve(const FString& message)
 	CurrentRequestObject = nullptr;
 
 	ProceedQueue();
+}
+
+void UConnectionManager::ReadConfigFile()
+{
+	FString path = FPaths::ConvertRelativePathToFull(FPaths::LaunchDir()) + ConfigFileName;
+
+	if (FPlatformFileManager::Get().GetPlatformFile().FileExists(*path))
+	{
+		FString readRes = ""; 
+		if (FFileHelper::LoadFileToString(readRes, *path))
+		{
+			TSharedPtr<FJsonObject> JsonObject;
+			TSharedRef<TJsonReader<>> Reader = TJsonReaderFactory<>::Create(readRes);
+			if (FJsonSerializer::Deserialize(Reader, JsonObject))
+			{
+				FString adress = "";
+				int32 port = -1;
+				for (auto val : JsonObject->Values)
+				{
+					if (val.Key == ServerManagerUrl && !val.Value->IsNull())
+					{
+						adress = val.Value->AsString(); 
+						
+					}
+					else if (val.Key == Port && !val.Value->IsNull())
+					{
+						port = val.Value->AsNumber();
+					}
+				}
+
+				SocketURL = "ws://" + adress + ":" + FString::FromInt(port);
+			}
+		}
+	}
 }
 

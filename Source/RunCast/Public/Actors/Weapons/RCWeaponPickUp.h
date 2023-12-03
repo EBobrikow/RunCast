@@ -10,6 +10,7 @@
 #include "Net/UnrealNetwork.h"
 #include "RCWeaponPickUp.generated.h"
 
+class UNiagaraSystem;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnPickup);
 
@@ -37,13 +38,13 @@ public:
 	UFUNCTION()
 	void ResetOverlap();
 
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
 	UFUNCTION(BlueprintCallable)
 	void OnBeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
-
 
 	UPROPERTY()
 	FTimerHandle PickUpResetTimer;

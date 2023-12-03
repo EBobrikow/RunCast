@@ -48,6 +48,9 @@ public:
 	UPROPERTY()
 	ACharacter* OwnerCharacter = nullptr;
 
+	UFUNCTION()
+	void SetTargetLocation(FVector loc);
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -69,6 +72,9 @@ protected:
 
 	UFUNCTION()
 	void TickFire();
+
+	UPROPERTY()
+	FVector TargetLocation;
 
 public:	
 	// Called every frame

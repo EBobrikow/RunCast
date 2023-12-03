@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "UI/Common/InGameHUD.h"
 #include "UI/Common/RCGameOverlay.h"
+#include "UI/DeathMatch/FinaleStat.h"
 #include "Characters/RCCharacter.h"
 #include "RCDeathMatchHUD.generated.h"
 
@@ -24,6 +25,9 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	TSubclassOf<URCGameOverlay> GameOverlayClass;
 
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	TSubclassOf<UFinaleStat> FinaleStatWidgetClass;
+
 	UFUNCTION()
 	void UpdateHealthBar(float val);
 
@@ -33,15 +37,21 @@ public:
 	UFUNCTION()
 	void UpdateTimer(int32 min, int32 sec);
 
+	UFUNCTION()
+	void DisplayFinaleStat(TArray<FScoreBoardData> data);
+
 protected: 
 
 	UPROPERTY()
 	URCGameOverlay* GameOverlayWidget = nullptr;
 
 	UPROPERTY()
+	UFinaleStat* FinaleStatWidget = nullptr;
+
+	UPROPERTY()
 	ARCCharacter* CharacterRef = nullptr;
 
-
+	virtual void GameMenuOpened(bool val) override;
 	
 	
 };

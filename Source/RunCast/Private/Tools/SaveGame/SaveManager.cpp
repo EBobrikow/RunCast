@@ -3,7 +3,30 @@
 
 #include "Tools/SaveGame/SaveManager.h"
 
-URCSaveGame* USaveManager::CreateSaveGameObj() 
+void USaveManager::Init()
+{
+    if (!IsSaveExist())
+    {
+        URCSaveGame* save =  CreateSaveGameObj();
+        save->AmbientVoluem = 0.5f;
+        save->MusicVoluem = 0.5f;
+        save->EffectsVoluem = 0.5f;
+        save->PlayerName = "Player";
+
+        save->Graphics = ESettingsQuality::High;
+        save->Shadow = ESettingsQuality::High;
+        save->Aliasing = ESettingsQuality::High;
+        save->PostProcessing = ESettingsQuality::High;
+        save->ViewDistance = ESettingsQuality::High;
+        save->Texture = ESettingsQuality::High;
+        save->Effects = ESettingsQuality::High;
+
+
+        SaveGameObject(save);
+    }
+}
+
+URCSaveGame* USaveManager::CreateSaveGameObj()
 {
     return NewObject<URCSaveGame>(this);
 }

@@ -3,7 +3,7 @@
 
 #include "UI/DeathMatch/RCDeathMatchHUD.h"
 #include "Core/DeathMatch/RCDeathMatchPC.h"
-//#include "Characters/RCCharacter.h"
+#include "Blueprint/WidgetBlueprintLibrary.h"
 #include "Components/HealthComponent.h"
 
 void ARCDeathMatchHUD::BeginPlay()
@@ -70,5 +70,27 @@ void ARCDeathMatchHUD::UpdateTimer(int32 min, int32 sec)
 	if (GameOverlayWidget)
 	{
 		GameOverlayWidget->SetTime(min, sec);
+	}
+}
+
+void ARCDeathMatchHUD::DisplayFinaleStat(TArray<FScoreBoardData> data)
+{
+	if (FinaleStatWidgetClass)
+	{
+		APlayerController* PC = Cast<APlayerController>(GetOwner());
+		FinaleStatWidget = CreateWidget<UFinaleStat>(PC, FinaleStatWidgetClass);
+		if (FinaleStatWidget)
+		{
+			FinaleStatWidget->AddToViewport();
+			FinaleStatWidget->Init(data);
+		}
+	}
+}
+
+void ARCDeathMatchHUD::GameMenuOpened(bool val)
+{
+	if (GameOverlayWidget)
+	{
+		GameOverlayWidget->ShowCrosshair(val);
 	}
 }

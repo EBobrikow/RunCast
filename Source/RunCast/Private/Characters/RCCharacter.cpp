@@ -104,6 +104,15 @@ void ARCCharacter::KillCharacter()
 	
 }
 
+bool ARCCharacter::IsAlive() const
+{
+	if (HealthComponent)
+	{
+		return HealthComponent->GetCurrentHealth() > 0;
+	}
+	return false;
+}
+
 
 
 void ARCCharacter::ApplyDamage(float dmg, ACharacter* damager)

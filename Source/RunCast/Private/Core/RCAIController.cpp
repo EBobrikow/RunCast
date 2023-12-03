@@ -17,7 +17,12 @@ void ARCAIController::BeginPlay()
 
 	ScoreData = FScoreBoardData();
 
-	
+	ARCDeathMatchGM* GM = Cast<ARCDeathMatchGM>(UGameplayStatics::GetGameMode(this));
+	if (GM)
+	{
+
+		GM->OnMatchEnd.AddDynamic(this, &ARCAIController::MatchEnd);
+	}
 }
 
 void ARCAIController::Init(FPlayerData playerData)
@@ -96,6 +101,11 @@ void ARCAIController::Restart()
 		CreateCharacter();
 
 	}
+}
+
+void ARCAIController::MatchEnd()
+{
+	BrainComponent->StopLogic("GameEnd");
 }
 
 void ARCAIController::AddKillCount()

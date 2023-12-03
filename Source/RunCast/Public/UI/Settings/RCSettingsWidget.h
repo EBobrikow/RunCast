@@ -8,8 +8,9 @@
 #include "Components/VerticalBox.h"
 #include "Components/Slider.h"
 #include "Components/WidgetSwitcher.h"
-#include "Sound/SoundMix.h"
+#include "Components/ComboBoxString.h"
 #include "Tools/SaveGame/SaveManager.h"
+#include "Tools/Globals.h"
 #include "RCSettingsWidget.generated.h"
 
 /**
@@ -62,9 +63,6 @@ public:
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
 	UWidgetSwitcher* SettingsWidgetSwitcher;
 
-	/*UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	USoundMix* SoundMix;*/
-
 	UFUNCTION(BlueprintImplementableEvent)
 	void SetMusicSoundVolume(float volume);
 
@@ -73,6 +71,32 @@ public:
 
 	UFUNCTION(BlueprintImplementableEvent)
 	void SetEffectsSoundVolume(float volume);
+
+	// Video settings 
+	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
+	UComboBoxString* GraphicsCombo;
+
+	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
+	UComboBoxString* ShadowsCombo;
+
+	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
+	UComboBoxString* AliasingCombo;
+
+	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
+	UComboBoxString* PostProcessCombo;
+
+	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
+	UComboBoxString* ViewDistanceCombo;
+
+	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
+	UComboBoxString* TextureCombo;
+
+	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
+	UComboBoxString* EffectsCombo;
+
+	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
+	UButton* ApplyVideoChangesBtn;
+
 
 protected:
 
@@ -87,6 +111,9 @@ protected:
 
 	UFUNCTION(BlueprintCallable)
 	void OnReturnClicked();
+
+	UFUNCTION(BlueprintCallable)
+	void OnApplyVideoChangesClicked();
 
 	//Sliders
 	UFUNCTION(BlueprintCallable)
@@ -111,7 +138,34 @@ protected:
 	UFUNCTION(BlueprintCallable)
 	void SetupAudioFromSave();
 
+	UFUNCTION(BlueprintCallable)
+	void ConstructComboBoxes();
+
+	UFUNCTION(BlueprintCallable)
+	void SetupVideoFromSave();
+
 	UPROPERTY()
 	USaveManager* SaveManager;
+
+private: 
+
+	FString EnumToString(ESettingsQuality val);
+	ESettingsQuality StringToEnum(const FString& val);
+
+	void FillCombo(UComboBoxString* combo);
+
+	FString GetGraphicsCommand();
+
+	FString GetShadowCommand();
+
+	FString GetAliasingCommand();
+
+	FString GetPostProcessCommand();
+
+	FString GetViewDistanceCommand();
+
+	FString GetTextureCommand();
+
+	FString GetEffectsCommand();
 	
 };

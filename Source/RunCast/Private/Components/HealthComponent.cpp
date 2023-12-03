@@ -27,7 +27,7 @@ void UHealthComponent::Multicast_DoDamage_Implementation(const float dmg, AChara
 			OnHealthUpdate.Broadcast(CurrentHealth);
 		}
 
-		if (CurrentHealth < 0)
+		if (CurrentHealth <= 0)
 		{
 			CanTakeDamage = false;
 			if (OnActorKilled.IsBound())

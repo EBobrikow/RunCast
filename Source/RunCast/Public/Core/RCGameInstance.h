@@ -67,6 +67,8 @@ public:
 
 protected:
 
+	virtual void Init() override;
+
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	bool bIsSoloGame;
 
@@ -89,7 +91,7 @@ protected:
 	FServerInfo RemoteServerInfo = FServerInfo();
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere)
-	float HeartBeatWaitRate = 0.5f;
+	float HeartBeatWaitRate = 1.0f;
 
 	UPROPERTY()
 	FTimerHandle HeartBeatWaitTimer;

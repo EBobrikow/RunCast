@@ -35,6 +35,7 @@ USaveManager* URCGameInstance::GetSaveManager()
 	if (!SaveManager)
 	{
 		SaveManager = NewObject<USaveManager>(this);
+		SaveManager->Init();
 	}
 	return SaveManager;
 }
@@ -95,6 +96,11 @@ void URCGameInstance::SetAIPlayersData(TArray<FPlayerData> data)
 TArray<FPlayerData> URCGameInstance::GetAIPlayersData() const
 {
 	return AIPlayersDataList;
+}
+
+void URCGameInstance::Init()
+{
+	GetServerManager()->InitConnection();
 }
 
 

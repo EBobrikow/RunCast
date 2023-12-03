@@ -28,6 +28,8 @@ public:
 	UFUNCTION()
 	void SetTime(int32 Min, int32 Sec);
 
+	void ShowCrosshair(bool val);
+
 protected: 
 
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))

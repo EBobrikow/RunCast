@@ -26,12 +26,14 @@ void AInGameHUD::ShowGameMenu(APlayerController* pc)
 			MenuWidget->SetVisibility(ESlateVisibility::Hidden);
 			UWidgetBlueprintLibrary::SetInputMode_GameOnly(pc);
 			pc->bShowMouseCursor = false;
+			GameMenuOpened(true);
 		}
 		else
 		{
 			MenuWidget->SetVisibility(ESlateVisibility::Visible);
 			UWidgetBlueprintLibrary::SetInputMode_GameAndUIEx(pc);
 			pc->bShowMouseCursor = true;
+			GameMenuOpened(false);
 		}
 	}
 	
@@ -66,6 +68,8 @@ void AInGameHUD::UpdateScoreBoardData(TArray<FScoreBoardData> dataList)
 	}
 }
 
+
+
 void AInGameHUD::CreateMenuWidget()
 {
 	if (GameMenuWidgetClass)
@@ -91,4 +95,8 @@ void AInGameHUD::CreateScoreBoardWidget()
 			ScoreBoardWidget->SetVisibility(ESlateVisibility::Hidden);
 		}
 	}
+}
+
+void AInGameHUD::GameMenuOpened(bool val)
+{
 }

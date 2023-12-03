@@ -33,6 +33,7 @@ public:
 	UFUNCTION()
 	void UpdateScoreBoardData(TArray<FScoreBoardData> dataList);
 
+
 protected: 
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
@@ -53,5 +54,7 @@ protected:
 
 	UFUNCTION()
 	void CreateScoreBoardWidget();
+
+	virtual void GameMenuOpened(bool val);
 	
 };

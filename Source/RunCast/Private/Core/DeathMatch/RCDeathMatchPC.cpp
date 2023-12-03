@@ -4,6 +4,7 @@
 #include "Core/DeathMatch/RCDeathMatchPC.h"
 #include "Core/DeathMatch/RCDeathMatchGM.h"
 #include "UI/DeathMatch/RCDeathMatchHUD.h"
+#include "Blueprint/WidgetBlueprintLibrary.h"
 
 void ARCDeathMatchPC::BeginPlay()
 {
@@ -17,12 +18,14 @@ void ARCDeathMatchPC::BeginPlay()
 		if (GM)
 		{
 			GM->OnMatchBegin.AddDynamic(this, &ARCDeathMatchPC::Client_Init);
+			GM->OnMatchEnd.AddDynamic(this, &ARCDeathMatchPC::MatchEnd);
 		}
 
 		ARCGameState* gameState = GetWorld()->GetGameState<ARCGameState>();
 		if (gameState)
 		{
 			gameState->OnScoreBoardUpdate.AddDynamic(this, &ARCDeathMatchPC::OnScoreBoardUpdateCall);
+			gameState->OnShowFinaleStat.AddDynamic(this, &ARCDeathMatchPC::OnFinaleScoreData);
 		}
 	}
 
@@ -39,6 +42,7 @@ void ARCDeathMatchPC::CreateCharacter()
 			if (character)
 			{
 				Possess(character);
+				EnableInput(this);
 				auto hp = character->GetHealthComponent();
 				if (hp)
 				{
@@ -97,6 +101,30 @@ void ARCDeathMatchPC::TimeUpdate(int32 Min, int32 Sec)
 	}
 }
 
+void ARCDeathMatchPC::ShowFinaleScore(TArray<FScoreBoardData> data)
+{
+	ARCDeathMatchHUD* hud = Cast<ARCDeathMatchHUD>(GetHUD());
+	if (hud)
+	{
+		hud->DisplayFinaleStat(data);
+	}
+
+	UWidgetBlueprintLibrary::SetInputMode_UIOnlyEx(this);
+	bShowMouseCursor = true;
+}
+
+void ARCDeathMatchPC::MatchEnd()
+{
+	ARCCharacter* character = Cast<ARCCharacter>(PossessedCharacter);
+	if (character)
+	{
+		character->DisableInput(this);
+	}
+
+	UWidgetBlueprintLibrary::SetInputMode_UIOnlyEx(this);
+	bShowMouseCursor = true;
+}
+
 void ARCDeathMatchPC::CharacterKilled(ACharacter* killer)
 {
 	ARCCharacter* character = Cast<ARCCharacter>(PossessedCharacter);
@@ -105,7 +133,9 @@ void ARCDeathMatchPC::CharacterKilled(ACharacter* killer)
 		character->KillCharacter();
 		character->DisableInput(this);
 
-		if (killer)
+		DisableInput(this);
+
+		if (killer && killer != character)
 		{
 			IScoreBoardInterface* scoreBoardInterface = Cast<IScoreBoardInterface>(killer->GetController());
 			if (scoreBoardInterface)

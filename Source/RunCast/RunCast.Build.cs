@@ -21,7 +21,8 @@ public class RunCast : ModuleRules
                 "ALSV4_CPP",
                 "NavigationSystem",
 				"AIModule", 
-				"GameplayTasks"
+				"GameplayTasks",
+                "Niagara"
             });
 
 		PrivateDependencyModuleNames.AddRange(new string[] {  });

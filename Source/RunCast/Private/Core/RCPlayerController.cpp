@@ -151,6 +151,15 @@ void ARCPlayerController::UpdateScoreBoard(TArray<FScoreBoardData> data)
 	}
 }
 
+void ARCPlayerController::ShowFinaleScore(TArray<FScoreBoardData> data)
+{
+}
+
+void ARCPlayerController::OnFinaleScoreData(TArray<FScoreBoardData> data)
+{
+	Client_FinaleScoreData(data);
+}
+
 void ARCPlayerController::OnScoreBoardUpdateCall(TArray<FScoreBoardData> data)
 {
 	TArray<FScoreBoardData> scoreData = data;
@@ -173,6 +182,11 @@ void ARCPlayerController::ShowMenu()
 
 void ARCPlayerController::TimeUpdate(int32 Min, int32 Sec)
 {
+}
+
+void ARCPlayerController::Client_FinaleScoreData_Implementation(const TArray<FScoreBoardData>& data)
+{
+	ShowFinaleScore(data);
 }
 
 void ARCPlayerController::AddKillCount()

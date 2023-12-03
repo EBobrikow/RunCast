@@ -36,8 +36,13 @@ protected:
 
 	virtual void TimeUpdate(int32 Min, int32 Sec) override;
 
+	virtual void ShowFinaleScore(TArray<FScoreBoardData> data) override;
+
 	UFUNCTION(Client, Reliable)
 	void Client_Init();
+
+	UFUNCTION()
+	void MatchEnd();
 
 	UFUNCTION()
 	void CharacterKilled(ACharacter* killer);
