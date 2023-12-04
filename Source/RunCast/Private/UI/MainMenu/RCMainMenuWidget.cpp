@@ -34,8 +34,8 @@ void URCMainMenuWidget::OnSoloGameClicked()
 {
 	if (GameInstancePtr)
 	{
-		//GameInstancePtr->StartSoloGame();
-		GameInstancePtr->GetServerManager()->ConnectToMocupServer();
+		GameInstancePtr->StartSoloGame();
+		//GameInstancePtr->GetServerManager()->ConnectToMocupServer();
 	}
 
 	HideAll();

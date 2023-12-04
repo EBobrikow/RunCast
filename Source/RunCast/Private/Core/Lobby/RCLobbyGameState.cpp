@@ -51,13 +51,15 @@ void ARCLobbyGameState::Server_RemoveAIBot_Implementation()
 	}
 }
 
-TArray<FArenaMapData> ARCLobbyGameState::GetMapsData() const
+TArray<FArenaMapData> ARCLobbyGameState::GetMapsData()
 {
+	GetMatchCreationData();
 	return ArenaDataList;
 }
 
-TArray<FArenaMatchData> ARCLobbyGameState::GetMatchesData() const
+TArray<FArenaMatchData> ARCLobbyGameState::GetMatchesData()
 {
+	GetMatchCreationData();
 	return MatchDataList;
 }
 
@@ -129,7 +131,14 @@ void ARCLobbyGameState::OnPlayerLogout(AController* Exiting)
 
 void ARCLobbyGameState::GetMatchCreationData()
 {
-	if (HasAuthority())
+	bool solo = false;
+	URCGameInstance* GameInstancePtr = Cast<URCGameInstance>(UGameplayStatics::GetGameInstance(this));
+	if (GameInstancePtr)
+	{
+		solo = GameInstancePtr->bIsSoloGame;
+	}
+
+	if (HasAuthority() || solo)
 	{
 		ARCLobbyGM* GM = Cast<ARCLobbyGM>(UGameplayStatics::GetGameMode(this));
 		if (GM)
@@ -145,24 +154,23 @@ void ARCLobbyGameState::GetMatchCreationData()
 
 void ARCLobbyGameState::Server_UpdatePlayerList_Implementation()
 {
-	if (HasAuthority())
+	
+	PlayersDataList.Empty();
+	for (FConstPlayerControllerIterator Iterator = GetWorld()->GetPlayerControllerIterator(); Iterator; ++Iterator)
 	{
-		PlayersDataList.Empty();
-		for (FConstPlayerControllerIterator Iterator = GetWorld()->GetPlayerControllerIterator(); Iterator; ++Iterator)
+		ARCPlayerController* Controller = Cast<ARCPlayerController>(Iterator->Get());
+		if (Controller)
 		{
-			ARCPlayerController* Controller = Cast<ARCPlayerController>(Iterator->Get());
-			if (Controller)
-			{
-				PlayersDataList.Add(Controller->GetPlayerData());
-			}
+			PlayersDataList.Add(Controller->GetPlayerData());
 		}
-		for (FPlayerData data : AIDataList)
-		{
-			PlayersDataList.Add(data);
-		}
-
-		NetMulticast_BroadcastPlayersList(PlayersDataList);
 	}
+	for (FPlayerData data : AIDataList)
+	{
+		PlayersDataList.Add(data);
+	}
+
+	NetMulticast_BroadcastPlayersList(PlayersDataList);
+	
 }
 
 void ARCLobbyGameState::Server_TryStartMatch_Implementation()
@@ -173,6 +181,11 @@ void ARCLobbyGameState::Server_TryStartMatch_Implementation()
 		if (Controller)
 		{
 			FPlayerData pData = Controller->GetPlayerData();
+			if (pData.PlayerAuthority == ELobbyPlayerAuthority::GameMaster)
+			{
+				continue;
+			}
+
 			if (pData.PlayerReady != ELobbyPlayerReady::Ready)
 			{
 				UE_LOG(LogTemp, Warning, TEXT("ARCLobbyGameState::Server_TryStartMatch Player %s not ready"), *pData.PlayerName);
@@ -199,22 +212,16 @@ void ARCLobbyGameState::Server_TryStartMatch_Implementation()
 
 void ARCLobbyGameState::Server_SetNewLobbyState_Implementation(const ELobbyState& newState)
 {
-	if (HasAuthority())
-	{
-		LobbyState = newState;
-		NetMulticast_BroadcastLobbyState(newState);
-	}
 
+	LobbyState = newState;
+	NetMulticast_BroadcastLobbyState(newState);
+	
 }
 
 void ARCLobbyGameState::Server_SetCurrentMatchAndMap_Implementation(const FArenaMapData& arena, const FArenaMatchData& match)
 {
-	if (HasAuthority())
-	{
-		CurrentMap = arena;
-		CurrentMatch = match;
-	}
-
+	CurrentMap = arena;
+	CurrentMatch = match;
 }
 
 void ARCLobbyGameState::Server_UpdateServerInfo_Implementation(const FServerInfo& info)

@@ -61,10 +61,10 @@ public:
 	FOnSyncInfoChanged OnSyncInfoChanged;
 
 	UFUNCTION()
-	TArray<FArenaMapData> GetMapsData() const;
+	TArray<FArenaMapData> GetMapsData();
 
 	UFUNCTION()
-	TArray<FArenaMatchData> GetMatchesData() const;
+	TArray<FArenaMatchData> GetMatchesData();
 
 	UFUNCTION()
 	void StartSyncServerInfo();

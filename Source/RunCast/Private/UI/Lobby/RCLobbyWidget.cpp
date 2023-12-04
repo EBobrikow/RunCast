@@ -24,9 +24,30 @@ void URCLobbyWidget::NativeConstruct()
 	if (PC)
 	{
 		FPlayerData pData = PC->GetPlayerData();
+
+		URCGameInstance* GameInstancePtr = Cast<URCGameInstance>(UGameplayStatics::GetGameInstance(this));
+		if (GameInstancePtr)
+		{
+			if (GameInstancePtr->bIsSoloGame)
+			{
+				pData.PlayerAuthority = ELobbyPlayerAuthority::GameMaster;
+				PC->SetPlayerData(pData);
+			}
+		}
+
+
 		if (pData.PlayerAuthority != ELobbyPlayerAuthority::GameMaster)
 		{
 			CreateBtn->SetIsEnabled(false);
+		}
+	}
+
+	URCGameInstance* GameInstancePtr = Cast<URCGameInstance>(UGameplayStatics::GetGameInstance(this));
+	if (GameInstancePtr)
+	{
+		if (GameInstancePtr->bIsSoloGame)
+		{
+			CreateBtn->SetIsEnabled(true);
 		}
 	}
 

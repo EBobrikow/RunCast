@@ -65,12 +65,14 @@ public:
 	UFUNCTION()
 	TArray<FPlayerData> GetAIPlayersData() const;
 
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	bool bIsSoloGame;
+
 protected:
 
 	virtual void Init() override;
 
-	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	bool bIsSoloGame;
+	
 
 	UPROPERTY()
 	FString PlayerName;

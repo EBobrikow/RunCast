@@ -40,6 +40,7 @@ TArray<FArenaMapData> ARCLobbyGM::GetArenasData() const
 void ARCLobbyGM::PostLogin(APlayerController* NewPlayer)
 {
 	Super::PostLogin(NewPlayer);
+	GameInstance = Cast<URCGameInstance>(UGameplayStatics::GetGameInstance(this));
 
 	if (GameInstance)
 	{
