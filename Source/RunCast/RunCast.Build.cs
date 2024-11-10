@@ -22,7 +22,9 @@ public class RunCast : ModuleRules
                 "NavigationSystem",
 				"AIModule", 
 				"GameplayTasks",
-                "Niagara"
+                "Niagara",
+				"GameplayAbilities",
+				"GameplayTags"
             });
 
 		PrivateDependencyModuleNames.AddRange(new string[] {  });

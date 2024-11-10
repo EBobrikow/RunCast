@@ -4,6 +4,9 @@
 #include "Actors/Projectiles/BaseProjectile.h"
 #include "Interfaces/DamagebleInterface.h"
 #include "GameFramework/Character.h"
+#include "AbilitySystemBlueprintLibrary.h"
+#include "AbilitySystemInterface.h"
+#include "AbilitySystemComponent.h"
 
 // Sets default values
 ABaseProjectile::ABaseProjectile()
@@ -50,11 +53,43 @@ void ABaseProjectile::OnHitComponent(UPrimitiveComponent* HitComponent, AActor* 
 		return;
 	}
 
-	IDamagebleInterface* damageble = Cast<IDamagebleInterface>(OtherActor);
-	if (damageble)
+	//IDamagebleInterface* damageble = Cast<IDamagebleInterface>(OtherActor);
+	//if (damageble)
+	//{
+	//	damageble->ApplyDamage(ProjectileDamage, OwnerCharacter);
+	//	//UAbilitySystemBlueprintLibrary::SendGameplayEventToActor();
+	//}
+
+	UAbilitySystemComponent* ownerAbilityComponent = nullptr;
+
+	if (IAbilitySystemInterface* abilityInterfaceActor = Cast<IAbilitySystemInterface>(OwnerCharacter))
 	{
-		damageble->ApplyDamage(ProjectileDamage, OwnerCharacter);
+		ownerAbilityComponent = abilityInterfaceActor->GetAbilitySystemComponent();
 	}
+
+	UAbilitySystemComponent* targetAbilityComponent = nullptr;
+	if (IAbilitySystemInterface* abilityInterfaceActor = Cast<IAbilitySystemInterface>(OtherActor))
+	{
+		targetAbilityComponent = abilityInterfaceActor->GetAbilitySystemComponent();
+	}
+		
+	
+	if (ownerAbilityComponent && targetAbilityComponent && ProjectileDamageEffect)
+	{
+		FGameplayEffectContextHandle EffectContext = ownerAbilityComponent->MakeEffectContext();
+		EffectContext.AddSourceObject(this);
+
+		FGameplayEffectSpecHandle  NewHandle = ownerAbilityComponent->MakeOutgoingSpec(ProjectileDamageEffect, 1, EffectContext);
+
+		if (NewHandle.IsValid())
+		{
+			FActiveGameplayEffectHandle ActiveGameplayEffectHandle =
+				ownerAbilityComponent->ApplyGameplayEffectSpecToTarget(*NewHandle.Data.Get(), targetAbilityComponent);
+		}
+
+	}
+	
+
 	Multicast_AfterEffect();
 
 	Destroy();

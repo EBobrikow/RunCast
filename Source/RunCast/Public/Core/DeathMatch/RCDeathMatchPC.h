@@ -32,6 +32,7 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	TSubclassOf<ARCCharacter> DefaultCharacterClass;
 
+
 protected: 
 
 	virtual void TimeUpdate(int32 Min, int32 Sec) override;
@@ -64,6 +65,5 @@ protected:
 
 	UPROPERTY()
 	FTimerHandle RestartDelay;
-
 	
 };

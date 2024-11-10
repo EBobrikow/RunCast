@@ -8,6 +8,7 @@
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "Components/SphereComponent.h"
 #include "Components/StaticMeshComponent.h"
+#include "GameplayEffect.h"
 #include "BaseProjectile.generated.h"
 
 UCLASS()
@@ -21,6 +22,9 @@ public:
 
 	UFUNCTION()
 	void SetOwnerCharacter(ACharacter* ownerChar);
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	TSubclassOf<UGameplayEffect> ProjectileDamageEffect;
 
 protected:
 	// Called when the game starts or when spawned

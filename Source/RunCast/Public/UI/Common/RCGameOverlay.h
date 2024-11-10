@@ -7,6 +7,7 @@
 #include "Components/Image.h"
 #include "Components/ProgressBar.h"
 #include "Components/TextBlock.h"
+#include "UI/Abilities/RCDashAbilityWidget.h"
 #include "RCGameOverlay.generated.h"
 
 /**
@@ -30,6 +31,8 @@ public:
 
 	void ShowCrosshair(bool val);
 
+	URCDashAbilityWidget* GetDashAbilityWidget() const;
+
 protected: 
 
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
@@ -43,5 +46,8 @@ protected:
 
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
 	UTextBlock* SecondsTxt;
+
+	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
+	URCDashAbilityWidget* DashAbilityWidget;
 
 };

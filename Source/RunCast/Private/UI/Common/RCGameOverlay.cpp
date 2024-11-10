@@ -41,3 +41,8 @@ void URCGameOverlay::ShowCrosshair(bool val)
 		CrosshairImg->SetVisibility(ESlateVisibility::Hidden);
 	}
 }
+
+URCDashAbilityWidget* URCGameOverlay::GetDashAbilityWidget() const
+{
+	return DashAbilityWidget;
+}

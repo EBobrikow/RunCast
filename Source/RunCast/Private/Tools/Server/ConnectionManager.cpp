@@ -73,7 +73,6 @@ void UConnectionManager::ProceedQueue()
 		if (RequestQueue.Dequeue(requestItem))
 		{
 			CurrentRequestObject = requestItem;
-			//CurrentRequestObject->AddCallback(OnMessageRecieved);
 			OnMessageRecieved.AddDynamic(requestItem, &UMessageHandler::OnURecieved);
 			SendRequest(CurrentRequestObject->GetRequestMessage());
 		}

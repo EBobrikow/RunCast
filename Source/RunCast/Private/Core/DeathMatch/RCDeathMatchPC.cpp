@@ -5,6 +5,7 @@
 #include "Core/DeathMatch/RCDeathMatchGM.h"
 #include "UI/DeathMatch/RCDeathMatchHUD.h"
 #include "Blueprint/WidgetBlueprintLibrary.h"
+#include "Abilities/RCAttributeSet.h"
 
 void ARCDeathMatchPC::BeginPlay()
 {
@@ -28,7 +29,6 @@ void ARCDeathMatchPC::BeginPlay()
 			gameState->OnShowFinaleStat.AddDynamic(this, &ARCDeathMatchPC::OnFinaleScoreData);
 		}
 	}
-
 }
 
 void ARCDeathMatchPC::CreateCharacter()
@@ -43,13 +43,15 @@ void ARCDeathMatchPC::CreateCharacter()
 			{
 				Possess(character);
 				EnableInput(this);
-				auto hp = character->GetHealthComponent();
-				if (hp)
+				
+				auto Attrib = character->GetAttributes();
+				if (Attrib)
 				{
-					hp->OnActorKilled.AddDynamic(this, &ARCDeathMatchPC::CharacterKilled);
-					hp->OnHealthUpdate.AddDynamic(this, &ARCDeathMatchPC::HealthUpdate);
-					HealthUpdate(hp->GetCurrentHealth());
+					Attrib->OnCharacterKilled.AddDynamic(this, &ARCDeathMatchPC::CharacterKilled);
+					Attrib->OnHealthChanged.AddDynamic(this, &ARCDeathMatchPC::HealthUpdate);
+					HealthUpdate(Attrib->GetHealth());
 				}
+
 			}
 			
 		}

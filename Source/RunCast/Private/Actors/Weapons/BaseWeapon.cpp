@@ -7,6 +7,7 @@
 #include "Kismet/KismetSystemLibrary.h"
 #include "Characters/RCCharacter.h"
 #include "DrawDebugHelpers.h"
+#include "GameplayTagsManager.h"
 
 // Sets default values
 ABaseWeapon::ABaseWeapon()
@@ -19,6 +20,10 @@ ABaseWeapon::ABaseWeapon()
 	WeaponSkeletalMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("WeaponSkeletalMesh"));
 	WeaponSkeletalMesh->SetupAttachment(DefaultRoot);
 	WeaponSkeletalMesh->VisibilityBasedAnimTickOption = EVisibilityBasedAnimTickOption::AlwaysTickPoseAndRefreshBones;
+
+	AbilitySystemComponent = CreateDefaultSubobject<URCAbilitySystemComponent>(TEXT("AbilityComponent"));
+	AbilitySystemComponent->SetIsReplicated(true);
+	AbilitySystemComponent->SetReplicationMode(EGameplayEffectReplicationMode::Minimal);
 
 	SetReplicates(true);
 }
@@ -54,92 +59,30 @@ void ABaseWeapon::BeginPlay()
 	Super::BeginPlay();
 	
 	TargetLocation = FVector::ZeroVector;
-}
 
-// Called every frame
-void ABaseWeapon::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-	TickFire();
-}
-
-void ABaseWeapon::WeaponFire(bool val)
-{
-	bCanAttack = val;
-	//TickFire();
-	/*if (WeaponSkeletalMesh && bCooldown && bCanAttack)
+	if (AbilitySystemComponent && HasAuthority())
 	{
-		Multicast_PlayMontage(FireMontage);
-
-
-		auto cameraManager = UGameplayStatics::GetPlayerCameraManager(GetWorld(), 0);
-		ARCCharacter* character = Cast<ARCCharacter>(OwnerCharacter);
-		if (character)
-		{
-			APlayerController* PC = Cast<APlayerController>(character->Controller);
-			if (PC)
-			{
-				cameraManager = PC->PlayerCameraManager;
-			}
-		}
-
-		FVector socketLoc = WeaponSkeletalMesh->GetSocketLocation(FName("Launch"));
-		if (cameraManager)
-		{
-			FRotator cameraRot = cameraManager->GetCameraRotation();
-			FVector cameraLoc = cameraManager->GetCameraLocation();
-			FVector forwardVec = cameraRot.Vector();
-			forwardVec *= 25000;
-			FVector end = cameraLoc + forwardVec; 
-			FHitResult OutHit;
-			TEnumAsByte<ECollisionChannel> TraceChannelProperty = ECC_Visibility;
-			FCollisionQueryParams QueryParams;
-			QueryParams.AddIgnoredActor(this);
-			bool hit = GetWorld()->LineTraceSingleByChannel(OutHit, cameraLoc, end, TraceChannelProperty, QueryParams);
-			FVector hitEnd = hit ? OutHit.ImpactPoint : OutHit.TraceEnd;
-			FRotator finaleRot = UKismetMathLibrary::FindLookAtRotation(socketLoc, hitEnd);
-
-			FTransform transform = UKismetMathLibrary::MakeTransform(socketLoc, finaleRot);
-			if (ProjectileClass)
-			{
-				auto bullet = GetWorld()->SpawnActor<ABaseProjectile>(ProjectileClass, transform);
-				bullet->SetOwnerCharacter(character);
-				bullet->SetReplicates(true);
-				
-				bCooldown = false;
-				
-				GetWorld()->GetTimerManager().ClearTimer(AttackTimer);
-				GetWorld()->GetTimerManager().SetTimer(AttackTimer, this, &ABaseWeapon::CooldownOff, AttackCooldown, false);
-			}
-			
-		}
-		
-	}*/
-
-}
-
-void ABaseWeapon::CooldownOff()
-{
-	bCooldown = true;
-
-}
-
-void ABaseWeapon::TickFire()
-{
-	ARCCharacter* character = Cast<ARCCharacter>(OwnerCharacter);
-
-	if (!bCanAttack || !character->IsAlive())
-	{
-		return;
+		AbilitySystemComponent->InitAbilityActorInfo(this, this);
+		AddStartupGameplayAbilities();
 	}
+	
+}
 
-	if (WeaponSkeletalMesh && bCooldown)
+void ABaseWeapon::FireAction()
+{
+	if (!OwnerCharacter) return;
+
+	ARCCharacter* character = Cast<ARCCharacter>(OwnerCharacter);
+	if (!bCanAttack || !character->IsAlive()) return;
+	
+
+	if (WeaponSkeletalMesh)
 	{
 		Multicast_PlayMontage(FireMontage);
 
 
 		auto cameraManager = UGameplayStatics::GetPlayerCameraManager(GetWorld(), 0);
-		
+
 		if (character)
 		{
 			APlayerController* PC = Cast<APlayerController>(character->Controller);
@@ -175,15 +118,53 @@ void ABaseWeapon::TickFire()
 				auto bullet = GetWorld()->SpawnActor<ABaseProjectile>(ProjectileClass, transform);
 				bullet->SetOwnerCharacter(character);
 				bullet->SetReplicates(true);
-
-				bCooldown = false;
-
-				GetWorld()->GetTimerManager().ClearTimer(AttackTimer);
-				GetWorld()->GetTimerManager().SetTimer(AttackTimer, this, &ABaseWeapon::CooldownOff, AttackCooldown, false);
 			}
 
 		}
 
+	}
+}
+
+void ABaseWeapon::AddStartupGameplayAbilities()
+{
+	if (AbilitySystemComponent)
+	{
+		if (GetLocalRole() == ROLE_Authority && !AbilityInitialized && PrimaryAbility)
+		{
+			
+			AbilitySystemComponent->GiveAbility(FGameplayAbilitySpec(
+				PrimaryAbility, 1,
+				static_cast<int32>(PrimaryAbility.GetDefaultObject()->AbilityInputID),
+				this));
+			
+			AbilityInitialized = true;
+		}
+
+	}
+}
+
+// Called every frame
+void ABaseWeapon::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+	AbilityTickFire();
+}
+
+void ABaseWeapon::WeaponFire(bool val)
+{
+	bCanAttack = val;
+}
+
+UAbilitySystemComponent* ABaseWeapon::GetAbilitySystemComponent() const
+{
+	return AbilitySystemComponent;
+}
+
+void ABaseWeapon::AbilityTickFire()
+{
+	if (bCanAttack && AbilitySystemComponent)
+	{
+		AbilitySystemComponent->TryActivateAbilityByClass(PrimaryAbility);
 	}
 }
 

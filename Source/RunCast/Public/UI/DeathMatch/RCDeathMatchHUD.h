@@ -32,6 +32,12 @@ public:
 	void UpdateHealthBar(float val);
 
 	UFUNCTION()
+	void UpdateDashCooldownTime(float remain, float duration);
+
+	UFUNCTION()
+	void FinishDashCooldown();
+
+	UFUNCTION()
 	float GetCharacterHP();
 
 	UFUNCTION()

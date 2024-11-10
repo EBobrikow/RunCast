@@ -16,19 +16,19 @@ void ARCDeathMatchHUD::BeginPlay()
 		if (GameOverlayWidget)
 		{
 			GameOverlayWidget->AddToViewport();
-			if (ARCDeathMatchPC* PC = Cast<ARCDeathMatchPC>(PlayerOwner.Get()))
-			{
-				CharacterRef = Cast<ARCCharacter>(PC->PossessedCharacter);
-				if (CharacterRef)
-				{
-					UHealthComponent* hpComp = CharacterRef->GetHealthComponent();
-					if (hpComp)
-					{
-						GameOverlayWidget->SetHealthBarValue(hpComp->GetCurrentHealth());
-						//hpComp->OnHealthUpdate.AddDynamic(this, &ARCDeathMatchHUD::UpdateHealthBar);
-					}
-				}
-			}
+			//if (ARCDeathMatchPC* PC = Cast<ARCDeathMatchPC>(PlayerOwner.Get()))
+			//{
+			//	CharacterRef = Cast<ARCCharacter>(PC->PossessedCharacter);
+			//	if (CharacterRef)
+			//	{
+			//		UHealthComponent* hpComp = CharacterRef->GetHealthComponent();
+			//		if (hpComp)
+			//		{
+			//			GameOverlayWidget->SetHealthBarValue(hpComp->GetCurrentHealth());
+			//			//hpComp->OnHealthUpdate.AddDynamic(this, &ARCDeathMatchHUD::UpdateHealthBar);
+			//		}
+			//	}
+			//}
 		}
 	}
 }
@@ -45,6 +45,22 @@ void ARCDeathMatchHUD::UpdateHealthBar(float val)
 		GameOverlayWidget->SetHealthBarValue(val);
 	}
 	
+}
+
+void ARCDeathMatchHUD::UpdateDashCooldownTime(float remain, float duration)
+{
+	if (GameOverlayWidget)
+	{
+		GameOverlayWidget->GetDashAbilityWidget()->SetCooldownProgress(remain, duration);
+	}
+}
+
+void ARCDeathMatchHUD::FinishDashCooldown()
+{
+	if (GameOverlayWidget)
+	{
+		GameOverlayWidget->GetDashAbilityWidget()->FinishCooldown();
+	}
 }
 
 float ARCDeathMatchHUD::GetCharacterHP()

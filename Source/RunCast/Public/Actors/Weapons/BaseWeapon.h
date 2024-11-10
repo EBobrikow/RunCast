@@ -10,10 +10,13 @@
 #include "Actors/Projectiles/BaseProjectile.h"
 #include "Net/UnrealNetwork.h"
 #include "Sound/SoundCue.h"
+#include "Abilities/RCGameplayAbility.h"
+#include "AbilitySystemInterface.h"
+#include "Components/RCAbilitySystemComponent.h"
 #include "BaseWeapon.generated.h"
 
 UCLASS()
-class RUNCAST_API ABaseWeapon : public AActor
+class RUNCAST_API ABaseWeapon : public AActor, public IAbilitySystemInterface
 {
 	GENERATED_BODY()
 	
@@ -36,8 +39,6 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Weapon")
 	UAnimMontage* FireMontage;
 
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Weapon")
-	float AttackCooldown = 0.2f;
 
 	UFUNCTION(Server, Reliable, BlueprintCallable)
 	void Server_WeaponFire(bool val);
@@ -51,30 +52,37 @@ public:
 	UFUNCTION()
 	void SetTargetLocation(FVector loc);
 
+	virtual void WeaponFire(bool val);
+
+	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
+
+	void FireAction();
+
+
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
-
-
-	virtual void WeaponFire(bool val);
-
-	UPROPERTY()
-	FTimerHandle AttackTimer;
-
-	UPROPERTY()
-	bool bCooldown = true;
 
 	UPROPERTY()
 	bool bCanAttack = false;
 
 	UFUNCTION()
-	void CooldownOff();
-
-	UFUNCTION()
-	void TickFire();
+	void AbilityTickFire();
 
 	UPROPERTY()
 	FVector TargetLocation;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	URCAbilitySystemComponent* AbilitySystemComponent = nullptr;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Abilities")
+	TSubclassOf<URCGameplayAbility> PrimaryAbility;
+
+	UPROPERTY()
+	bool AbilityInitialized = false;
+
+	void AddStartupGameplayAbilities();
 
 public:	
 	// Called every frame

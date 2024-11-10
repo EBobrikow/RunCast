@@ -6,10 +6,14 @@
 #include "GameFramework/Actor.h"
 #include "Interfaces/DamagebleInterface.h"
 #include "Net/UnrealNetwork.h"
+#include "AbilitySystemInterface.h"
+#include "Components/RCAbilitySystemComponent.h"
+#include "Abilities/RCAttributeSet.h"
+#include "GameplayEffect.h"
 #include "DynamiteBox.generated.h"
 
 UCLASS()
-class RUNCAST_API ADynamiteBox : public AActor, public IDamagebleInterface
+class RUNCAST_API ADynamiteBox : public AActor, public IDamagebleInterface, public IAbilitySystemInterface
 {
 	GENERATED_BODY()
 	
@@ -31,6 +35,17 @@ public:
 
 	virtual void ApplyDamage(float dmg, ACharacter* damager) override;
 
+	UFUNCTION()
+	void ApplyAbilityDamage(ACharacter* instigatorCharacter);
+
+	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	TSubclassOf<UGameplayEffect> ExplosionDamageEffect;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	FGameplayTag CueTag;
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -43,6 +58,22 @@ protected:
 
 	UFUNCTION(NetMulticast, Reliable)
 	void Multicast_AfterEffect();
+
+	//Ability
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	URCAbilitySystemComponent* AbilitySystemComponent = nullptr;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	URCAttributeSet* Attributes = nullptr;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Abilities")
+	TArray<TSubclassOf<UGameplayEffect>> PassiveGameplayEffects;
+
+	void AddStartupGameplayAbilities();
+
+	UPROPERTY()
+	bool AbilityInitialized = false;
 
 public:	
 	// Called every frame

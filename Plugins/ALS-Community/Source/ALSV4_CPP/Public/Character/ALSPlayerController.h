@@ -66,6 +66,9 @@ protected:
 	void LightAtatackAction(const FInputActionValue& Value);
 
 	UFUNCTION()
+	void DashAction(const FInputActionValue& Value);
+
+	UFUNCTION()
 	void CameraTapAction(const FInputActionValue& Value);
 
 	UFUNCTION()

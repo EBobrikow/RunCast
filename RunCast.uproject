@@ -1,6 +1,6 @@
 {
 	"FileVersion": 3,
-	"EngineAssociation": "{0E0F839F-473B-DA15-29C4-B2AF06A8AAE9}",
+	"EngineAssociation": "{AD596A8E-4255-5DE2-6A02-DA81C9C13A6A}",
 	"Category": "",
 	"Description": "",
 	"Modules": [
@@ -13,7 +13,8 @@
 				"UMG",
 				"CoreUObject",
 				"ALSV4_CPP",
-				"AIModule"
+				"AIModule",
+				"GameplayAbilities"
 			]
 		}
 	],
@@ -32,6 +33,10 @@
 		},
 		{
 			"Name": "SkeletalMeshModelingTools",
+			"Enabled": true
+		},
+		{
+			"Name": "GameplayAbilities",
 			"Enabled": true
 		}
 	]

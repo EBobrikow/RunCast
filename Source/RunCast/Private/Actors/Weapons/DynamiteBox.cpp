@@ -8,12 +8,18 @@
 ADynamiteBox::ADynamiteBox()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
+	PrimaryActorTick.bCanEverTick = false;
 
 	BaseMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("BaseMesh"));
 	RootComponent = BaseMesh;
 
 	SetReplicates(true);
+
+	AbilitySystemComponent = CreateDefaultSubobject<URCAbilitySystemComponent>(TEXT("AbilityComp"));
+	AbilitySystemComponent->SetIsReplicated(true);
+	AbilitySystemComponent->SetReplicationMode(EGameplayEffectReplicationMode::Minimal);
+
+	Attributes = CreateDefaultSubobject<URCAttributeSet>(TEXT("Attributes"));
 
 }
 
@@ -23,11 +29,36 @@ void ADynamiteBox::ApplyDamage(float dmg, ACharacter* damager)
 	//BigBadaBum();
 }
 
+void ADynamiteBox::ApplyAbilityDamage(ACharacter* instigatorCharacter)
+{
+
+	Server_TakeDamage();
+}
+
+UAbilitySystemComponent* ADynamiteBox::GetAbilitySystemComponent() const
+{
+	return AbilitySystemComponent;
+}
+
 // Called when the game starts or when spawned
 void ADynamiteBox::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
+	if (HasAuthority())
+	{
+		if (Attributes)
+		{
+			Attributes->OnCharacterKilled.AddDynamic(this, &ADynamiteBox::ApplyAbilityDamage);
+		}
+
+		if (AbilitySystemComponent)
+		{
+			AbilitySystemComponent->InitAbilityActorInfo(this, this);
+			AddStartupGameplayAbilities();
+		}
+	}
+
 }
 
 void ADynamiteBox::BigBadaBum()
@@ -49,32 +80,37 @@ void ADynamiteBox::BigBadaBum()
 		FVector lenthVec = actor->GetActorLocation() - GetActorLocation();
 		if (lenthVec.Length() <= ExplosionRadius)
 		{
-			IDamagebleInterface* damageble = Cast<IDamagebleInterface>(actor);
-			if (damageble)
+			IAbilitySystemInterface* target = Cast<IAbilitySystemInterface>(actor);
+			if (target)
 			{
-				if (lenthVec.Length() > (ExplosionRadius * 0.75f))
-				{
-					damageble->ApplyDamage(ExplosionDamage * 0.25f, nullptr);
-				}
-				else if (lenthVec.Length() > (ExplosionRadius * 0.5f))
-				{
-					damageble->ApplyDamage(ExplosionDamage * 0.5f, nullptr);
-				}
-				else if (lenthVec.Length() > (ExplosionRadius * 0.25f))
-				{
-					damageble->ApplyDamage(ExplosionDamage * 0.75f, nullptr);
-				}
-				else
-				{
-					damageble->ApplyDamage(ExplosionDamage, nullptr);
-				}
 
+				UAbilitySystemComponent* ownerAbilityComponent = GetAbilitySystemComponent();
+				UAbilitySystemComponent* targetAbilityComponent = target->GetAbilitySystemComponent();
 				
+
+
+				if (ownerAbilityComponent && targetAbilityComponent && ExplosionDamageEffect)
+				{
+					FGameplayEffectContextHandle EffectContext = ownerAbilityComponent->MakeEffectContext();
+					EffectContext.AddSourceObject(this);
+					TArray<TWeakObjectPtr<AActor>> actors;
+					TWeakObjectPtr<AActor> actorObj = Cast<AActor>(target);
+					actors.Add(actorObj);
+					EffectContext.AddActors(actors);
+
+					FGameplayEffectSpecHandle  NewHandle = ownerAbilityComponent->MakeOutgoingSpec(ExplosionDamageEffect, 1, EffectContext);
+
+					if (NewHandle.IsValid())
+					{
+						FActiveGameplayEffectHandle ActiveGameplayEffectHandle =
+							ownerAbilityComponent->ApplyGameplayEffectSpecToTarget(*NewHandle.Data.Get(), targetAbilityComponent);
+					}
+
+				}
 			}
 		}
 	}
 	Multicast_AfterEffect();
-	//ApplyEffects();
 	Destroy();
 }
 
@@ -86,7 +122,33 @@ void ADynamiteBox::Server_TakeDamage_Implementation()
 void ADynamiteBox::Multicast_AfterEffect_Implementation()
 {
 	ApplyEffects();
-	//Destroy();
+}
+
+void ADynamiteBox::AddStartupGameplayAbilities()
+{
+	if (AbilitySystemComponent)
+	{
+		if (GetLocalRole() == ROLE_Authority && !AbilityInitialized)
+		{
+			
+
+			for (TSubclassOf<UGameplayEffect>& effect : PassiveGameplayEffects)
+			{
+				FGameplayEffectContextHandle EffectContext = AbilitySystemComponent->MakeEffectContext();
+				EffectContext.AddSourceObject(this);
+
+				FGameplayEffectSpecHandle  NewHandle = AbilitySystemComponent->MakeOutgoingSpec(effect, 1, EffectContext);
+
+				if (NewHandle.IsValid())
+				{
+					FActiveGameplayEffectHandle ActiveGameplayEffectHandle =
+						AbilitySystemComponent->ApplyGameplayEffectSpecToTarget(*NewHandle.Data.Get(), AbilitySystemComponent);
+				}
+			}
+			AbilityInitialized = true;
+		}
+
+	}
 }
 
 // Called every frame

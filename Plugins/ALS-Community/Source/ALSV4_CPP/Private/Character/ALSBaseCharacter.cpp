@@ -652,7 +652,16 @@ void AALSBaseCharacter::GetCameraParameters(float& TPFOVOut, float& FPFOVOut, bo
 	bRightShoulderOut = bRightShoulder;
 }
 
+void AALSBaseCharacter::DashAction_Implementation(bool bValue)
+{
+	DashActionBase(bValue);
+}
+
 void AALSBaseCharacter::AttackActionBase(bool val)
+{
+}
+
+void AALSBaseCharacter::DashActionBase(bool val)
 {
 }
 

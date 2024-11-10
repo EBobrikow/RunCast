@@ -351,9 +351,14 @@ public:
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "ALS|Input")
 	void AttackAction(bool bValue);
 
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "ALS|Input")
+	void DashAction(bool bValue);
+
 protected:
 
 	virtual void AttackActionBase(bool val);
+
+	virtual void DashActionBase(bool val);
 
 	/** Ragdoll System */
 

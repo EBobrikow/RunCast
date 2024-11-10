@@ -227,3 +227,13 @@ class RUNCAST_API UGlobals : public UObject
 	GENERATED_BODY()
 	
 };
+
+UENUM(BlueprintType)
+enum class ERCAbilityInputID : uint8
+{
+	None,
+	Confirm,
+	Cancel,
+	Dash,
+	PrimaryWeaponFire
+};

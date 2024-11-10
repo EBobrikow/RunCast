@@ -196,6 +196,14 @@ void AALSPlayerController::LightAtatackAction(const FInputActionValue& Value)
 	}
 }
 
+void AALSPlayerController::DashAction(const FInputActionValue& Value)
+{
+	if (PossessedCharacter)
+	{
+		PossessedCharacter->DashAction(Value.Get<bool>());
+	}
+}
+
 void AALSPlayerController::CameraTapAction(const FInputActionValue& Value)
 {
 	if (PossessedCharacter)
