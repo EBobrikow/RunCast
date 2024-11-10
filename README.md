@@ -1,7 +1,7 @@
 # RunCast
 Multiplayer game
 
-In order to build game need to clone repositiry and dowload content folder by link: https://drive.google.com/file/d/1omhmpAsoaurJ2HBq0YQcVyDDigb-9rer/view?usp=sharing
+In order to build game need to clone repositiry and dowload content folder by link: [https://drive.google.com/file/d/1omhmpAsoaurJ2HBq0YQcVyDDigb-9rer/view?usp=sharing](https://drive.google.com/file/d/1AfT-k66o8JbvxEoq7CahUxXovikDl2yq/view?usp=sharing)
 Past content folder to clone repositry.
 Also clone Server Manager https://github.com/EBobrikow/ServerManager 
 Edit Config.json file to match IP adress port and RunCastServer.exe path at your machine. 
