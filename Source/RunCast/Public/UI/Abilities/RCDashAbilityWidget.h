@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Blueprint/UserWidget.h"
+#include "UI/Abilities/BaseAbilityWidget.h"
 #include "Components/ProgressBar.h"
 #include "RCDashAbilityWidget.generated.h"
 
@@ -11,7 +11,7 @@
  * 
  */
 UCLASS()
-class RUNCAST_API URCDashAbilityWidget : public UUserWidget
+class RUNCAST_API URCDashAbilityWidget : public UBaseAbilityWidget
 {
 	GENERATED_BODY()
 
@@ -21,11 +21,12 @@ public:
 	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
 
 	void SetCooldownProgress(float remainingTime, float Duration);
-	void FinishCooldown();
 
 protected: 
 
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
 	UProgressBar* CooldownProgressBar;
+
+	virtual void RelatedCooldownTagRecieved(float renmaining, float duration) override;
 	
 };

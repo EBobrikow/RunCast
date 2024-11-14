@@ -2,6 +2,7 @@
 
 
 #include "Tools/Globals.h"
+#include "Core/RCGameInstance.h"
 
 FServerInfo::FServerInfo()
 	: FServerInfo(-1, TEXT(""), 0 , TEXT(""), 0, TEXT(""), TEXT(""), 0, 0)

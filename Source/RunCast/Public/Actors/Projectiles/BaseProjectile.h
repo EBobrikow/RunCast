@@ -46,7 +46,7 @@ protected:
 	ACharacter* OwnerCharacter = nullptr;
 
 	UFUNCTION(BlueprintCallable)
-	void OnHitComponent(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
+	virtual void OnHitComponent(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
 
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
 	void ApplyHitAfterEffect();
@@ -54,9 +54,21 @@ protected:
 	UFUNCTION(NetMulticast, Unreliable)
 	void Multicast_AfterEffect();
 
+	virtual void PostHit();
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	float DestructionTime = 2.0f;
 
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+
+private: 
+
+	UPROPERTY()
+	FTimerHandle DestroyTimer;
+
+	UFUNCTION()
+	void DestroyTimerEnd();
 
 };

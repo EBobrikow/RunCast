@@ -23,10 +23,5 @@ public:
 
 	FGameplayEffectAttributeCaptureDefinition HealthDef;
 
-private: 
-
-	float ExplosionRadius = 800.0f;
-
-	float ExplosionDamage = 150.0f;
 	
 };

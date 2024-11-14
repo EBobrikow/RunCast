@@ -3,6 +3,8 @@
 
 #include "Abilities/RCDashGameplayAbility.h"
 #include "Characters/RCCharacter.h"
+#include "Abilities/Tasks/AbilityTask_PlayMontageAndWait.h"
+#include "Abilities/Tasks/AbilityTask_ApplyRootMotionConstantForce.h"
 
 URCDashGameplayAbility::URCDashGameplayAbility()
 {
@@ -45,7 +47,7 @@ void URCDashGameplayAbility::ActivateAbility(const FGameplayAbilitySpecHandle Ha
 		velocity.Normalize();
 		FVector targetLoc = Character->GetActorLocation() + (velocity * DashDistance);
 
-		
+		// apply execution effect to prevent gun fire during dash
 		if (Character->HoldWeaponRef)
 		{
 			UAbilitySystemComponent* ownerAbilityComponent = Character->HoldWeaponRef->GetAbilitySystemComponent();
@@ -68,17 +70,37 @@ void URCDashGameplayAbility::ActivateAbility(const FGameplayAbilitySpecHandle Ha
 			{
 				Character->HoldWeaponRef->WeaponSkeletalMesh->SetVisibility(false);
 			}
+			
 		}
-		
 
-		ActivateMotionTask(velocity);
+		FVector selfLoc = Character->GetActorLocation();
+		FRotator selfRot = Character->GetActorRotation();
+		FVector DeltaToPoint = targetLoc - selfLoc;
+		FVector DirToPoint2D = DeltaToPoint.GetSafeNormal2D();
+		FVector LocalDirToPoint2D = selfRot.UnrotateVector(DirToPoint2D);
+		float AngleToPoint = FMath::Sign(LocalDirToPoint2D.Y) * FMath::Acos(LocalDirToPoint2D.X);
+		// left -1.57 right 1.57 forward 0 back 3.14\ -3.14
+		UAnimMontage* montageToPlay = DashForwardMontage;
+		float angleVal = FMath::Abs(AngleToPoint);
+		if (angleVal > 0.753f && angleVal < 2.3f)
+		{
+			montageToPlay = AngleToPoint > 0.0f ? DashRightMontage : DashLeftMontage;
+		}
+		else if (angleVal > 2.3f)
+		{
+			montageToPlay = DashBackwardMontage;
+		}
 
+		UAbilityTask_PlayMontageAndWait* montageTask = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, NAME_None, montageToPlay);
+		montageTask->OnCompleted.AddDynamic(this, &URCDashGameplayAbility::FinishAbilitie);
+		montageTask->ReadyForActivation();
 
-		CommitAbilityCooldown(Handle, ActorInfo, ActivationInfo, true);
-		return;
+		UAbilityTask_ApplyRootMotionConstantForce* forceMotionTask = UAbilityTask_ApplyRootMotionConstantForce::ApplyRootMotionConstantForce(this, NAME_None,
+			velocity, DashStrength, DashDuration,false,nullptr,ERootMotionFinishVelocityMode::MaintainLastRootMotionVelocity,FVector(),0.0f, false);
+		forceMotionTask->ReadyForActivation();
+
 		
-		
-		
+		return;		
 	}
 
 	CommitAbilityCooldown(Handle, ActorInfo, ActivationInfo,true);

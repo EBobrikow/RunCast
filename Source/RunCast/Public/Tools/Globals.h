@@ -10,6 +10,7 @@
 #include "Globals.generated.h"
 
 
+
 namespace JSVal
 {
 	namespace ServerInfo
@@ -235,5 +236,44 @@ enum class ERCAbilityInputID : uint8
 	Confirm,
 	Cancel,
 	Dash,
+	Updraft,
 	PrimaryWeaponFire
+};
+
+USTRUCT(BlueprintType)
+struct FDynamiteBoxAbilitiesValues
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere)
+	float BoxExplosionRadius;
+
+	UPROPERTY(EditAnywhere)
+	float BoxExplosionDamage;
+
+};
+
+USTRUCT(BlueprintType)
+struct FLauncherGrenadeValues
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere)
+	float GrenadeExplosionRadius;
+
+	UPROPERTY(EditAnywhere)
+	float GrenadeExplosionDamage;
+
+};
+
+USTRUCT(BlueprintType)
+struct FGameplayAbilitiesValues
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere)
+	FDynamiteBoxAbilitiesValues DynamiteBoxValues;
+
+	UPROPERTY(EditAnywhere)
+	FLauncherGrenadeValues LauncherGrenadeValues;
 };

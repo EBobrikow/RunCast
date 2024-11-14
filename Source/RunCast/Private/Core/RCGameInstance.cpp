@@ -98,6 +98,15 @@ TArray<FPlayerData> URCGameInstance::GetAIPlayersData() const
 	return AIPlayersDataList;
 }
 
+UDefaultValuesContainer* URCGameInstance::GetDefaultValuesContaner() const
+{
+	if (DefaultValuesContainerClass)
+	{
+		return DefaultValuesContainerClass->GetDefaultObject<UDefaultValuesContainer>();
+	}
+	return nullptr;
+}
+
 void URCGameInstance::Init()
 {
 	GetServerManager()->InitConnection();

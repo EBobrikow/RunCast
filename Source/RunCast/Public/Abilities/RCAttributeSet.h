@@ -16,7 +16,7 @@
 	GAMEPLAYATTRIBUTE_VALUE_INITTER(PropertyName)
 
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnHealthChanged, float, health);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnHealthChanged, float, health, ACharacter*, instigator);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnCharacterKilled, ACharacter*, instigator);
 
 UCLASS()

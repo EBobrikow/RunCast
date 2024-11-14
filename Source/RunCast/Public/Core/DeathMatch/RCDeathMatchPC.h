@@ -49,10 +49,10 @@ protected:
 	void CharacterKilled(ACharacter* killer);
 
 	UFUNCTION()
-	void HealthUpdate(float val);
+	void HealthUpdate(float val, ACharacter* source = nullptr);
 
 	UFUNCTION(Client, Reliable)
-	void Client_UpdateHealthStatus(const float hp);
+	void Client_UpdateHealthStatus(const float hp, ACharacter* source);
 
 	UFUNCTION()
 	void Restart();

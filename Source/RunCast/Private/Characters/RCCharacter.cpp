@@ -12,12 +12,9 @@ ARCCharacter::ARCCharacter(const FObjectInitializer& ObjectInitializer)
 {
 	PrimaryActorTick.bCanEverTick = true;
 
-	HealthComponent = CreateDefaultSubobject<UHealthComponent>(TEXT("HealthComponent"));
-	HealthComponent->SetIsReplicated(true);
-
 	AbilitySystemComponent = CreateDefaultSubobject<URCAbilitySystemComponent>(TEXT("AbilityComponent"));
 	AbilitySystemComponent->SetIsReplicated(true);
-	AbilitySystemComponent->SetReplicationMode(EGameplayEffectReplicationMode::Minimal);
+	AbilitySystemComponent->SetReplicationMode(EGameplayEffectReplicationMode::Full);
 
 	Attributes = CreateDefaultSubobject<URCAttributeSet>(TEXT("Attributes"));
 }
@@ -43,9 +40,6 @@ void ARCCharacter::BeginPlay()
 			AbilitySystemComponent->OnAnyGameplayEffectRemovedDelegate().AddUFunction(this, FName("GERemoved"));
 		}
 		
-		
-		
-		//AbilitySystemComponent->RegisterGameplayTagEvent(FGameplayTag::RequestGameplayTag(FName("State.Debuff.Stun")), EGameplayTagEventType::NewOrRemoved).AddUObject(this, &AGDPlayerState::StunTagChanged);
 
 	}
 
@@ -55,18 +49,21 @@ void ARCCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	if (TrackDashCooldown && HasAuthority())
+	if (CurrentEffectTagsContainer.Num() > 0 && HasAuthority())
 	{
-		FGameplayTagContainer Container;
-		Container.AddTag(FGameplayTag::RequestGameplayTag(DashCooldowTag));
+		TArray<FGameplayTag> InOutGameplayTags;
+		CurrentEffectTagsContainer.GetGameplayTagArray(InOutGameplayTags);
 		float remainigTime = 0.0f;
 		float duration = 0.0f;
-		if (GetCooldownRemainingForTag(Container, remainigTime, duration))
-		{
-			Client_UpdateDashCooldown(remainigTime, duration);
-			UE_LOG(LogTemp, Warning, TEXT("Dash cooldown = %f"), remainigTime);
+		for (FGameplayTag tag : CurrentEffectTagsContainer)
+		{	
+			if (GetCooldownRemainingForTag(tag.GetSingleTagContainer(), remainigTime, duration))
+			{
+				Client_UpdateRelatedTagCooldown(tag, remainigTime, duration);
+			}
 		}
 	}
+
 }
 
 void ARCCharacter::PossessedBy(AController* NewController)
@@ -177,9 +174,10 @@ void ARCCharacter::Server_DashAction_Implementation(const bool val)
 	SendInputToAbilities(val, ERCAbilityInputID::Dash);
 }
 
-void ARCCharacter::ApplyDamageBP(float dmg, ACharacter* damager)
+
+void ARCCharacter::Server_UpdraftAction_Implementation(const bool val)
 {
-	ApplyDamage(dmg, damager);
+	SendInputToAbilities(val, ERCAbilityInputID::Updraft);
 }
 
 void ARCCharacter::KillCharacter()
@@ -204,28 +202,13 @@ void ARCCharacter::KillCharacter()
 
 bool ARCCharacter::IsAlive() const
 {
-	if (HealthComponent)
+	auto Attrib = GetAttributes();
+	if (Attrib)
 	{
-		return HealthComponent->GetCurrentHealth() > 0;
+		return Attrib->GetHealth() > 0.0f;
 	}
+
 	return false;
-}
-
-
-
-void ARCCharacter::ApplyDamage(float dmg, ACharacter* damager)
-{
-	UE_LOG(LogTemp, Warning, TEXT("Character take damage %f"), dmg);
-	if (HealthComponent)
-	{
-		HealthComponent->Multicast_DoDamage(dmg, damager);
-	}
-	
-}
-
-UHealthComponent* ARCCharacter::GetHealthComponent() const
-{
-	return HealthComponent;
 }
 
 UAbilitySystemComponent* ARCCharacter::GetAbilitySystemComponent() const
@@ -235,12 +218,12 @@ UAbilitySystemComponent* ARCCharacter::GetAbilitySystemComponent() const
 
 void ARCCharacter::HandleDamage(float damageAmount, const FHitResult& hitInfo, const FGameplayTagContainer& damageTags, ARCCharacter* InstigatorCharacter, AActor* damageCauser)
 {
-	OnDamage(damageAmount, hitInfo, damageTags, InstigatorCharacter, damageCauser);
+	//OnDamage(damageAmount, hitInfo, damageTags, InstigatorCharacter, damageCauser);
 }
 
-void ARCCharacter::HandleHealthChanged(float deltaValue)
+void ARCCharacter::HandleHealthChanged(float deltaValue, ACharacter* source)
 {
-	OnHealthChanged(deltaValue);
+	//OnHealthChanged(deltaValue);
 }
 
 void ARCCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -279,6 +262,15 @@ void ARCCharacter::DashActionBase(bool val)
 	}
 }
 
+void ARCCharacter::UpdraftActionBase(bool val)
+{
+	if (IsLocallyControlled())
+	{
+		Server_UpdraftAction(val);
+	}
+	
+}
+
 void ARCCharacter::SendInputToAbilities(bool Pressed, ERCAbilityInputID AbilityInputID)
 {
 	if (!AbilitySystemComponent) return;
@@ -299,46 +291,45 @@ void ARCCharacter::ActiveGEAdded(UAbilitySystemComponent* component, const FGame
 		
 	FGameplayTagContainer Container;
 	GESpec.GetAllGrantedTags(Container);
-	if (Container.HasTag(FGameplayTag::RequestGameplayTag(DashCooldowTag)))
-	{
-		TrackDashCooldown = true;
-		Client_ActivateDashCooldownTracking(true);
-		/*if (!CashedHUD)
-		{
-			if (ARCDeathMatchPC* PC = Cast<ARCDeathMatchPC>(GetController()))
-			{
-				CashedHUD = Cast<ARCDeathMatchHUD>(PC->GetHUD());
 
-			}
-		}*/
-			
-	}
+	TArray<FGameplayTag> InOutGameplayTags;
+	Container.GetGameplayTagArray(InOutGameplayTags);
+	for (FGameplayTag tag : InOutGameplayTags)
+	{
+		if (!CurrentEffectTagsContainer.HasTagExact(tag))
+		{
+			CurrentEffectTagsContainer.AddTag(tag);
+		}
 		
-	
-	
+	}
+
 }
 
 void ARCCharacter::GERemoved(const FActiveGameplayEffect& GEEffect)
 {
 	FGameplayTagContainer Container;
 	GEEffect.Spec.GetAllGrantedTags(Container);
-	if (Container.HasTag(FGameplayTag::RequestGameplayTag(DashCooldowTag)))
+
+	TArray<FGameplayTag> InOutGameplayTags;
+	Container.GetGameplayTagArray(InOutGameplayTags);
+	for (FGameplayTag tag : InOutGameplayTags)
+	{
+		if (CurrentEffectTagsContainer.HasTagExact(tag))
+		{
+			CurrentEffectTagsContainer.RemoveTag(tag);
+			UE_LOG(LogTemp, Warning, TEXT("RemovedTag: %s"), *tag.GetTagName().ToString());
+		}
+		
+	}
+
+	//CurrentEffectTagsContainer.RemoveTags(Container);
+
+	/*if (Container.HasTag(FGameplayTag::RequestGameplayTag(DashCooldowTag)))
 	{
 		TrackDashCooldown = false;
 		Client_ActivateDashCooldownTracking(false);
-		/*if (!CashedHUD)
-		{
-			if (ARCDeathMatchPC* PC = Cast<ARCDeathMatchPC>(GetController()))
-			{
-				CashedHUD = Cast<ARCDeathMatchHUD>(PC->GetHUD());
-
-			}
-		}
-		if (CashedHUD)
-		{				
-			CashedHUD->FinishDashCooldown();				
-		}*/
-	}
+		
+	}*/
 	
 }
 
@@ -372,6 +363,23 @@ bool ARCCharacter::GetCooldownRemainingForTag(FGameplayTagContainer CooldownTags
 	}
 
 	return false;
+}
+
+void ARCCharacter::Client_UpdateRelatedTagCooldown_Implementation(const FGameplayTag& Tag, const float& renmaining, const float& duration)
+{
+	if (!CashedHUD)
+	{
+		if (ARCDeathMatchPC* PC = Cast<ARCDeathMatchPC>(GetController()))
+		{
+			CashedHUD = Cast<ARCDeathMatchHUD>(PC->GetHUD());
+
+		}
+	}
+	if (CashedHUD)
+	{
+		CashedHUD->UpdateTagRelatedCooldown(Tag, renmaining, duration);
+	}
+	
 }
 
 void ARCCharacter::Client_UpdateDashCooldown_Implementation(const float& renmaining, const float& duration)

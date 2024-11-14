@@ -204,6 +204,14 @@ void AALSPlayerController::DashAction(const FInputActionValue& Value)
 	}
 }
 
+void AALSPlayerController::UpdraftAction(const FInputActionValue& Value)
+{
+	if (PossessedCharacter)
+	{
+		PossessedCharacter->UpdraftAction(Value.Get<bool>());
+	}
+}
+
 void AALSPlayerController::CameraTapAction(const FInputActionValue& Value)
 {
 	if (PossessedCharacter)

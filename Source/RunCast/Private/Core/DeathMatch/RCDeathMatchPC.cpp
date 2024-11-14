@@ -160,12 +160,12 @@ void ARCDeathMatchPC::CharacterKilled(ACharacter* killer)
 	
 }
 
-void ARCDeathMatchPC::HealthUpdate(float val)
+void ARCDeathMatchPC::HealthUpdate(float val, ACharacter* source)
 {
-	Client_UpdateHealthStatus(val);
+	Client_UpdateHealthStatus(val, source);
 }
 
-void ARCDeathMatchPC::Client_UpdateHealthStatus_Implementation(const float hp)
+void ARCDeathMatchPC::Client_UpdateHealthStatus_Implementation(const float hp, ACharacter* source)
 {
 	ARCDeathMatchHUD* hud = Cast<ARCDeathMatchHUD>(GetHUD());
 	if (hud)

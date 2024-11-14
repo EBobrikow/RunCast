@@ -44,12 +44,9 @@ void URCAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallback
 			float clampVal = FMath::Clamp(GetHealth(), 0.0f, GetMaxHealth());
 			SetHealth(clampVal);
 
-
-			
-
 			if (OnHealthChanged.IsBound())
 			{
-				OnHealthChanged.Broadcast(GetHealth());
+				OnHealthChanged.Broadcast(GetHealth(), Cast<ACharacter>(source->GetOwnerActor()));
 			}
 			float currHealth = GetHealth();
 			if (FMath::IsNearlyZero(GetHealth(), 0.001f) && source->GetOwnerActor())

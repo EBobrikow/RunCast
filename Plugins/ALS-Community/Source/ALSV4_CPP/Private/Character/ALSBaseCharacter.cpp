@@ -657,11 +657,20 @@ void AALSBaseCharacter::DashAction_Implementation(bool bValue)
 	DashActionBase(bValue);
 }
 
+void AALSBaseCharacter::UpdraftAction_Implementation(bool bValue)
+{
+	UpdraftActionBase(bValue);
+}
+
 void AALSBaseCharacter::AttackActionBase(bool val)
 {
 }
 
 void AALSBaseCharacter::DashActionBase(bool val)
+{
+}
+
+void AALSBaseCharacter::UpdraftActionBase(bool val)
 {
 }
 
@@ -793,7 +802,7 @@ void AALSBaseCharacter::OnMovementStateChanged(const EALSMovementState PreviousS
 				UnCrouch();
 			}
 		}
-		else if (MovementAction == EALSMovementAction::Rolling)
+		else if (MovementAction == EALSMovementAction::Rolling && bRagdollOnLand)
 		{
 			// If the character is currently rolling, enable the ragdoll.
 			ReplicatedRagdollStart();

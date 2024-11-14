@@ -24,11 +24,23 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	float DashDistance = 1000.0f;
 
-	UFUNCTION(BlueprintImplementableEvent)
-	void ActivateMotionTask(FVector TargetLocation);
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	float DashStrength = 1000.0f;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	UAnimMontage* DashMontage;
+	float DashDuration = 0.5f;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	UAnimMontage* DashForwardMontage;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	UAnimMontage* DashLeftMontage;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	UAnimMontage* DashRightMontage;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	UAnimMontage* DashBackwardMontage;
 
 	UFUNCTION(BlueprintCallable)
 	void FinishAbilitie();
@@ -42,6 +54,6 @@ protected:
 		const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData);
 
 	UPROPERTY()
-	ARCCharacter* CashedCharacter;
+	class ARCCharacter* CashedCharacter;
 	
 };

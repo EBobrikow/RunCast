@@ -48,11 +48,12 @@ void ARCAIController::CreateCharacter()
 			if (character)
 			{
 				Possess(character);
-				auto hp = character->GetHealthComponent();
-				if (hp)
+				auto Attrib = character->GetAttributes();
+				if (Attrib)
 				{
-					hp->OnActorKilled.AddDynamic(this, &ARCAIController::CharacterKilled);
+					Attrib->OnCharacterKilled.AddDynamic(this, &ARCAIController::CharacterKilled);
 				}
+				
 			}
 
 		}

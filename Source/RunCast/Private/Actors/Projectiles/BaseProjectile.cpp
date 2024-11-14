@@ -35,6 +35,7 @@ void ABaseProjectile::BeginPlay()
 {
 	Super::BeginPlay();
 	
+	GetWorld()->GetTimerManager().SetTimer(DestroyTimer, this, &ABaseProjectile::DestroyTimerEnd, DestructionTime, false);
 }
 
 
@@ -52,13 +53,6 @@ void ABaseProjectile::OnHitComponent(UPrimitiveComponent* HitComponent, AActor* 
 	{
 		return;
 	}
-
-	//IDamagebleInterface* damageble = Cast<IDamagebleInterface>(OtherActor);
-	//if (damageble)
-	//{
-	//	damageble->ApplyDamage(ProjectileDamage, OwnerCharacter);
-	//	//UAbilitySystemBlueprintLibrary::SendGameplayEventToActor();
-	//}
 
 	UAbilitySystemComponent* ownerAbilityComponent = nullptr;
 
@@ -91,7 +85,8 @@ void ABaseProjectile::OnHitComponent(UPrimitiveComponent* HitComponent, AActor* 
 	
 
 	Multicast_AfterEffect();
-
+	PostHit();
+	GetWorld()->GetTimerManager().ClearTimer(DestroyTimer);
 	Destroy();
 }
 
@@ -102,6 +97,10 @@ void ABaseProjectile::Multicast_AfterEffect_Implementation()
 
 
 
+void ABaseProjectile::PostHit()
+{
+}
+
 // Called every frame
 void ABaseProjectile::Tick(float DeltaTime)
 {
@@ -109,9 +108,11 @@ void ABaseProjectile::Tick(float DeltaTime)
 
 }
 
-//void ABaseProjectile::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const
-//{
-//	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
-//	
-//
-//}
+void ABaseProjectile::DestroyTimerEnd()
+{
+	if (IsValid(this))
+	{
+		Destroy();
+	}
+	
+}

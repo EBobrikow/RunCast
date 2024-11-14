@@ -69,6 +69,9 @@ protected:
 	void DashAction(const FInputActionValue& Value);
 
 	UFUNCTION()
+	void UpdraftAction(const FInputActionValue& Value);
+
+	UFUNCTION()
 	void CameraTapAction(const FInputActionValue& Value);
 
 	UFUNCTION()

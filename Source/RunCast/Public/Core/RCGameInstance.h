@@ -8,6 +8,7 @@
 #include "Tools/Server/ServerManager.h"
 #include "Tools/SaveGame/SaveManager.h"
 #include "GameFramework/GameModeBase.h"
+#include "Tools/DefaultValuesContainer.h"
 #include "RCGameInstance.generated.h"
 
 /**
@@ -68,6 +69,9 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	bool bIsSoloGame;
 
+	UFUNCTION()
+	UDefaultValuesContainer* GetDefaultValuesContaner() const;
+
 protected:
 
 	virtual void Init() override;
@@ -80,10 +84,10 @@ protected:
 	UPROPERTY()
 	FPlayerData LocalPlayerData;
 
-	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
+	UPROPERTY()
 	UServerManager* ServerManager = nullptr;
 
-	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
+	UPROPERTY()
 	USaveManager* SaveManager = nullptr;
 
 	UPROPERTY()
@@ -115,4 +119,7 @@ protected:
 
 	UPROPERTY()
 	TArray<FPlayerData> AIPlayersDataList;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	TSubclassOf<UDefaultValuesContainer> DefaultValuesContainerClass;
 };

@@ -54,6 +54,9 @@ public:
 	UFUNCTION(Server, Reliable)
 	void Server_DashAction(const bool val);
 
+	UFUNCTION(Server, Reliable)
+	void Server_UpdraftAction(const bool val);
+
 	UFUNCTION(NetMulticast, Reliable)
 	void Multicast_SetAnimState(EALSOverlayState overlay);
 
@@ -61,32 +64,25 @@ public:
 	void Server_SpawnBaseWeapon(TSubclassOf<ABaseWeapon> WeaponClass);
 
 	UFUNCTION(BlueprintCallable)
-	void ApplyDamageBP(float dmg, ACharacter* damager);
-
-	UFUNCTION(BlueprintCallable)
 	void KillCharacter();
 
 	UFUNCTION(BlueprintCallable)
 	bool IsAlive() const;
 
-	virtual void ApplyDamage(float dmg, ACharacter* damager) override;
-
-	UHealthComponent* GetHealthComponent() const;
-
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 
-	UFUNCTION(BlueprintImplementableEvent)
+	/*UFUNCTION(BlueprintImplementableEvent)
 	void OnDamage(float damageAmount, const FHitResult& hitInfo,const struct FGameplayTagContainer& damageTags, 
 			ARCCharacter* InstigatorCharacter, AActor* damageCauser);
 
 	UFUNCTION(BlueprintImplementableEvent)
-	void OnHealthChanged(float deltaValue);
+	void OnHealthChanged(float deltaValue);*/
 
 	virtual void HandleDamage(float damageAmount, const FHitResult& hitInfo, const struct FGameplayTagContainer& damageTags,
 		ARCCharacter* InstigatorCharacter, AActor* damageCauser);
 
 	UFUNCTION()
-	virtual void HandleHealthChanged(float deltaValue);
+	virtual void HandleHealthChanged(float deltaValue, ACharacter* source);
 
 
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
@@ -94,9 +90,6 @@ public:
 	URCAttributeSet* GetAttributes() const;
 
 protected: 
-
-	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	UHealthComponent* HealthComponent = nullptr;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	UChildActorComponent* ChildActorComponent = nullptr;
@@ -113,6 +106,8 @@ protected:
 	virtual void AttackActionBase(bool val) override;
 
 	virtual void DashActionBase(bool val) override;
+
+	virtual void UpdraftActionBase(bool val) override;
 
 	//Abilities
 
@@ -131,6 +126,9 @@ protected:
 	UPROPERTY()
 	bool AbilityInitialized = false;
 
+	UPROPERTY()
+	FGameplayTagContainer CurrentEffectTagsContainer;
+
 	UFUNCTION()
 	void SendInputToAbilities(bool Pressed, ERCAbilityInputID AbilityInputID);
 
@@ -148,6 +146,9 @@ protected:
 
 	UFUNCTION(Client, Unreliable)
 	void Client_UpdateDashCooldown(const float& renmaining, const float& duration);
+
+	UFUNCTION(Client, Unreliable)
+	void Client_UpdateRelatedTagCooldown(const FGameplayTag& Tag ,const float& renmaining, const float& duration);
 
 private: 
 

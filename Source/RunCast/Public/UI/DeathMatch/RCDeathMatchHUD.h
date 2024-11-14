@@ -9,9 +9,9 @@
 #include "Characters/RCCharacter.h"
 #include "RCDeathMatchHUD.generated.h"
 
-/**
- * 
- */
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FOnTagCooldownUpdate, FGameplayTag, Tag, float, remaining, float, duration);
+
 UCLASS()
 class RUNCAST_API ARCDeathMatchHUD : public AInGameHUD
 {
@@ -38,6 +38,9 @@ public:
 	void FinishDashCooldown();
 
 	UFUNCTION()
+	void UpdateTagRelatedCooldown(const FGameplayTag& Tag, const float& renmaining, const float& duration);
+
+	UFUNCTION()
 	float GetCharacterHP();
 
 	UFUNCTION()
@@ -45,6 +48,9 @@ public:
 
 	UFUNCTION()
 	void DisplayFinaleStat(TArray<FScoreBoardData> data);
+
+	UPROPERTY()
+	FOnTagCooldownUpdate OnTagCooldownUpdate;
 
 protected: 
 

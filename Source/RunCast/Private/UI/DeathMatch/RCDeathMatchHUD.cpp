@@ -51,7 +51,7 @@ void ARCDeathMatchHUD::UpdateDashCooldownTime(float remain, float duration)
 {
 	if (GameOverlayWidget)
 	{
-		GameOverlayWidget->GetDashAbilityWidget()->SetCooldownProgress(remain, duration);
+		//GameOverlayWidget->GetDashAbilityWidget()->SetCooldownProgress(remain, duration);
 	}
 }
 
@@ -59,7 +59,15 @@ void ARCDeathMatchHUD::FinishDashCooldown()
 {
 	if (GameOverlayWidget)
 	{
-		GameOverlayWidget->GetDashAbilityWidget()->FinishCooldown();
+		//GameOverlayWidget->GetDashAbilityWidget()->FinishCooldown();
+	}
+}
+
+void ARCDeathMatchHUD::UpdateTagRelatedCooldown(const FGameplayTag& Tag, const float& renmaining, const float& duration)
+{
+	if (OnTagCooldownUpdate.IsBound())
+	{
+		OnTagCooldownUpdate.Broadcast(Tag, renmaining, duration);
 	}
 }
 
@@ -70,11 +78,11 @@ float ARCDeathMatchHUD::GetCharacterHP()
 		CharacterRef = Cast<ARCCharacter>(PC->PossessedCharacter);
 		if (CharacterRef)
 		{
-			UHealthComponent* hpComp = CharacterRef->GetHealthComponent();
-			if (hpComp)
+			auto Attrib = CharacterRef->GetAttributes();
+			if (Attrib)
 			{
-				return hpComp->GetCurrentHealth();
-			}
+				return Attrib->GetHealth();
+			}			
 		}
 	}
 	

@@ -3,6 +3,7 @@
 
 #include "Abilities/Dynamite/RCMMC_BoxExplosion.h"
 #include "Abilities/RCAttributeSet.h"
+#include "Core/RCGameInstance.h"
 
 URCMMC_BoxExplosion::URCMMC_BoxExplosion()
 {
@@ -15,12 +16,25 @@ URCMMC_BoxExplosion::URCMMC_BoxExplosion()
 
 float URCMMC_BoxExplosion::CalculateBaseMagnitude_Implementation(const FGameplayEffectSpec& Spec) const
 {
+	float ExplosionDamage = 0.0f;
+	float ExplosionRadius = 0.0f;
+	
+
 	float damageResult = 10.0f;
 	FGameplayEffectContextHandle contextHandle = Spec.GetContext();
 	if (FGameplayEffectContext* context = contextHandle.Get())
 	{
 		AActor* effectOwner = context->GetInstigator();
 		TArray<TWeakObjectPtr< AActor>> actors = context->GetActors();
+
+		if (URCGameInstance* GI = effectOwner->GetWorld()->GetGameInstance<URCGameInstance>())
+		{
+			if (UDefaultValuesContainer* valContainer = GI->GetDefaultValuesContaner())
+			{
+				ExplosionDamage = valContainer->GameplayAbilitiesValuesContainer.DynamiteBoxValues.BoxExplosionDamage;
+				ExplosionRadius = valContainer->GameplayAbilitiesValuesContainer.DynamiteBoxValues.BoxExplosionRadius;
+			}
+		}
 	
 		if (actors.Num() > 0)
 		{
@@ -29,24 +43,10 @@ float URCMMC_BoxExplosion::CalculateBaseMagnitude_Implementation(const FGameplay
 			if (target && effectOwner)
 			{
 				FVector lenthVec = target->GetActorLocation() - effectOwner->GetActorLocation();
-				if (lenthVec.Length() > (ExplosionRadius * 0.75f))
-				{
-					damageResult = ExplosionDamage * 0.25f;
-				}
-				else if (lenthVec.Length() > (ExplosionRadius * 0.5f))
-				{
-					damageResult = ExplosionDamage * 0.5f;
-				}
-				else if (lenthVec.Length() > (ExplosionRadius * 0.25f))
-				{
-					damageResult = ExplosionDamage * 0.75f;
-				}
-				else
-				{
-					damageResult = ExplosionDamage ;
-				}
+				float distance = lenthVec.Length();
+				float mod = 1 - distance / ExplosionRadius;
+				damageResult = ExplosionDamage * mod;
 
-				UE_LOG(LogTemp, Warning, TEXT("[CalculateBaseMagnitude] Target = %s, Source = %s, distance = %f, DamageResult = %f"), *target->GetName(), *effectOwner->GetName(), lenthVec.Length(), damageResult * -1);
 			}
 
 			

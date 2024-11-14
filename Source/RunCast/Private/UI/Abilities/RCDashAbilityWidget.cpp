@@ -2,6 +2,7 @@
 
 
 #include "UI/Abilities/RCDashAbilityWidget.h"
+#include "UI/DeathMatch/RCDeathMatchHUD.h"
 
 void URCDashAbilityWidget::NativeConstruct()
 {
@@ -11,6 +12,8 @@ void URCDashAbilityWidget::NativeConstruct()
 	{
 		CooldownProgressBar->SetVisibility(ESlateVisibility::Hidden);
 	}
+
+
 }
 
 void URCDashAbilityWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
@@ -23,15 +26,23 @@ void URCDashAbilityWidget::SetCooldownProgress(float remainingTime, float Durati
 {
 	if (CooldownProgressBar)
 	{
-		CooldownProgressBar->SetVisibility(ESlateVisibility::Visible);
-		CooldownProgressBar->SetPercent(1.0f - remainingTime / Duration);
+		
+		float percent = 1.0f - remainingTime / Duration;
+		//UE_LOG(LogTemp, Warning, TEXT("Percent: %f"), percent);
+		CooldownProgressBar->SetPercent(percent);
+		if (percent > 0.99f)
+		{
+			CooldownProgressBar->SetVisibility(ESlateVisibility::Hidden);
+		}
+		else
+		{
+			CooldownProgressBar->SetVisibility(ESlateVisibility::Visible);
+		}
 	}
 }
 
-void URCDashAbilityWidget::FinishCooldown()
+void URCDashAbilityWidget::RelatedCooldownTagRecieved(float renmaining, float duration)
 {
-	if (CooldownProgressBar)
-	{
-		CooldownProgressBar->SetVisibility(ESlateVisibility::Hidden);
-	}
+	SetCooldownProgress(renmaining, duration);
 }
+

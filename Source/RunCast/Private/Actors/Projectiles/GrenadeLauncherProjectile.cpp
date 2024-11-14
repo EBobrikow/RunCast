@@ -4,6 +4,12 @@
 #include "Actors/Projectiles/GrenadeLauncherProjectile.h"
 #include "Kismet/GameplayStatics.h"
 #include "Interfaces/DamagebleInterface.h"
+#include "AbilitySystemInterface.h"
+#include "Components/RCAbilitySystemComponent.h"
+#include "Abilities/RCAttributeSet.h"
+#include "GameplayEffect.h"
+#include "Characters/RCCharacter.h"
+#include "Actors/Weapons/DynamiteBox.h"
 
 void AGrenadeLauncherProjectile::BeginPlay()
 {
@@ -12,29 +18,60 @@ void AGrenadeLauncherProjectile::BeginPlay()
 
 void AGrenadeLauncherProjectile::ApplyExplosionDamage()
 {
+	TArray<AActor*> BoxActors;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ADynamiteBox::StaticClass(), BoxActors);
+
 	TArray<AActor*> Actors;
-	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AActor::StaticClass(), Actors);
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ARCCharacter::StaticClass(), Actors);
+	for (AActor* box : BoxActors)
+	{
+		Actors.Add(box);
+	}
+
+
 	for (AActor* actor : Actors)
 	{
 		FVector lenthVec = actor->GetActorLocation() - GetActorLocation();
 		if (lenthVec.Length() <= ExplosionRadius)
 		{
-			IDamagebleInterface* damageble = Cast<IDamagebleInterface>(actor);
-			if (damageble)
+			IAbilitySystemInterface* target = Cast<IAbilitySystemInterface>(actor);
+			if (target && OwnerCharacter && (actor != OwnerCharacter))
 			{
-				if (lenthVec.Length() > (ExplosionRadius * 0.75f))
+
+				UAbilitySystemComponent* ownerAbilityComponent = Cast<IAbilitySystemInterface>(OwnerCharacter)->GetAbilitySystemComponent();
+				UAbilitySystemComponent* targetAbilityComponent = target->GetAbilitySystemComponent();
+
+
+
+				if (ownerAbilityComponent && targetAbilityComponent && GrenadeExplosionEffect)
 				{
-					 damageble->ApplyDamage(ExplosionDamage * 0.25f, OwnerCharacter);
-				}
-				else if (lenthVec.Length() > (ExplosionRadius * 0.5f))
-				{
-					damageble->ApplyDamage(ExplosionDamage * 0.5f, OwnerCharacter);
-				}
-				else if (lenthVec.Length() > (ExplosionRadius * 0.25f))
-				{
-					damageble->ApplyDamage(ExplosionDamage * 0.75f, OwnerCharacter);
+					FGameplayEffectContextHandle EffectContext = ownerAbilityComponent->MakeEffectContext();
+					EffectContext.AddSourceObject(this);
+					TArray<TWeakObjectPtr<AActor>> actors;
+					TWeakObjectPtr<AActor> actorObj = Cast<AActor>(target);
+					actors.Add(actorObj);
+					EffectContext.AddActors(actors);
+
+					FGameplayEffectSpecHandle  NewHandle = ownerAbilityComponent->MakeOutgoingSpec(GrenadeExplosionEffect, 1, EffectContext);
+
+					if (NewHandle.IsValid())
+					{
+						FActiveGameplayEffectHandle ActiveGameplayEffectHandle =
+							ownerAbilityComponent->ApplyGameplayEffectSpecToTarget(*NewHandle.Data.Get(), targetAbilityComponent);
+					}
+
 				}
 			}
+		
 		}
 	}
+}
+
+void AGrenadeLauncherProjectile::PostHit()
+{
+	if (HasAuthority())
+	{
+		ApplyExplosionDamage();
+	}
+	
 }

@@ -3,6 +3,8 @@
 
 #include "Actors/Weapons/DynamiteBox.h"
 #include "Kismet/GameplayStatics.h"
+#include "Characters/RCCharacter.h"
+#include "Core/RCGameInstance.h"
 
 // Sets default values
 ADynamiteBox::ADynamiteBox()
@@ -59,12 +61,21 @@ void ADynamiteBox::BeginPlay()
 		}
 	}
 
+	if (URCGameInstance* GI = GetWorld()->GetGameInstance<URCGameInstance>())
+	{
+		if (const UDefaultValuesContainer* valContainer = GI->GetDefaultValuesContaner())
+		{
+			ExplosionDamage = valContainer->GameplayAbilitiesValuesContainer.DynamiteBoxValues.BoxExplosionDamage;
+			ExplosionRadius = valContainer->GameplayAbilitiesValuesContainer.DynamiteBoxValues.BoxExplosionRadius;
+		}
+	}
+
 }
 
 void ADynamiteBox::BigBadaBum()
 {
 	TArray<AActor*> Actors;
-	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AActor::StaticClass(), Actors);
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ARCCharacter::StaticClass(), Actors);
 	for (AActor* actor : Actors)
 	{
 		if (actor == this)

@@ -24,9 +24,14 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	float ExplosionDamage = 70.0f;
 
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	TSubclassOf<UGameplayEffect> GrenadeExplosionEffect;
+
 protected: 
 
 	UFUNCTION(BlueprintCallable)
 	void ApplyExplosionDamage();
+
+	virtual void PostHit() override;
 	
 };

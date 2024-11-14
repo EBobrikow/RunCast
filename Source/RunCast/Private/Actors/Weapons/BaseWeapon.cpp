@@ -19,6 +19,7 @@ ABaseWeapon::ABaseWeapon()
 	RootComponent = DefaultRoot;
 	WeaponSkeletalMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("WeaponSkeletalMesh"));
 	WeaponSkeletalMesh->SetupAttachment(DefaultRoot);
+	WeaponSkeletalMesh->SetIsReplicated(true);
 	WeaponSkeletalMesh->VisibilityBasedAnimTickOption = EVisibilityBasedAnimTickOption::AlwaysTickPoseAndRefreshBones;
 
 	AbilitySystemComponent = CreateDefaultSubobject<URCAbilitySystemComponent>(TEXT("AbilityComponent"));
