@@ -28,5 +28,6 @@ protected:
 	UProgressBar* CooldownProgressBar;
 
 	virtual void RelatedCooldownTagRecieved(float renmaining, float duration) override;
+	virtual void ClearCooldownUI() override;
 	
 };

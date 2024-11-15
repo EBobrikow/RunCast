@@ -5,8 +5,6 @@
 #include "CoreMinimal.h"
 #include "Character/ALSCharacter.h"
 #include "Actors/Weapons/BaseWeapon.h"
-#include "Interfaces/DamagebleInterface.h"
-#include "Components/HealthComponent.h"
 #include "Components/ChildActorComponent.h"
 #include "Net/UnrealNetwork.h"
 #include "AbilitySystemInterface.h"
@@ -18,12 +16,9 @@
 #include "RCCharacter.generated.h"
 
 
-static const FName DashCooldowTag = FName("Ability.Actions.Dash.Cooldown");
-
-//class ARCDeathMatchHUD;
 
 UCLASS()
-class RUNCAST_API ARCCharacter : public AALSCharacter, public IDamagebleInterface, public IAbilitySystemInterface
+class RUNCAST_API ARCCharacter : public AALSCharacter, public IAbilitySystemInterface
 {
 	GENERATED_BODY()
 
@@ -71,18 +66,11 @@ public:
 
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 
-	/*UFUNCTION(BlueprintImplementableEvent)
-	void OnDamage(float damageAmount, const FHitResult& hitInfo,const struct FGameplayTagContainer& damageTags, 
-			ARCCharacter* InstigatorCharacter, AActor* damageCauser);
-
-	UFUNCTION(BlueprintImplementableEvent)
-	void OnHealthChanged(float deltaValue);*/
-
 	virtual void HandleDamage(float damageAmount, const FHitResult& hitInfo, const struct FGameplayTagContainer& damageTags,
 		ARCCharacter* InstigatorCharacter, AActor* damageCauser);
 
 	UFUNCTION()
-	virtual void HandleHealthChanged(float deltaValue, ACharacter* source);
+	virtual void HandleHealthChanged(float deltaValue, AActor* source);
 
 
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
@@ -90,6 +78,9 @@ public:
 	URCAttributeSet* GetAttributes() const;
 
 protected: 
+
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
+	UAudioComponent* AudioComponent = nullptr;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	UChildActorComponent* ChildActorComponent = nullptr;
@@ -140,12 +131,6 @@ protected:
 
 	UFUNCTION()
 	bool GetCooldownRemainingForTag(FGameplayTagContainer CooldownTags, float& TimeRemaining, float& CooldownDuration);
-
-	UFUNCTION(Client, Reliable)
-	void Client_ActivateDashCooldownTracking(const bool val);
-
-	UFUNCTION(Client, Unreliable)
-	void Client_UpdateDashCooldown(const float& renmaining, const float& duration);
 
 	UFUNCTION(Client, Unreliable)
 	void Client_UpdateRelatedTagCooldown(const FGameplayTag& Tag ,const float& renmaining, const float& duration);

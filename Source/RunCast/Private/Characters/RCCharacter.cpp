@@ -4,6 +4,7 @@
 #include "Characters/RCCharacter.h"
 #include "Core/DeathMatch/RCDeathMatchPC.h"
 #include "UI/DeathMatch/RCDeathMatchHUD.h"
+#include "Core/RCGameInstance.h"
 
 
 
@@ -17,6 +18,10 @@ ARCCharacter::ARCCharacter(const FObjectInitializer& ObjectInitializer)
 	AbilitySystemComponent->SetReplicationMode(EGameplayEffectReplicationMode::Full);
 
 	Attributes = CreateDefaultSubobject<URCAttributeSet>(TEXT("Attributes"));
+
+	AudioComponent = CreateDefaultSubobject<UAudioComponent>(TEXT("AudioComponent"));
+	AudioComponent->SetupAttachment(RootComponent);
+	//AudioComponent->SetSound();
 }
 
 void ARCCharacter::BeginPlay()
@@ -30,18 +35,20 @@ void ARCCharacter::BeginPlay()
 		Attributes->OnHealthChanged.AddDynamic(this, &ARCCharacter::HandleHealthChanged);
 	}
 	
-	if (AbilitySystemComponent)
+	if (HasAuthority())	
 	{
-		if (HasAuthority())
+		if (AbilitySystemComponent)
 		{
 			AbilitySystemComponent->InitAbilityActorInfo(this, this);
 			AddStartupGameplayAbilities();
 			AbilitySystemComponent->OnActiveGameplayEffectAddedDelegateToSelf.AddUFunction(this, FName("ActiveGEAdded"));;
 			AbilitySystemComponent->OnAnyGameplayEffectRemovedDelegate().AddUFunction(this, FName("GERemoved"));
-		}
-		
+		}	
 
 	}
+
+	
+	
 
 }
 
@@ -49,7 +56,7 @@ void ARCCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	if (CurrentEffectTagsContainer.Num() > 0 && HasAuthority())
+	if (CurrentEffectTagsContainer.Num() > 0 && HasAuthority() && IsAlive())
 	{
 		TArray<FGameplayTag> InOutGameplayTags;
 		CurrentEffectTagsContainer.GetGameplayTagArray(InOutGameplayTags);
@@ -221,7 +228,7 @@ void ARCCharacter::HandleDamage(float damageAmount, const FHitResult& hitInfo, c
 	//OnDamage(damageAmount, hitInfo, damageTags, InstigatorCharacter, damageCauser);
 }
 
-void ARCCharacter::HandleHealthChanged(float deltaValue, ACharacter* source)
+void ARCCharacter::HandleHealthChanged(float deltaValue, AActor* source)
 {
 	//OnHealthChanged(deltaValue);
 }
@@ -317,20 +324,8 @@ void ARCCharacter::GERemoved(const FActiveGameplayEffect& GEEffect)
 		if (CurrentEffectTagsContainer.HasTagExact(tag))
 		{
 			CurrentEffectTagsContainer.RemoveTag(tag);
-			UE_LOG(LogTemp, Warning, TEXT("RemovedTag: %s"), *tag.GetTagName().ToString());
-		}
-		
-	}
-
-	//CurrentEffectTagsContainer.RemoveTags(Container);
-
-	/*if (Container.HasTag(FGameplayTag::RequestGameplayTag(DashCooldowTag)))
-	{
-		TrackDashCooldown = false;
-		Client_ActivateDashCooldownTracking(false);
-		
-	}*/
-	
+		}		
+	}	
 }
 
 bool ARCCharacter::GetCooldownRemainingForTag(FGameplayTagContainer CooldownTags, float& TimeRemaining, float& CooldownDuration)
@@ -380,30 +375,4 @@ void ARCCharacter::Client_UpdateRelatedTagCooldown_Implementation(const FGamepla
 		CashedHUD->UpdateTagRelatedCooldown(Tag, renmaining, duration);
 	}
 	
-}
-
-void ARCCharacter::Client_UpdateDashCooldown_Implementation(const float& renmaining, const float& duration)
-{
-	if (CashedHUD)
-	{
-		CashedHUD->UpdateDashCooldownTime(renmaining, duration);
-	}
-}
-
-void ARCCharacter::Client_ActivateDashCooldownTracking_Implementation(const bool val)
-{
-	TrackDashCooldown = val;
-
-	if (!CashedHUD)
-	{
-		if (ARCDeathMatchPC* PC = Cast<ARCDeathMatchPC>(GetController()))
-		{
-			CashedHUD = Cast<ARCDeathMatchHUD>(PC->GetHUD());
-
-		}
-	}
-	if (CashedHUD && !val)
-	{
-		CashedHUD->FinishDashCooldown();
-	}
 }

@@ -6,6 +6,13 @@
 #include "UI/DeathMatch/RCDeathMatchHUD.h"
 #include "Blueprint/WidgetBlueprintLibrary.h"
 #include "Abilities/RCAttributeSet.h"
+#include "Core/RCGameInstance.h"
+
+ARCDeathMatchPC::ARCDeathMatchPC()
+{
+	AudioComponent = CreateDefaultSubobject<UAudioComponent>(TEXT("AudioComponent"));
+	AudioComponent->SetupAttachment(RootComponent);
+}
 
 void ARCDeathMatchPC::BeginPlay()
 {
@@ -28,7 +35,12 @@ void ARCDeathMatchPC::BeginPlay()
 			gameState->OnScoreBoardUpdate.AddDynamic(this, &ARCDeathMatchPC::OnScoreBoardUpdateCall);
 			gameState->OnShowFinaleStat.AddDynamic(this, &ARCDeathMatchPC::OnFinaleScoreData);
 		}
+
+		
 	}
+	
+
+	Client_StartBackgroundMusic();
 }
 
 void ARCDeathMatchPC::CreateCharacter()
@@ -147,6 +159,7 @@ void ARCDeathMatchPC::CharacterKilled(ACharacter* killer)
 		}
 		
 		AddDeathCount();
+		Client_ClearAbilityCooldownsUI();
 
 		ARCDeathMatchGameState* gameState = GetWorld()->GetGameState<ARCDeathMatchGameState>();
 		if (gameState)
@@ -160,18 +173,33 @@ void ARCDeathMatchPC::CharacterKilled(ACharacter* killer)
 	
 }
 
-void ARCDeathMatchPC::HealthUpdate(float val, ACharacter* source)
+void ARCDeathMatchPC::HealthUpdate(float val, AActor* source)
 {
 	Client_UpdateHealthStatus(val, source);
 }
 
-void ARCDeathMatchPC::Client_UpdateHealthStatus_Implementation(const float hp, ACharacter* source)
+void ARCDeathMatchPC::Client_UpdateHealthStatus_Implementation(const float hp, AActor* source)
 {
 	ARCDeathMatchHUD* hud = Cast<ARCDeathMatchHUD>(GetHUD());
 	if (hud)
 	{
 		hud->UpdateHealthBar(hp);
+		if (source)
+		{
+			hud->DisplayDamageDirection(source);
+		}
+		
 	}
+}
+
+void ARCDeathMatchPC::Client_ClearAbilityCooldownsUI_Implementation()
+{
+	ARCDeathMatchHUD* hud = Cast<ARCDeathMatchHUD>(GetHUD());
+	if (hud)
+	{
+		hud->ClearCooldowns();
+	}
+	
 }
 
 void ARCDeathMatchPC::Restart()
@@ -183,5 +211,32 @@ void ARCDeathMatchPC::Restart()
 		character->Destroy();
 		CreateCharacter();
 		
+	}
+}
+
+void ARCDeathMatchPC::PlayMusicList()
+{
+	if (AudioComponent && MusicList.Num() > 0)
+	{
+		int32 randInd = FMath::RandRange(0, MusicList.Num() - 1);
+		USoundBase* sound = MusicList[randInd];
+		MusicList.RemoveAt(randInd);
+		AudioComponent->SetSound(sound);
+		AudioComponent->OnAudioFinished.Clear();
+		AudioComponent->OnAudioFinished.AddDynamic(this, &ARCDeathMatchPC::PlayMusicList);
+		AudioComponent->Play();
+	}
+}
+
+void ARCDeathMatchPC::Client_StartBackgroundMusic_Implementation()
+{
+	if (URCGameInstance* GI = GetWorld()->GetGameInstance<URCGameInstance>())
+	{
+		if (UBackgroundMusicContaner* musicContainer = GI->GetBackgroundMusicContainer())
+		{
+			MusicList = musicContainer->BackgroundMusicList;
+			PlayMusicList();
+		}
+
 	}
 }

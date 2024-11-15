@@ -5,7 +5,7 @@
 #include "Runtime/Engine/Classes/Kismet/GameplayStatics.h"
 #include "AIController.h"
 #include "BehaviorTree/BlackboardComponent.h"
-#include "Actors/Weapons/RCWeaponPickUp.h"
+#include "Actors/PickUp/RCWeaponPickUp.h"
 #include "Characters/RCCharacter.h"
 
 UBTTask_FindWeapon::UBTTask_FindWeapon()

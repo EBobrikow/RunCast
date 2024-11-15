@@ -34,3 +34,11 @@ void URCUpdraftAbilityWidget::RelatedCooldownTagRecieved(float renmaining, float
 		}
 	}
 }
+
+void URCUpdraftAbilityWidget::ClearCooldownUI()
+{
+	if (CooldownProgressBar)
+	{
+		CooldownProgressBar->SetVisibility(ESlateVisibility::Hidden);
+	}
+}

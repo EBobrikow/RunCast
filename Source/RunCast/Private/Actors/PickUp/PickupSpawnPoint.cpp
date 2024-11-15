@@ -1,14 +1,14 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "Actors/Weapons/WeaponSpawnPoint.h"
+#include "Actors/PickUp/PickupSpawnPoint.h"
 
 // Sets default values
-AWeaponSpawnPoint::AWeaponSpawnPoint()
+APickupSpawnPoint::APickupSpawnPoint()
 	: RespawnTime(10.0f)
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
+	PrimaryActorTick.bCanEverTick = false;
 
 	USceneComponent* defRoot = CreateDefaultSubobject<USceneComponent>(TEXT("defRoot"));
 	RootComponent = defRoot;
@@ -16,13 +16,13 @@ AWeaponSpawnPoint::AWeaponSpawnPoint()
 }
 
 // Called when the game starts or when spawned
-void AWeaponSpawnPoint::BeginPlay()
+void APickupSpawnPoint::BeginPlay()
 {
 	Super::BeginPlay();
 	SpawmWeaponPickup();
 }
 
-void AWeaponSpawnPoint::SpawmWeaponPickup()
+void APickupSpawnPoint::SpawmWeaponPickup()
 {
 	if (HasAuthority())
 	{
@@ -32,10 +32,10 @@ void AWeaponSpawnPoint::SpawmWeaponPickup()
 			FVector loc = GetActorLocation() + SpawnOffset;
 			FRotator rot = FRotator::ZeroRotator;
 		
-			CurrentPickup = GetWorld()->SpawnActor<ARCWeaponPickUp>(PickupList[randInd], loc, rot);
+			CurrentPickup = GetWorld()->SpawnActor<ARCBasePickUp>(PickupList[randInd], loc, rot);
 			if (CurrentPickup)
 			{
-				CurrentPickup->OnPickupDelegate.AddDynamic(this, &AWeaponSpawnPoint::Respawn);
+				CurrentPickup->OnPickupDelegate.AddDynamic(this, &APickupSpawnPoint::Respawn);
 			}
 
 		}
@@ -43,7 +43,7 @@ void AWeaponSpawnPoint::SpawmWeaponPickup()
 	
 }
 
-void AWeaponSpawnPoint::Respawn()
+void APickupSpawnPoint::Respawn()
 {
 	if (CurrentPickup)
 	{
@@ -51,14 +51,14 @@ void AWeaponSpawnPoint::Respawn()
 		CurrentPickup->OnPickupDelegate.Clear();
 		
 		GetWorld()->GetTimerManager().ClearTimer(DestroyTimer);
-		GetWorld()->GetTimerManager().SetTimer(DestroyTimer, this, &AWeaponSpawnPoint::Destroy, 0.2f, false);
+		GetWorld()->GetTimerManager().SetTimer(DestroyTimer, this, &APickupSpawnPoint::Destroy, 0.2f, false);
 
 		GetWorld()->GetTimerManager().ClearTimer(RespawnTimer);
-		GetWorld()->GetTimerManager().SetTimer(RespawnTimer, this, &AWeaponSpawnPoint::SpawmWeaponPickup, RespawnTime, false);
+		GetWorld()->GetTimerManager().SetTimer(RespawnTimer, this, &APickupSpawnPoint::SpawmWeaponPickup, RespawnTime, false);
 	}
 }
 
-void AWeaponSpawnPoint::Destroy()
+void APickupSpawnPoint::Destroy()
 {
 	if (CurrentPickup)
 	{
@@ -67,7 +67,7 @@ void AWeaponSpawnPoint::Destroy()
 }
 
 // Called every frame
-void AWeaponSpawnPoint::Tick(float DeltaTime)
+void APickupSpawnPoint::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 

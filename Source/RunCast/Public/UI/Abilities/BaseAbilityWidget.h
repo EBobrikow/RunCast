@@ -29,5 +29,10 @@ protected:
 	void OnTagCooldownRecieved(FGameplayTag Tag, float renmaining, float duration);
 
 	virtual void RelatedCooldownTagRecieved(float renmaining, float duration);
+
+	UFUNCTION()
+	void ClearCooldownTriggered();
+
+	virtual void ClearCooldownUI();
 	
 };

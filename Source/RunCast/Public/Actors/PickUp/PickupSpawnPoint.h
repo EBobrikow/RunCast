@@ -4,21 +4,21 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "Actors/Weapons/RCWeaponPickUp.h"
+#include "Actors/PickUp/RCBasePickUp.h"
 #include "Net/UnrealNetwork.h"
-#include "WeaponSpawnPoint.generated.h"
+#include "PickupSpawnPoint.generated.h"
 
 UCLASS()
-class RUNCAST_API AWeaponSpawnPoint : public AActor
+class RUNCAST_API APickupSpawnPoint : public AActor
 {
 	GENERATED_BODY()
 	
 public:	
 	// Sets default values for this actor's properties
-	AWeaponSpawnPoint();
+	APickupSpawnPoint();
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	TArray<TSubclassOf<ARCWeaponPickUp>> PickupList;
+	TArray<TSubclassOf<ARCBasePickUp>> PickupList;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	float RespawnTime;
@@ -52,5 +52,5 @@ public:
 
 private: 
 
-	ARCWeaponPickUp* CurrentPickup = nullptr;
+	ARCBasePickUp* CurrentPickup = nullptr;
 };

@@ -107,6 +107,15 @@ UDefaultValuesContainer* URCGameInstance::GetDefaultValuesContaner() const
 	return nullptr;
 }
 
+UBackgroundMusicContaner* URCGameInstance::GetBackgroundMusicContainer() const
+{
+	if (BackgroundMusicContainerClass)
+	{
+		return BackgroundMusicContainerClass->GetDefaultObject<UBackgroundMusicContaner>();
+	}
+	return nullptr;
+}
+
 void URCGameInstance::Init()
 {
 	GetServerManager()->InitConnection();

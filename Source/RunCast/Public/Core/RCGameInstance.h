@@ -9,6 +9,7 @@
 #include "Tools/SaveGame/SaveManager.h"
 #include "GameFramework/GameModeBase.h"
 #include "Tools/DefaultValuesContainer.h"
+#include "Tools/BackgroundMusicContaner.h"
 #include "RCGameInstance.generated.h"
 
 /**
@@ -72,6 +73,9 @@ public:
 	UFUNCTION()
 	UDefaultValuesContainer* GetDefaultValuesContaner() const;
 
+	UFUNCTION()
+	UBackgroundMusicContaner* GetBackgroundMusicContainer() const;
+
 protected:
 
 	virtual void Init() override;
@@ -122,4 +126,7 @@ protected:
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	TSubclassOf<UDefaultValuesContainer> DefaultValuesContainerClass;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	TSubclassOf<UBackgroundMusicContaner> BackgroundMusicContainerClass;
 };

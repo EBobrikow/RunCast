@@ -4,7 +4,7 @@
 #include "UI/DeathMatch/RCDeathMatchHUD.h"
 #include "Core/DeathMatch/RCDeathMatchPC.h"
 #include "Blueprint/WidgetBlueprintLibrary.h"
-#include "Components/HealthComponent.h"
+#include "AbilitySystemInterface.h"
 
 void ARCDeathMatchHUD::BeginPlay()
 {
@@ -16,19 +16,7 @@ void ARCDeathMatchHUD::BeginPlay()
 		if (GameOverlayWidget)
 		{
 			GameOverlayWidget->AddToViewport();
-			//if (ARCDeathMatchPC* PC = Cast<ARCDeathMatchPC>(PlayerOwner.Get()))
-			//{
-			//	CharacterRef = Cast<ARCCharacter>(PC->PossessedCharacter);
-			//	if (CharacterRef)
-			//	{
-			//		UHealthComponent* hpComp = CharacterRef->GetHealthComponent();
-			//		if (hpComp)
-			//		{
-			//			GameOverlayWidget->SetHealthBarValue(hpComp->GetCurrentHealth());
-			//			//hpComp->OnHealthUpdate.AddDynamic(this, &ARCDeathMatchHUD::UpdateHealthBar);
-			//		}
-			//	}
-			//}
+			
 		}
 	}
 }
@@ -47,27 +35,19 @@ void ARCDeathMatchHUD::UpdateHealthBar(float val)
 	
 }
 
-void ARCDeathMatchHUD::UpdateDashCooldownTime(float remain, float duration)
-{
-	if (GameOverlayWidget)
-	{
-		//GameOverlayWidget->GetDashAbilityWidget()->SetCooldownProgress(remain, duration);
-	}
-}
-
-void ARCDeathMatchHUD::FinishDashCooldown()
-{
-	if (GameOverlayWidget)
-	{
-		//GameOverlayWidget->GetDashAbilityWidget()->FinishCooldown();
-	}
-}
-
 void ARCDeathMatchHUD::UpdateTagRelatedCooldown(const FGameplayTag& Tag, const float& renmaining, const float& duration)
 {
 	if (OnTagCooldownUpdate.IsBound())
 	{
 		OnTagCooldownUpdate.Broadcast(Tag, renmaining, duration);
+	}
+}
+
+void ARCDeathMatchHUD::ClearCooldowns()
+{
+	if (OnClearCooldownUI.IsBound())
+	{
+		OnClearCooldownUI.Broadcast();
 	}
 }
 
@@ -107,6 +87,20 @@ void ARCDeathMatchHUD::DisplayFinaleStat(TArray<FScoreBoardData> data)
 		{
 			FinaleStatWidget->AddToViewport();
 			FinaleStatWidget->Init(data);
+		}
+	}
+}
+
+void ARCDeathMatchHUD::DisplayDamageDirection(AActor* source)
+{
+	if (DamageDirectionWidgetClass)
+	{
+		URCDamageDirectionWidget* DamageDirectionWidget = CreateWidget<URCDamageDirectionWidget>(Cast<APlayerController>(GetOwner()), DamageDirectionWidgetClass);
+		if (DamageDirectionWidget)
+		{
+			DamageDirectionWidget->DamageSource = source;
+			DamageDirectionWidget->InitAnimation();
+			DamageDirectionWidget->AddToViewport();
 		}
 	}
 }

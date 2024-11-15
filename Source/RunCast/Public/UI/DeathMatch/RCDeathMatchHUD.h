@@ -7,10 +7,12 @@
 #include "UI/Common/RCGameOverlay.h"
 #include "UI/DeathMatch/FinaleStat.h"
 #include "Characters/RCCharacter.h"
+#include "UI/Common/RCDamageDirectionWidget.h"
 #include "RCDeathMatchHUD.generated.h"
 
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FOnTagCooldownUpdate, FGameplayTag, Tag, float, remaining, float, duration);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnClearCooldownUI);
 
 UCLASS()
 class RUNCAST_API ARCDeathMatchHUD : public AInGameHUD
@@ -28,17 +30,17 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	TSubclassOf<UFinaleStat> FinaleStatWidgetClass;
 
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	TSubclassOf<URCDamageDirectionWidget> DamageDirectionWidgetClass;
+
 	UFUNCTION()
 	void UpdateHealthBar(float val);
 
 	UFUNCTION()
-	void UpdateDashCooldownTime(float remain, float duration);
-
-	UFUNCTION()
-	void FinishDashCooldown();
-
-	UFUNCTION()
 	void UpdateTagRelatedCooldown(const FGameplayTag& Tag, const float& renmaining, const float& duration);
+
+	UFUNCTION()
+	void ClearCooldowns();
 
 	UFUNCTION()
 	float GetCharacterHP();
@@ -49,8 +51,14 @@ public:
 	UFUNCTION()
 	void DisplayFinaleStat(TArray<FScoreBoardData> data);
 
+	UFUNCTION()
+	void DisplayDamageDirection(AActor* source);
+
 	UPROPERTY()
 	FOnTagCooldownUpdate OnTagCooldownUpdate;
+
+	UPROPERTY()
+	FOnClearCooldownUI OnClearCooldownUI;
 
 protected: 
 

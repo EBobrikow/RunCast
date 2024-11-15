@@ -11,6 +11,7 @@ void UBaseAbilityWidget::NativeConstruct()
 	if (ARCDeathMatchHUD* hud = GetOwningPlayer()->GetHUD<ARCDeathMatchHUD>())
 	{
 		hud->OnTagCooldownUpdate.AddDynamic(this, &UBaseAbilityWidget::OnTagCooldownRecieved);
+		hud->OnClearCooldownUI.AddDynamic(this, &UBaseAbilityWidget::ClearCooldownTriggered);
 	}
 }
 
@@ -30,4 +31,13 @@ void UBaseAbilityWidget::OnTagCooldownRecieved(FGameplayTag Tag, float renmainin
 void UBaseAbilityWidget::RelatedCooldownTagRecieved(float renmaining, float duration)
 {
 
+}
+
+void UBaseAbilityWidget::ClearCooldownTriggered()
+{
+	ClearCooldownUI();
+}
+
+void UBaseAbilityWidget::ClearCooldownUI()
+{
 }

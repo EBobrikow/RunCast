@@ -7,6 +7,7 @@
 #include "Core/RCPlayerController.h"
 #include "Characters/RCCharacter.h"
 #include "Core/DeathMatch/RCDeathMatchGameState.h"
+#include "Components/AudioComponent.h"
 #include "RCDeathMatchPC.generated.h"
 
 //DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnHealthStatusUpdate, float, health);
@@ -17,6 +18,8 @@ class RUNCAST_API ARCDeathMatchPC : public ARCPlayerController
 	GENERATED_BODY()
 
 public: 
+
+	ARCDeathMatchPC();
 
 	virtual void BeginPlay() override;
 	
@@ -35,6 +38,9 @@ public:
 
 protected: 
 
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
+	UAudioComponent* AudioComponent = nullptr;
+
 	virtual void TimeUpdate(int32 Min, int32 Sec) override;
 
 	virtual void ShowFinaleScore(TArray<FScoreBoardData> data) override;
@@ -49,10 +55,13 @@ protected:
 	void CharacterKilled(ACharacter* killer);
 
 	UFUNCTION()
-	void HealthUpdate(float val, ACharacter* source = nullptr);
+	void HealthUpdate(float val, AActor* source = nullptr);
 
 	UFUNCTION(Client, Reliable)
-	void Client_UpdateHealthStatus(const float hp, ACharacter* source);
+	void Client_UpdateHealthStatus(const float hp, AActor* source);
+
+	UFUNCTION(Client, Reliable)
+	void Client_ClearAbilityCooldownsUI();
 
 	UFUNCTION()
 	void Restart();
@@ -65,5 +74,17 @@ protected:
 
 	UPROPERTY()
 	FTimerHandle RestartDelay;
+
+private: 
+
+
+	UPROPERTY()
+	TArray<USoundBase*> MusicList;
+
+	UFUNCTION()
+	void PlayMusicList();
+
+	UFUNCTION(Client, Reliable)
+	void Client_StartBackgroundMusic();
 	
 };

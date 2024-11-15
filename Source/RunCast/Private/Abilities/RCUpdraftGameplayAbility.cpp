@@ -16,7 +16,7 @@ void URCUpdraftGameplayAbility::ActivateAbility(const FGameplayAbilitySpecHandle
 	CommitAbility(Handle, ActorInfo, ActivationInfo);
 
 	ARCCharacter* Character = Cast<ARCCharacter>(ActorInfo->OwnerActor.Get());
-	if (Character)
+	if (Character && Character->IsAlive())
 	{
 		
 		FVector targetLoc = Character->GetActorLocation() + (Character->GetActorUpVector() * UpdraftStrength);
@@ -24,6 +24,11 @@ void URCUpdraftGameplayAbility::ActivateAbility(const FGameplayAbilitySpecHandle
 		targetLoc.Y = 0;
 
 		Character->LaunchCharacter(targetLoc,false, true);
+	}
+	else
+	{
+		CancelAbility(Handle, ActorInfo, ActivationInfo, true);
+		return;
 	}
 
 	EndAbility(Handle, ActorInfo, ActivationInfo, true, false);

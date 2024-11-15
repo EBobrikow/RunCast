@@ -46,3 +46,11 @@ void URCDashAbilityWidget::RelatedCooldownTagRecieved(float renmaining, float du
 	SetCooldownProgress(renmaining, duration);
 }
 
+void URCDashAbilityWidget::ClearCooldownUI()
+{
+	if (CooldownProgressBar)
+	{
+		CooldownProgressBar->SetVisibility(ESlateVisibility::Hidden);
+	}
+}
+

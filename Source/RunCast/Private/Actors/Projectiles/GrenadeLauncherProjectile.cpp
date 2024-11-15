@@ -3,7 +3,6 @@
 
 #include "Actors/Projectiles/GrenadeLauncherProjectile.h"
 #include "Kismet/GameplayStatics.h"
-#include "Interfaces/DamagebleInterface.h"
 #include "AbilitySystemInterface.h"
 #include "Components/RCAbilitySystemComponent.h"
 #include "Abilities/RCAttributeSet.h"

@@ -25,11 +25,7 @@ ADynamiteBox::ADynamiteBox()
 
 }
 
-void ADynamiteBox::ApplyDamage(float dmg, ACharacter* damager)
-{
-	Server_TakeDamage();
-	//BigBadaBum();
-}
+
 
 void ADynamiteBox::ApplyAbilityDamage(ACharacter* instigatorCharacter)
 {

@@ -2,7 +2,6 @@
 
 
 #include "Actors/Projectiles/BaseProjectile.h"
-#include "Interfaces/DamagebleInterface.h"
 #include "GameFramework/Character.h"
 #include "AbilitySystemBlueprintLibrary.h"
 #include "AbilitySystemInterface.h"

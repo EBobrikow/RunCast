@@ -4,7 +4,6 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "Interfaces/DamagebleInterface.h"
 #include "Net/UnrealNetwork.h"
 #include "AbilitySystemInterface.h"
 #include "Components/RCAbilitySystemComponent.h"
@@ -13,7 +12,7 @@
 #include "DynamiteBox.generated.h"
 
 UCLASS()
-class RUNCAST_API ADynamiteBox : public AActor, public IDamagebleInterface, public IAbilitySystemInterface
+class RUNCAST_API ADynamiteBox : public AActor, public IAbilitySystemInterface
 {
 	GENERATED_BODY()
 	
@@ -32,8 +31,6 @@ public:
 
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
 	void ApplyEffects();
-
-	virtual void ApplyDamage(float dmg, ACharacter* damager) override;
 
 	UFUNCTION()
 	void ApplyAbilityDamage(ACharacter* instigatorCharacter);

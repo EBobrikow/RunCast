@@ -14,8 +14,7 @@ URCDashGameplayAbility::URCDashGameplayAbility()
 void URCDashGameplayAbility::FinishAbilitie()
 {
 	if (CashedCharacter)
-	{
-		//CashedCharacter->GetController()->EnableInput(Cast<APlayerController>(CashedCharacter->GetController()));
+	{		
 		if (CashedCharacter->HoldWeaponRef && CashedCharacter->HoldWeaponRef->WeaponSkeletalMesh)
 		{
 			CashedCharacter->HoldWeaponRef->WeaponSkeletalMesh->SetVisibility(true);
@@ -36,7 +35,7 @@ void URCDashGameplayAbility::ActivateAbility(const FGameplayAbilitySpecHandle Ha
 	
 
 	ARCCharacter* Character = Cast<ARCCharacter>(ActorInfo->OwnerActor.Get());
-	if (Character)
+	if (Character && Character->IsAlive())
 	{
 		CashedCharacter = Character;
 		FVector velocity = Character->GetVelocity();
@@ -102,7 +101,12 @@ void URCDashGameplayAbility::ActivateAbility(const FGameplayAbilitySpecHandle Ha
 		
 		return;		
 	}
+	else
+	{
+		CancelAbility(Handle, ActorInfo, ActivationInfo, true);
+		return;
+	}
 
-	CommitAbilityCooldown(Handle, ActorInfo, ActivationInfo,true);
+	//CommitAbilityCooldown(Handle, ActorInfo, ActivationInfo,true);
 	EndAbility(Handle,ActorInfo, ActivationInfo,true,false);
 }

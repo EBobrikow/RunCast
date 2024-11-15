@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/Actor.h"
+#include "Actors/PickUp/RCBasePickUp.h"
 #include "Components/SphereComponent.h"
 #include "Components/StaticMeshComponent.h"
 #include "Actors/Weapons/BaseWeapon.h"
@@ -12,10 +12,10 @@
 
 class UNiagaraSystem;
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnPickup);
+//DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnPickup);
 
 UCLASS()
-class RUNCAST_API ARCWeaponPickUp : public AActor
+class RUNCAST_API ARCWeaponPickUp : public ARCBasePickUp //, public ISpawnPointInterface
 {
 	GENERATED_BODY()
 	
@@ -32,11 +32,12 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Weapon")
 	TSubclassOf<ABaseWeapon> WeaponClass;
 
-	UPROPERTY();
-	FOnPickup OnPickupDelegate;
+	/*UPROPERTY();
+	FOnPickup OnPickupDelegate;*/
 
 	UFUNCTION()
 	void ResetOverlap();
+
 
 
 protected:

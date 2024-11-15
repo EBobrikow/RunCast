@@ -46,7 +46,7 @@ void URCAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallback
 
 			if (OnHealthChanged.IsBound())
 			{
-				OnHealthChanged.Broadcast(GetHealth(), Cast<ACharacter>(source->GetOwnerActor()));
+				OnHealthChanged.Broadcast(GetHealth(), delta > 0.0f ? nullptr : source->GetOwnerActor());
 			}
 			float currHealth = GetHealth();
 			if (FMath::IsNearlyZero(GetHealth(), 0.001f) && source->GetOwnerActor())

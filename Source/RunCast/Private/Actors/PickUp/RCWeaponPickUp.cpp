@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "Actors/Weapons/RCWeaponPickUp.h"
+#include "Actors/PickUp/RCWeaponPickUp.h"
 #include "Characters/RCCharacter.h"
 #include "NiagaraSystem.h"
 #include "NiagaraFunctionLibrary.h"
