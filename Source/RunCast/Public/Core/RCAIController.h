@@ -31,7 +31,7 @@ protected:
 	void CreateCharacter();
 
 	UFUNCTION()
-	void CharacterKilled(ACharacter* killer);
+	void CharacterKilled(AActor* killer);
 
 
 	UFUNCTION()

@@ -34,6 +34,7 @@ void ARCDeathMatchPC::BeginPlay()
 		{
 			gameState->OnScoreBoardUpdate.AddDynamic(this, &ARCDeathMatchPC::OnScoreBoardUpdateCall);
 			gameState->OnShowFinaleStat.AddDynamic(this, &ARCDeathMatchPC::OnFinaleScoreData);
+			gameState->OnCharacterKillAnounce.AddDynamic(this, &ARCDeathMatchPC::CharacterKillAnounce);
 		}
 
 		
@@ -139,7 +140,7 @@ void ARCDeathMatchPC::MatchEnd()
 	bShowMouseCursor = true;
 }
 
-void ARCDeathMatchPC::CharacterKilled(ACharacter* killer)
+void ARCDeathMatchPC::CharacterKilled(AActor* killer)
 {
 	ARCCharacter* character = Cast<ARCCharacter>(PossessedCharacter);
 	if (character)
@@ -151,11 +152,15 @@ void ARCDeathMatchPC::CharacterKilled(ACharacter* killer)
 
 		if (killer && killer != character)
 		{
-			IScoreBoardInterface* scoreBoardInterface = Cast<IScoreBoardInterface>(killer->GetController());
-			if (scoreBoardInterface)
+			if (ACharacter* killerChar = Cast<ACharacter>(killer))
 			{
-				scoreBoardInterface->AddKillCount();
+				IScoreBoardInterface* scoreBoardInterface = Cast<IScoreBoardInterface>(killerChar->GetController());
+				if (scoreBoardInterface)
+				{
+					scoreBoardInterface->AddKillCount();
+				}
 			}
+			
 		}
 		
 		AddDeathCount();
@@ -165,6 +170,7 @@ void ARCDeathMatchPC::CharacterKilled(ACharacter* killer)
 		if (gameState)
 		{
 			gameState->Server_UpdateScoreBoard();
+			gameState->Server_AnounceCharacterKilled(killer, character);
 		}
 
 		GetWorld()->GetTimerManager().ClearTimer(RestartDelay);
@@ -212,6 +218,20 @@ void ARCDeathMatchPC::Restart()
 		CreateCharacter();
 		
 	}
+}
+
+void ARCDeathMatchPC::Client_CharacterKillAnounce_Implementation(const FString& killerName, EWeaponIconType weaponIconType, const FString& victimName)
+{
+	ARCDeathMatchHUD* hud = Cast<ARCDeathMatchHUD>(GetHUD());
+	if (hud)
+	{
+		hud->KillAnnounce(killerName, weaponIconType, victimName);
+	}
+}
+
+void ARCDeathMatchPC::CharacterKillAnounce(FString killerName, EWeaponIconType weaponIconType, FString victimName)
+{
+	Client_CharacterKillAnounce(killerName, weaponIconType, victimName);
 }
 
 void ARCDeathMatchPC::PlayMusicList()

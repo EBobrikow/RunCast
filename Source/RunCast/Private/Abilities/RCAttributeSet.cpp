@@ -53,7 +53,7 @@ void URCAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallback
 			{
 				if (OnCharacterKilled.IsBound())
 				{
-					OnCharacterKilled.Broadcast(Cast<ACharacter>(source->GetOwnerActor()));
+					OnCharacterKilled.Broadcast(source->GetOwnerActor());
 				}
 			}
 
@@ -86,15 +86,5 @@ void URCAttributeSet::OnRep_MaxHealth(const FGameplayAttributeData& oldVal)
 
 void URCAttributeSet::AdjustAttributeForMaxChange(const FGameplayAttributeData& AffectedAttribute, const FGameplayAttributeData& MaxAttribute, float NewMaxValue, const FGameplayAttribute& AffectedAttributeProperty) const
 {
-	/*UAbilitySystemComponent* AbilityComp = GetOwningAbilitySystemComponent();
-	const float CurrentMaxValue = MaxAttribute.GetCurrentValue();
-
-	if (!FMath::IsNearlyEqual(CurrentMaxValue, NewMaxValue) && AbilityComp)
-	{
-		const float currentValue = AffectedAttribute.GetCurrentValue();
-		const float NewDelta = (CurrentMaxValue > 0.0f) ? (currentValue * NewMaxValue / CurrentMaxValue) - currentValue : NewMaxValue;
-
-		AbilityComp->ApplyModToAttributeUnsafe(AffectedAttributeProperty, EGameplayModOp::Additive, NewDelta);
-	}*/
-
+	
 }

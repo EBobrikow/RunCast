@@ -52,7 +52,7 @@ protected:
 	void MatchEnd();
 
 	UFUNCTION()
-	void CharacterKilled(ACharacter* killer);
+	void CharacterKilled(AActor* killer);
 
 	UFUNCTION()
 	void HealthUpdate(float val, AActor* source = nullptr);
@@ -74,6 +74,12 @@ protected:
 
 	UPROPERTY()
 	FTimerHandle RestartDelay;
+
+	UFUNCTION()
+	void CharacterKillAnounce(FString killerName, EWeaponIconType weaponIconType, FString victimName);
+
+	UFUNCTION(Client, Unreliable)
+	void Client_CharacterKillAnounce(const FString& killerName, EWeaponIconType weaponIconType, const FString& victimName);
 
 private: 
 

@@ -8,6 +8,7 @@
 #include "Components/ProgressBar.h"
 #include "Components/TextBlock.h"
 #include "UI/Abilities/RCDashAbilityWidget.h"
+#include "UI/Common/Announcer/KillAnnouncerBoard.h"
 #include "RCGameOverlay.generated.h"
 
 /**
@@ -31,7 +32,8 @@ public:
 
 	void ShowCrosshair(bool val);
 
-	URCDashAbilityWidget* GetDashAbilityWidget() const;
+	UFUNCTION()
+	void SetKillAnnounce(FString killerName, EWeaponIconType weaponIconType, FString victimName);
 
 protected: 
 
@@ -49,5 +51,8 @@ protected:
 
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
 	URCDashAbilityWidget* DashAbilityWidget;
+
+	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
+	UKillAnnouncerBoard* KillAnouncerBoard;
 
 };

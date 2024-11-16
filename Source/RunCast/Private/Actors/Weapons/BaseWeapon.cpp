@@ -126,6 +126,11 @@ void ABaseWeapon::FireAction()
 	}
 }
 
+EWeaponIconType ABaseWeapon::GetWeaponTypeIcon() const
+{
+	return WeaponIconType;
+}
+
 void ABaseWeapon::AddStartupGameplayAbilities()
 {
 	if (AbilitySystemComponent)

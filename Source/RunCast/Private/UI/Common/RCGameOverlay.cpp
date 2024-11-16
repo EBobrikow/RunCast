@@ -42,7 +42,11 @@ void URCGameOverlay::ShowCrosshair(bool val)
 	}
 }
 
-URCDashAbilityWidget* URCGameOverlay::GetDashAbilityWidget() const
+void URCGameOverlay::SetKillAnnounce(FString killerName, EWeaponIconType weaponIconType, FString victimName)
 {
-	return DashAbilityWidget;
+	if (KillAnouncerBoard)
+	{
+		KillAnouncerBoard->AddKillAnnounce(killerName, weaponIconType, victimName);
+	}
 }
+

@@ -60,7 +60,7 @@ void ARCAIController::CreateCharacter()
 	}
 }
 
-void ARCAIController::CharacterKilled(ACharacter* killer)
+void ARCAIController::CharacterKilled(AActor* killer)
 {
 	ARCCharacter* character = Cast<ARCCharacter>(GetPawn());
 	if (character)
@@ -70,11 +70,15 @@ void ARCAIController::CharacterKilled(ACharacter* killer)
 
 		if (killer)
 		{
-			IScoreBoardInterface* scoreBoardInterface = Cast<IScoreBoardInterface>(killer->GetController());
-			if (scoreBoardInterface)
+			if (ACharacter* killerChar = Cast<ACharacter>(killer))
 			{
-				scoreBoardInterface->AddKillCount();
+				IScoreBoardInterface* scoreBoardInterface = Cast<IScoreBoardInterface>(killerChar->GetController());
+				if (scoreBoardInterface)
+				{
+					scoreBoardInterface->AddKillCount();
+				}
 			}
+			
 		}
 
 		AddDeathCount();
@@ -83,6 +87,7 @@ void ARCAIController::CharacterKilled(ACharacter* killer)
 		if (gameState)
 		{
 			gameState->Server_UpdateScoreBoard();
+			gameState->Server_AnounceCharacterKilled(killer, character);
 		}
 
 		GetWorld()->GetTimerManager().ClearTimer(RestartDelay);

@@ -27,7 +27,7 @@ ADynamiteBox::ADynamiteBox()
 
 
 
-void ADynamiteBox::ApplyAbilityDamage(ACharacter* instigatorCharacter)
+void ADynamiteBox::ApplyAbilityDamage(AActor* instigatorCharacter)
 {
 
 	Server_TakeDamage();

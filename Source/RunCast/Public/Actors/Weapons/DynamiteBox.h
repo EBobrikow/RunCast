@@ -33,7 +33,7 @@ public:
 	void ApplyEffects();
 
 	UFUNCTION()
-	void ApplyAbilityDamage(ACharacter* instigatorCharacter);
+	void ApplyAbilityDamage(AActor* instigatorCharacter);
 
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 

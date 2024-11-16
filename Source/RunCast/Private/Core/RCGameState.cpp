@@ -5,6 +5,8 @@
 #include "Core/RCGameMode.h"
 #include "Kismet/GameplayStatics.h"
 #include "Interfaces/ScoreBoardInterface.h"
+#include "Actors/Weapons/DynamiteBox.h"
+#include "Characters/RCCharacter.h"
 
 void ARCGameState::BeginPlay()
 {
@@ -17,6 +19,50 @@ void ARCGameState::BeginPlay()
 		{
 			GM->OnMatchEnd.AddDynamic(this, &ARCGameState::OnMatchEnd);
 		}
+	}
+}
+
+void ARCGameState::Server_AnounceCharacterKilled_Implementation(AActor* killer, ACharacter* victim)
+{
+	EWeaponIconType iconType = EWeaponIconType::None;
+	FString killerName = "";
+	FString victimName = "";
+
+	if (killer)
+	{
+		if (ARCCharacter* killerCharacter = Cast<ARCCharacter>(killer))
+		{
+			if (killerCharacter->HoldWeaponRef)
+			{
+				iconType = killerCharacter->HoldWeaponRef->GetWeaponTypeIcon();
+				if (IScoreBoardInterface* scoreBoardInterface = Cast<IScoreBoardInterface>(killerCharacter->GetController()))
+				{
+					killerName = scoreBoardInterface->GetScoreBoardData().PlayerName;
+				}
+			}
+		}
+		else if (ADynamiteBox* box = Cast<ADynamiteBox>(killer))
+		{
+			iconType = EWeaponIconType::Dynamite;
+		}
+	}
+
+	if (victim)
+	{
+		if (IScoreBoardInterface* scoreBoardInterface = Cast<IScoreBoardInterface>(victim->GetController()))
+		{
+			victimName = scoreBoardInterface->GetScoreBoardData().PlayerName;
+		}
+	}
+
+	Multicast_AnounceCharacterKilled(killerName, iconType, victimName);
+}
+
+void ARCGameState::Multicast_AnounceCharacterKilled_Implementation(const FString& killerName, EWeaponIconType weaponIconType, const FString& victimName)
+{
+	if (OnCharacterKillAnounce.IsBound())
+	{
+		OnCharacterKillAnounce.Broadcast(killerName, weaponIconType, victimName);
 	}
 }
 

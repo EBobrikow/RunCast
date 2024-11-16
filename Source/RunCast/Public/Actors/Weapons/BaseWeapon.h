@@ -58,7 +58,7 @@ public:
 
 	void FireAction();
 
-
+	EWeaponIconType GetWeaponTypeIcon() const;
 
 protected:
 	// Called when the game starts or when spawned
@@ -83,6 +83,9 @@ protected:
 	bool AbilityInitialized = false;
 
 	void AddStartupGameplayAbilities();
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	EWeaponIconType WeaponIconType = EWeaponIconType::None;
 
 public:	
 	// Called every frame

@@ -25,6 +25,7 @@ void URCScoreBoard::ConstructList(TArray<FScoreBoardData> listData)
 			UScoreBoardDataContainer* dataContainer = NewObject<UScoreBoardDataContainer>(this);
 			dataContainer->ScoreData = listData[i];
 			ScoreBoardListView->AddItem(dataContainer);
+			//ScoreBoardListView->RemoveItem();
 		}
 
 	}

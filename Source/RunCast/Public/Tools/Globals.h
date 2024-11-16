@@ -277,3 +277,13 @@ struct FGameplayAbilitiesValues
 	UPROPERTY(EditAnywhere)
 	FLauncherGrenadeValues LauncherGrenadeValues;
 };
+
+UENUM(BlueprintType)
+enum class EWeaponIconType : uint8
+{
+	None,
+	Pistol,
+	Riffle,
+	Launcher,
+	Dynamite
+};

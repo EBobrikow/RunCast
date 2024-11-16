@@ -60,6 +60,9 @@ public:
 	UPROPERTY()
 	FOnClearCooldownUI OnClearCooldownUI;
 
+	UFUNCTION()
+	void KillAnnounce(FString killerName, EWeaponIconType weaponIconType, FString victimName);
+
 protected: 
 
 	UPROPERTY()

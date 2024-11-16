@@ -17,7 +17,7 @@
 
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnHealthChanged, float, health, AActor*, instigator);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnCharacterKilled, ACharacter*, instigator);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnCharacterKilled, AActor*, instigator);
 
 UCLASS()
 class RUNCAST_API URCAttributeSet : public UAttributeSet

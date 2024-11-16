@@ -105,6 +105,14 @@ void ARCDeathMatchHUD::DisplayDamageDirection(AActor* source)
 	}
 }
 
+void ARCDeathMatchHUD::KillAnnounce(FString killerName, EWeaponIconType weaponIconType, FString victimName)
+{
+	if (GameOverlayWidget)
+	{
+		GameOverlayWidget->SetKillAnnounce(killerName, weaponIconType, victimName);
+	}
+}
+
 void ARCDeathMatchHUD::GameMenuOpened(bool val)
 {
 	if (GameOverlayWidget)

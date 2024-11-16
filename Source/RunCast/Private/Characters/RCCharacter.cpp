@@ -19,9 +19,7 @@ ARCCharacter::ARCCharacter(const FObjectInitializer& ObjectInitializer)
 
 	Attributes = CreateDefaultSubobject<URCAttributeSet>(TEXT("Attributes"));
 
-	AudioComponent = CreateDefaultSubobject<UAudioComponent>(TEXT("AudioComponent"));
-	AudioComponent->SetupAttachment(RootComponent);
-	//AudioComponent->SetSound();
+	
 }
 
 void ARCCharacter::BeginPlay()

@@ -11,6 +11,8 @@
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnScoreBoardUpdate, TArray<FScoreBoardData>, scoreTable);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnShowFinaleStat, TArray<FScoreBoardData>, scoreTable);
+//DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FOnCharacterKillAnounce, FString, killerName, int32, iconType, FString victimName);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FOnCharacterKillAnounce, FString, killerName, EWeaponIconType, iconType, FString, victimName);
 
 UCLASS()
 class RUNCAST_API ARCGameState : public AGameState
@@ -27,8 +29,17 @@ public:
 	UPROPERTY()
 	FOnShowFinaleStat OnShowFinaleStat;
 
+	UPROPERTY()
+	FOnCharacterKillAnounce OnCharacterKillAnounce;
+
 	UFUNCTION(Server, Reliable)
 	void Server_UpdateScoreBoard();
+
+	UFUNCTION(Server, Reliable)
+	void Server_AnounceCharacterKilled(AActor* killer, ACharacter* victim);
+
+	UFUNCTION(NetMulticast, Reliable)
+	void Multicast_AnounceCharacterKilled(const FString& killerName, EWeaponIconType weaponIconType, const FString& victimName);
 
 protected: 
 

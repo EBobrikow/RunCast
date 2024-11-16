@@ -79,9 +79,6 @@ public:
 
 protected: 
 
-	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
-	UAudioComponent* AudioComponent = nullptr;
-
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	UChildActorComponent* ChildActorComponent = nullptr;
 
