@@ -9,4 +9,4 @@ Copy Config.json to all folders with executable (RunCast.exe RunCastServer.exe S
 Run ServerManager and it's ready to run game it self. 
 
 RunCast is free non comercial project. All assets were used from free sources. 
-Complete build could be dowloaded by link: https://drive.google.com/file/d/1KJIKpw5zQNaz6ZfDNdl4X4KyB5zeWwM7/view?usp=sharing
+Complete build could be dowloaded by link: [https://drive.google.com/file/d/1KJIKpw5zQNaz6ZfDNdl4X4KyB5zeWwM7/view?usp=sharing](https://drive.google.com/file/d/15AJOnWMqTaVQHGoJW9DhbVWhovj238yL/view?usp=sharing)
